@@ -20,4 +20,6 @@ The server will be hosted under a SSL certified domain name.
 
 ### Initialize virtual env
 `python3 -m venv .`
+### Run virtual enviroment
+`source bin/activate`
 
