@@ -15,3 +15,11 @@ The frontend is built with Vue.
 
 ### Hosting
 The server will be hosted under a SSL certified domain name. 
+
+## Getting started
+
+### Initialize virtual env
+`python3 -m venv .`
+### Run virtual enviroment
+`source bin/activate`
+
