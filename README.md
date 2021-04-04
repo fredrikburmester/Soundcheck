@@ -18,6 +18,8 @@ The server will be hosted under a SSL certified domain name.
 
 ## Getting started
 
+Clone this repo
+
 ### Backend
 - Initialize virtual env
 `python3 -m venv .`
