@@ -18,8 +18,14 @@ The server will be hosted under a SSL certified domain name.
 
 ## Getting started
 
-### Initialize virtual env
+### Backend
+
+- Initialize virtual env
 `python3 -m venv .`
-### Run virtual enviroment
+- Run virtual enviroment
 `source bin/activate`
+
+### Frontend
+Make sure to have npm, Node and Vue installed.
+Run: `npm install`
 
