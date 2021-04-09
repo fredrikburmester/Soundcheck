@@ -23,11 +23,11 @@ Clone this repo to your computer. You will have two folders, frontend and backen
 ### Backend
 The backend contains all files for the REST API. This is the Flask project. To run this you will need to run it inside a virtual enviroment and install all dependencies. 
 
-- Initialize virtual env
-`python3 -m venv .`
-- Run virtual enviroment
-`source bin/activate`
-- Run `pip install requirements.txt`
+- Install virtualenv: `pip3 install virtualenv --user`
+- Make sure you are in the folder `tddd27`
+- Initialize virtual env: `virtualenv .`
+- Run virtual enviroment: `source bin/activate`
+- Run `pip install -r requirements.txt`
 
 After this you can run the backend with `python3 app.js` 
 
