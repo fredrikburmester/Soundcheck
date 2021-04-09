@@ -10,6 +10,10 @@ Each player joins a room hosted by 1 player and authenticates with their spotify
 ### Backend
 The backend is REST API build with flask and sockets.io for websockets. Communication will be Peer->Server->Peer.
 
+This game requires a connection to the Spotify API. We have therefore created an application in the Spotify developer console which gives us a private client_id and secret that we can use to get information from the API. 
+
+When a user enters our site they will be required to log in to their Spotify account from a link on our website. From this request a token is given, unique to the user, that the client can use to get information about the current user from the Spotify API. 
+
 ### Frontend
 The frontend is built with Vue. 
 
