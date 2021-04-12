@@ -1,18 +1,75 @@
 <template>
   <div class="home">
-    <img alt="Vue logo" src="../assets/logo.png" />
-    <HelloWorld msg="Welcome to Your Vue.js App" />
+    <h1>Home</h1>   
+	<Button buttonLink="/join" buttonText="Join Room" />
+	<router-link to="/create">Create room</router-link>
+	<router-link to="/join">Join room</router-link>
+	<p>{{ name }}</p>
   </div>
 </template>
 
 <script>
-// @ is an alias to /src
-import HelloWorld from "@/components/HelloWorld.vue";
+const axios = require('axios');
+import Button from '../components/Button'
 
 export default {
   name: "Home",
   components: {
-    HelloWorld,
+	  Button
   },
+  data: function () {
+    return {
+      name: ''
+    }
+  },
+  methods: {
+	  getUserData: function() {
+		  	var self = this;
+			var token = localStorage.getItem('token')
+			axios.get('https://api.spotify.com/v1/me', {
+				headers: {
+					'Authorization': `Bearer ${token}`,
+					"Accept": "application/json",
+					"Content-Type": "application/json",
+				}
+			})
+			.then(function (response) {
+				// handle success
+				console.log(response.data);
+				self.name = response.data.display_name
+			})
+			.catch(function (error) {
+				// handle error
+				console.log(error);
+			})
+			.then(function () {
+				// always executed
+			});
+	  },
+	  getUserTopTracks: function() {
+		  	// var self = this;
+			var token = localStorage.getItem('token')
+			console.log(token)
+			console.log(decodeURIComponent(token))
+			axios.get('https://api.spotify.com/v1/me/top/tracks', {
+				headers: {
+					'Authorization': `Bearer ${token}`,
+				}
+			})
+			.then(function (response) {
+				// handle success
+				console.log(response.data);
+			})
+			.catch(function (error) {
+				// handle error
+				console.log(error);
+			})
+			.then(function () {
+				// always executed
+			});
+	  },
+  },
+  beforeMount() {
+  }
 };
 </script>

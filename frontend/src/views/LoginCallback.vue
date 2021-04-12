@@ -8,14 +8,19 @@
 export default {
     name: "LoginCallback",
     methods: {
-        handleLoginAuthentication: function() {
-            console.log(this.$route.query.code)
-            localStorage.setItem('token', this.$route.query.code)
+        handleLoginCallback: function() {
+            console.log(this.$route.query.access_token)
+            
+            let uri = window.location.href.split('=')[1]
+            let token = uri.split('&')[0]
+
+            localStorage.setItem('token', token)
+
             this.$router.push('/')
         } 
     },
-    beforeMount() {
-        this.handleLoginAuthentication()
+    mounted() {
+        this.handleLoginCallback()
     },
 }
 </script>
