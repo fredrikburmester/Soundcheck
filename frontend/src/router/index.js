@@ -1,6 +1,9 @@
 import { createRouter, createWebHistory } from "vue-router";
 import Home from "../views/Home.vue";
 import Login from "../views/Login.vue";
+import Join from "../views/Join.vue";
+import Create from "../views/Create.vue";
+import Room from "../views/Room.vue";
 import LoginCallback from "../views/LoginCallback.vue";
 
 const routes = [
@@ -18,6 +21,21 @@ const routes = [
     path: "/logincallback",
     name: "LoginCallback",
     component: LoginCallback,
+  },
+  {
+    path: "/join",
+    name: "Join",
+    component: Join,
+  },
+  {
+    path: "/create",
+    name: "Create",
+    component: Create,
+  },
+  {
+    path: "/:code",
+    name: "Room",
+    component: Room,
   },
   {
     path: "/about",
