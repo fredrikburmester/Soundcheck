@@ -2,6 +2,7 @@
   <div class="home">
     <h1>Home</h1>   
 	<Button buttonLink="/create" buttonText="Create Room" />
+	<br>
 	<Button buttonLink="/join" buttonText="Join Room" />
 	<p>{{ name }}</p>
   </div>
