@@ -33,16 +33,20 @@ export default {
   mounted() {
         var self = this
 
+        socket.on("connect", () => {
+          console.log(socket.id);
+        });
+
         socket.on("playerJoined", (data) => {
             console.log("player joined")
             self.players.push(data.name)
         });
 
         socket.on("listofplayers", (data) => {
-            console.log(data)
-            // data.players.forEach(player => {
-            //     self.players.push(player.name)
-            // });
+            self.players = [] 
+            data.players.forEach(player => {
+                self.players.push(player)
+            });
         });
   }
 

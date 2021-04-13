@@ -9,8 +9,8 @@ export default {
     name: "LoginCallback",
     methods: {
         handleLoginCallback: function() {
-            console.log(this.$route.query.access_token)
-            
+            console.log("Handle callback")
+
             let uri = window.location.href.split('=')[1]
             let token = uri.split('&')[0]
 
