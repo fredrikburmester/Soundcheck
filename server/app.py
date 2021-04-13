@@ -1,19 +1,24 @@
 import os
+
 from flask import Flask
-from flask_socketio import SocketIO
 from flask_socketio import join_room, leave_room
+from flask_socketio import SocketIO
+
 import json
 import random
 import requests
 
+# For Spotify
 CLIENT_SECRET = "5c04ecc65221460587462cd9dabd9eae"
 CLIENT_ID = "bad02ecfaf4046638a1daa7f60cbe42b"
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'secret!'
+
+# Allow cross origin to be able to do websockets from different servers
 socketio = SocketIO(app, cors_allowed_origins="*")
 
-# DATABASE #
+#### DATABASE ####
 class Player:
   def __init__(self, name, id):
     self.host = False
@@ -27,25 +32,27 @@ class Room:
     self.players = []
 
 ROOMS = []
-ROOM_IDs = []
-PLAYERS = []
+PLAYERS = [] 
 
-############
+##################
 
-# @socketio.on('token')
-# def handle_message(data):
-#     print(data['token'])
+@socketio.on('connect')
+def connected():
+    socketio.emit('connect')
 
 @socketio.on('createRoom')
 def createRoom():
-    print("Creating room...")
-
+    # Get the global variable (think of the scope)
     global ROOMS
+
+    # Generate a random room code, 4 letters
     code = generateId()
 
     ROOMS.append(Room(code))
 
     socketio.emit('roomCode', {'code': code})
+
+    print(f"[Server] Creating room: {code}")
 
 @socketio.on('joinRoom')
 def joinRoom(data):
@@ -53,6 +60,7 @@ def joinRoom(data):
     code = data['code']
 
     global ROOMS
+    global PLAYERS
 
     for Room in ROOMS:
         if Room.code == code:
@@ -62,52 +70,79 @@ def joinRoom(data):
             # extracting data in json format
             data = r.json()
 
-            # Create player object
-            player = Player(data['display_name'], data['id'])
-
             # Have the player join the room
             join_room(code)
 
-            # Tell everyone in the room that player has joined 
-            socketio.emit("playerJoined", {'name': player.name}, room=code)
+            # Create player object
+            new_player = Player(data['display_name'], data['id'])
+            print(f"[{code}] {new_player.name} joined")
 
-            # If the room is empty, make the user host
-            if len(Room.players) == 0:
-                player.host = True
-            else:
-                # if the room is not empty, send a list of all players already in the room 
-                for player in Room.players:
-                    list_of_players.append(player.name)
+            # Check if the player already exists, i.e. reconnected
+            reconnected = False
+            for player in Room.players:
+                if new_player.id == player.id:
+                    reconnected = True
+                    print(f"[{code}] {new_player.name} reconnected")
+
+            list_of_players = []
+            if reconnected == False:
+                # Tell everyone in the room that player has joined 
+                socketio.emit("playerJoined", {'name': new_player.name}, room=code)
+
+                # If the room is empty, make the user host
+                if len(Room.players) == 0:
+                    new_player.host = True
+                    print(f"[{code}] Making {new_player.name} host")
+                else:
+                    # if the room is not empty, send a list of all players already in the room 
+                    for new_player in Room.players:
+                        list_of_players.append(new_player.name)
+                    socketio.emit("listofplayers", {'players': list_of_players})
+                
+                # Add the player to the list of players for that room
+                Room.players.append(new_player)
+            else: 
+                for new_player in Room.players:
+                    list_of_players.append(new_player.name)
                 socketio.emit("listofplayers", {'players': list_of_players})
-            
-            # Add the player to the list of players for that room
-            Room.players.append(player)
         else: 
-            print("Room does not exist")
+            print(f"[{code}] Room does not exist")
 
+"""
+Function to add a player to a room
+@args: none
+@return: none
+"""
 def add_player_to_room():
     # creates a new Player object and add it to the array ? 
     pass
 
+"""
+Function to generate random 4 letter room code
+@args: none
+@return: String
+"""
 def generateId():
     letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
     code = ""
     for i in range(4):
         code += letters[random.randint(1, 25)]
 
+    #for Room in ROOMS:
+    #    if Room.code == code:
+    #        code = generateId() # Make sure this works!!!
+    
     return code
 
-def room_exists(code):
-    global ROOMS
-
-    for ROOM in ROOMS: 
-        print(ROOM.code)
-
-    if ROOM in ROOMS:
-        if ROOM.code == code:
-            return True
-
-    return False
+# Check if a room exists - not used right now
+# def room_exists(code):
+#     global ROOMS
+#     for ROOM in ROOMS: 
+#         print(ROOM.code)
+#     if ROOM in ROOMS:
+#         if ROOM.code == code:
+#             return True
+#     return False
 
 def delete_room():
     # call leave_room() for all players
