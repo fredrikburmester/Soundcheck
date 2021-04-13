@@ -1,9 +1,8 @@
 <template>
   <div class="home">
     <h1>Home</h1>   
+	<Button buttonLink="/create" buttonText="Create Room" />
 	<Button buttonLink="/join" buttonText="Join Room" />
-	<router-link to="/create">Create room</router-link>
-	<router-link to="/join">Join room</router-link>
 	<p>{{ name }}</p>
   </div>
 </template>
