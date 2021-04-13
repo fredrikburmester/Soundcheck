@@ -6,11 +6,40 @@ import Create from "../views/Create.vue";
 import Room from "../views/Room.vue";
 import LoginCallback from "../views/LoginCallback.vue";
 
+const axios = require('axios');
+
 const routes = [
   {
     path: "/",
     name: "Home",
     component: Home,
+    beforeEnter: (to, from, next) => {
+		if(localStorage.getItem('token')) {
+			var token = localStorage.getItem('token')
+		} else {
+			next({ name: 'Login' })
+		}
+
+		axios.get('https://api.spotify.com/v1/me', {
+			headers: {
+				'Authorization': `Bearer ${token}`,
+				"Accept": "application/json",
+				"Content-Type": "application/json",
+			}
+		})
+		.then(function (response) {
+			console.log("Data ", response.data);
+			console.log("Status ",response.status);
+			next()
+		})
+		.catch(function (error) {
+			console.log(error);
+			// next({ name: 'Login' })
+		})
+		.then(function () {
+			// always executed
+		});
+    }
   },
   {
     path: "/login",
@@ -36,6 +65,33 @@ const routes = [
     path: "/:code",
     name: "Room",
     component: Room,
+	beforeEnter: (to, from, next) => {
+		if(localStorage.getItem('token')) {
+			var token = localStorage.getItem('token')
+		} else {
+			next({ name: 'Login' })
+		}
+
+		axios.get('https://api.spotify.com/v1/me', {
+			headers: {
+				'Authorization': `Bearer ${token}`,
+				"Accept": "application/json",
+				"Content-Type": "application/json",
+			}
+		})
+		.then(function (response) {
+			console.log("Data ", response.data);
+			console.log("Status ",response.status);
+			next()
+		})
+		.catch(function (error) {
+			console.log(error);
+			// next({ name: 'Login' })
+		})
+		.then(function () {
+			// always executed
+		});
+    }
   },
   {
     path: "/about",
