@@ -28,7 +28,7 @@ export default {
       }
   },
   beforeMount() {
-        socket.emit('joinRoom',{'token':localStorage.getItem('token'),'code': this.code});
+        socket.emit('joinRoom',{'access_token':localStorage.getItem('access_token'),'code': this.code});
   },
   mounted() {
         var self = this
