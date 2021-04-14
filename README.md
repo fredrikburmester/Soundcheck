@@ -1,4 +1,4 @@
-# tddd27 - project
+# tddd27
 
 ## Info
 
