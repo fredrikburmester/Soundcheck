@@ -31,7 +31,7 @@ export default {
             type: Boolean,
             default: false
         }
-    },
+    }, 
     data() {
         return {
             playerName_: this.playerName,
