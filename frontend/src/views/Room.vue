@@ -2,25 +2,32 @@
   <div class="home">
     <h1>Room</h1>   
     <p>{{ code }}</p>
-    <p v-for="player in players" v-bind:key="player">{{ player }}</p>
+    <PlayerAvatar v-for="player in players" v-bind:key="player" :playerName="player" :color="color" />
   </div>
 </template>
 
 <script>
+import PlayerAvatar from '../components/PlayerAvatar'
+
 const io = require("socket.io-client");
 const socket = io("http://localhost:5000");
 
 export default {
   name: "Home",
   components: {
+    PlayerAvatar
   },
   data: function () {
     return {
-        players: []
+        players: [],
+        colors: [],
+        color: this.generator()
     }
   },
   methods: {
-
+    generator: function(){
+        return '#'+(Math.random()*0xFFFFFF<<0).toString(16);
+    }
   },
   computed: {
       code() {
