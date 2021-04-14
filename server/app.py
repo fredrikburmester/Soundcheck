@@ -25,12 +25,13 @@ socketio = SocketIO(app, path="/ws/socket.io", cors_allowed_origins='*')
 
 #### DATABASE ####
 class Player:
-  def __init__(self, name, id):
+  def __init__(self):
     self.host = False
-    self.name = name # Name of player
-    self.id = id # Spotify username
+    self.name = '' # Name of player
+    self.id = '' # Spotify username
     self.points = 0
-    self.token = ''
+    self.access_token = ''
+    self.refresh_token = ''
 
 class Room:
   def __init__(self, code):
@@ -69,6 +70,7 @@ def createRoom():
 @socketio.on('joinRoom')
 def joinRoom(data):
     access_token = data['access_token']
+    refresh_token = data['refresh_token']
     code = data['code']
 
     global ROOMS
@@ -89,7 +91,14 @@ def joinRoom(data):
             join_room(code)
 
             # Create player object
-            new_player = Player(data['display_name'], data['id'])
+            new_player = Player()
+
+            new_player.name = data['display_name']
+            new_player.id = data['id']
+            new_player.points = 0
+            new_player.access_token = access_token
+            new_player.refresh_token = refresh_token
+
             print(f"[{code}] {new_player.name} joined")
 
             # Check if the player already exists, i.e. reconnected
@@ -102,7 +111,11 @@ def joinRoom(data):
             list_of_players = []
             if reconnected == False:
                 # Tell everyone in the room that player has joined 
-                socketio.emit("playerJoined", {'name': new_player.name}, room=code)
+                socketio.emit("playerJoined", {'player': {
+                    'name': new_player.name,
+                    'id': new_player.id,
+                   # 'points': new_player.points,
+                }}, room=code)
 
                 # If the room is empty, make the user host
                 if len(Room.players) == 0:
