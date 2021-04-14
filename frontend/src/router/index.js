@@ -14,8 +14,8 @@ const routes = [
     name: "Home",
     component: Home,
     beforeEnter: (to, from, next) => {
-		if(localStorage.getItem('token')) {
-			var token = localStorage.getItem('token')
+		if(localStorage.getItem('access_token')) {
+			var token = localStorage.getItem('access_token')
 		} else {
 			next({ name: 'Login' })
 		}
@@ -27,14 +27,11 @@ const routes = [
 				"Content-Type": "application/json",
 			}
 		})
-		.then(function (response) {
-			console.log("Data ", response.data);
-			console.log("Status ",response.status);
+		.then(function () {
 			next()
 		})
-		.catch(function (error) {
-			console.log(error);
-			// next({ name: 'Login' })
+		.catch(function () {
+			next({ name: 'Login' })
 		})
 		.then(function () {
 			// always executed
@@ -45,6 +42,13 @@ const routes = [
     path: "/login",
     name: "Login",
     component: Login,
+	beforeEnter: (to, from, next) => {
+		if(localStorage.getItem('access_token')) {
+			next({ name: 'Home' })
+		} else {
+			next()
+		}
+	}
   },
   {
     path: "/logincallback",
@@ -55,19 +59,9 @@ const routes = [
     path: "/join",
     name: "Join",
     component: Join,
-  },
-  {
-    path: "/create",
-    name: "Create",
-    component: Create,
-  },
-  {
-    path: "/:code",
-    name: "Room",
-    component: Room,
 	beforeEnter: (to, from, next) => {
-		if(localStorage.getItem('token')) {
-			var token = localStorage.getItem('token')
+		if(localStorage.getItem('access_token')) {
+			var token = localStorage.getItem('access_token')
 		} else {
 			next({ name: 'Login' })
 		}
@@ -79,14 +73,69 @@ const routes = [
 				"Content-Type": "application/json",
 			}
 		})
-		.then(function (response) {
-			console.log("Data ", response.data);
-			console.log("Status ",response.status);
+		.then(function () {
 			next()
 		})
-		.catch(function (error) {
-			console.log(error);
-			// next({ name: 'Login' })
+		.catch(function () {
+			next({ name: 'Login' })
+		})
+		.then(function () {
+			// always executed
+		});
+    }
+  },
+  {
+    path: "/create",
+    name: "Create",
+    component: Create,
+	beforeEnter: (to, from, next) => {
+		if(localStorage.getItem('access_token')) {
+			var token = localStorage.getItem('access_token')
+		} else {
+			next({ name: 'Login' })
+		}
+
+		axios.get('https://api.spotify.com/v1/me', {
+			headers: {
+				'Authorization': `Bearer ${token}`,
+				"Accept": "application/json",
+				"Content-Type": "application/json",
+			}
+		})
+		.then(function () {
+			next()
+		})
+		.catch(function () {
+			next({ name: 'Login' })
+		})
+		.then(function () {
+			// always executed
+		});
+    }
+  },
+  {
+    path: "/:code",
+    name: "Room",
+    component: Room,
+	beforeEnter: (to, from, next) => {
+		if(localStorage.getItem('access_token')) {
+			var token = localStorage.getItem('access_token')
+		} else {
+			next({ name: 'Login' })
+		}
+
+		axios.get('https://api.spotify.com/v1/me', {
+			headers: {
+				'Authorization': `Bearer ${token}`,
+				"Accept": "application/json",
+				"Content-Type": "application/json",
+			}
+		})
+		.then(function () {
+			next()
+		})
+		.catch(function () {
+			next({ name: 'Login' })
 		})
 		.then(function () {
 			// always executed
