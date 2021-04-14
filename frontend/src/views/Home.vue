@@ -1,10 +1,12 @@
 <template>
   <div class="home">
-    <h1>Home</h1>   
+    <h1>Start a game...</h1>   
 	<Button buttonLink="/create" buttonText="Create Room" />
-	<br>
 	<Button buttonLink="/join" buttonText="Join Room" />
 	<p>{{ name }}</p>
+	<div class="logout">
+		<Button @click="logout" color="#CD1A2B" buttonLink="/logout" buttonText="Log out" />
+	</div>
   </div>
 </template>
 
@@ -25,7 +27,7 @@ export default {
   methods: {
 	  getUserData: function() {
 		  	var self = this;
-			var token = localStorage.getItem('token')
+			var token = localStorage.getItem('access_token')
 			axios.get('https://api.spotify.com/v1/me', {
 				headers: {
 					'Authorization': `Bearer ${token}`,
@@ -68,8 +70,26 @@ export default {
 				// always executed
 			});
 	  },
+	  logout: function() {
+		  localStorage.removeItem('access_token')
+		  localStorage.removeItem('refresh_token')
+		  this.$router.push('/login')
+	  }
   },
   beforeMount() {
   }
 };
 </script>
+
+<style scoped>
+	.home {
+		margin-top:30vh;
+	}
+	.logout {
+		position: fixed;
+		left: 50%;
+		bottom: 20px;
+		transform: translate(-50%, -50%);
+		margin: 0 auto;
+	}
+</style>
