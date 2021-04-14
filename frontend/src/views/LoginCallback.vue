@@ -6,12 +6,15 @@
 
 <script>
 const io = require("socket.io-client");
-const socket = io();
+// const socket = io("https://musicwithfriends.fdrive.se");
+const socket = io("https://musicwithfriends.fdrive.se", {path: '/ws/socket.io'});
+
 
 export default {
     name: "LoginCallback",
     methods: {
         handleLoginCallback: function() {
+            console.log("callback")
             let uri = window.location.href.split('=')[1]
             let code = uri.split('&')[0]
             socket.emit('generate_access_token',{'code': code});

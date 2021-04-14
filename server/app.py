@@ -19,7 +19,8 @@ app = Flask(__name__)
 app.config['SECRET_KEY'] = 'secret!'
 
 # Allow cross origin to be able to do websockets from different servers
-socketio = SocketIO(app)
+# socketio = SocketIO(app)
+socketio = SocketIO(app, path="/ws/socket.io", cors_allowed_origins='*')
 # CORS(app)
 
 #### DATABASE ####
@@ -43,6 +44,7 @@ PLAYERS = []
 
 @socketio.on('generate_access_token')
 def check_token(data):
+    print("[1] - YES")
     access_token, refresh_token = generate_access_token(data['code'])
     socketio.emit("access_token", {'access_token': access_token, 'refresh_token': refresh_token})
 
@@ -204,4 +206,4 @@ def recieve_answer(player, results_object, gamemode):
 
 if __name__ == '__main__':
     #app.run()
-    socketio.run(app, host='0.0.0.0', port=5000)
+    socketio.run(app, host='0.0.0.0', port=5000, log_output=True)

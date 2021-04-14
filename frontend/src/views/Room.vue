@@ -13,7 +13,8 @@ import PlayerAvatar from '../components/PlayerAvatar'
 import Button from '../components/Button'
 
 const io = require("socket.io-client");
-const socket = io();
+// const socket = io("https://musicwithfriends.fdrive.se");
+const socket = io("https://musicwithfriends.fdrive.se", {path: '/ws/socket.io'});
 
 export default {
   name: "Home",
