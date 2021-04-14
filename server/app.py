@@ -4,6 +4,8 @@ from flask import Flask
 from flask_socketio import join_room, leave_room
 from flask_socketio import SocketIO
 
+# from flask_cors import CORS
+
 import json
 import random
 import requests
@@ -17,7 +19,8 @@ app = Flask(__name__)
 app.config['SECRET_KEY'] = 'secret!'
 
 # Allow cross origin to be able to do websockets from different servers
-socketio = SocketIO(app, cors_allowed_origins="*")
+socketio = SocketIO(app)
+# CORS(app)
 
 #### DATABASE ####
 class Player:

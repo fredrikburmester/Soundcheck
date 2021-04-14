@@ -8,9 +8,8 @@
 
 <script>
 import Button from '../components/Button'
-// Creating the websockets instance
 const io = require("socket.io-client");
-const socket = io("http://localhost:5000");
+const socket = io();
 
 export default {
 	name: "Create",
@@ -27,6 +26,7 @@ export default {
             socket.emit('createRoom');
         }
 	},
+    
     mounted() {
         // When room is created the server will return a code that we can go to to join the room.
         socket.on("roomCode", (data) => {
