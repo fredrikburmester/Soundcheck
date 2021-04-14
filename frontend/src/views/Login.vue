@@ -15,7 +15,7 @@ export default {
 	},
 	methods: {
 		loginWithSpotify: function() {
-			window.location.href = "https://accounts.spotify.com/authorize?client_id=bad02ecfaf4046638a1daa7f60cbe42b&response_type=code&redirect_uri=http://localhost:8080/logincallback&scope=user-read-private%20user-read-email&state=34fFs29kd09&show_dialog=true"
+			window.location.href = "https://accounts.spotify.com/authorize?client_id=bad02ecfaf4046638a1daa7f60cbe42b&response_type=code&redirect_uri=https://musicwithfriends.fdrive.se/logincallback&scope=user-read-private%20user-read-email&state=34fFs29kd09&show_dialog=true"
 		},
 		checkToken: function() {
 			if(localStorage.getItem('token')) {
