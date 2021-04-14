@@ -1,19 +1,21 @@
 <template>
 	<div class="login">
-		<h1>Login Page</h1>
-		<button v-on:click="loginWithSpotify">Log in with Spotify</button>
+		<h1>Music With Friends</h1>
+		<Button v-on:click="loginWithSpotify" buttonText="Authenticate" />
+		<p>Click to log in with Spotify</p>
 	</div>
 </template>
 
 <script>
+import Button from '../components/Button'
 export default {
 	name: "Login",
 	components: {
- 
+ 		Button
 	},
 	methods: {
 		loginWithSpotify: function() {
-			window.location.href = "https://accounts.spotify.com/authorize?client_id=bad02ecfaf4046638a1daa7f60cbe42b&response_type=token&redirect_uri=http://localhost:8080/logincallback&scope=user-read-private%20user-read-email&state=34fFs29kd09&show_dialog=true"
+			window.location.href = "https://accounts.spotify.com/authorize?client_id=bad02ecfaf4046638a1daa7f60cbe42b&response_type=code&redirect_uri=http://localhost:8080/logincallback&scope=user-read-private%20user-read-email&state=34fFs29kd09&show_dialog=true"
 		},
 		checkToken: function() {
 			if(localStorage.getItem('token')) {
@@ -26,3 +28,13 @@ export default {
 	}
 };
 </script>
+
+<style scoped>
+	.login {
+		margin-top:30vh;
+	}
+	p {
+		opacity: 70%;
+		font-style: italic;
+	}
+</style>
