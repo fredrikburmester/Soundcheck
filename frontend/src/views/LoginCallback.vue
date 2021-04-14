@@ -5,22 +5,27 @@
 </template>
 
 <script>
+const io = require("socket.io-client");
+const socket = io("http://localhost:5000");
+
 export default {
     name: "LoginCallback",
     methods: {
         handleLoginCallback: function() {
-            console.log("Handle callback")
-
             let uri = window.location.href.split('=')[1]
-            let token = uri.split('&')[0]
-
-            localStorage.setItem('token', token)
-
-            this.$router.push('/')
+            let code = uri.split('&')[0]
+            socket.emit('generate_access_token',{'code': code});
         } 
     },
     mounted() {
         this.handleLoginCallback()
+
+        socket.on("access_token", (data) => {
+            localStorage.setItem('access_token', data.access_token)
+            localStorage.setItem('refresh_token', data.refresh_token)
+            console.log(data.access_token, data.refresh_token);
+            this.$router.push('/')
+        });
     },
 }
 </script>
