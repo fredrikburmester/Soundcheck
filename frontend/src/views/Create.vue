@@ -1,12 +1,13 @@
 <template>
 	<div class="create">
-		<h1>Create Room</h1>
-	    <router-link to="/">Home</router-link>
-        <button v-on:click="createRoom">Create Room</button>
+		<h1>Almost there...</h1>
+        <Button buttonLink="/" buttonText="Back"></Button>
+        <Button v-on:click="createRoom" buttonText="Quick start"></Button>
 	</div>
 </template>
 
 <script>
+import Button from '../components/Button'
 // Creating the websockets instance
 const io = require("socket.io-client");
 const socket = io("http://localhost:5000");
@@ -14,7 +15,7 @@ const socket = io("http://localhost:5000");
 export default {
 	name: "Create",
 	components: {
- 
+        Button
 	},
     data() {
         return {
@@ -34,3 +35,9 @@ export default {
     }
 };
 </script>
+
+<style scoped>
+	.create {
+		margin-top:30vh;
+	}
+</style>
