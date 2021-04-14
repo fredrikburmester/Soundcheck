@@ -1,16 +1,51 @@
 <template>
-	<div class="button">
-  		<router-link :to="buttonLink">{{ buttonText }}</router-link>
+	<div :style="btnStyles" class="button">
+		<a v-if="external">{{ buttonText_ }}</a>
+		<router-link v-else :to="buttonLink_">{{ buttonText_}}</router-link>
 	</div>
 </template>
 
 <script>
 export default {
-  name: "HelloWorld",
+  name: "Button",
   props: {
-    buttonLink: String,
-    buttonText: String,
+	  	buttonLink: {
+			type: String
+		},
+		buttonText: {
+			type: String
+		},
+		color: {
+			type: String,
+			default: "#1DB954"
+		}
   },
+  data() {
+	return {
+		buttonLink_: this.buttonLink,
+		buttonText_: this.buttonText,
+		color_: this.color
+	}
+  },
+  computed: {
+	external() {
+		if(this.buttonLink_ === undefined) {
+			return true
+		} else {
+			return false	
+		}
+	},
+	btnStyles() {
+		return {
+			"background-color": this.color
+		}
+	}
+  },
+  watch: {
+	  buttonLink: function(value) {
+		  this.buttonLink_ = value
+	  }
+  }
 };
 </script>
 
@@ -19,20 +54,21 @@ export default {
 @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap');
 
 	.button {
+		display: inline-block;
 		font-size: 15px;
 		font-family: 'Roboto', sans-serif;
 		font-weight: 500;
 		letter-spacing: 2px;
-		background-color: green;
 		border-radius: 100px;
-		padding: 15px 25px 15px 25px;
-		width: 60vw;
-		margin-left: auto;
-		margin-right: auto;
+		padding: 15px 20px 15px 20px;
+		width: 50vw;
+		margin-bottom: 10px;
 	}
 	.button a {
 		color: white;
 		text-transform: uppercase;
 		text-decoration: none;
+		margin-left: auto;
+		margin-right: auto;
 	}
 </style>
