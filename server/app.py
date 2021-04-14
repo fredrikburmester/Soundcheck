@@ -7,6 +7,7 @@ from flask_socketio import SocketIO
 import json
 import random
 import requests
+import base64
 
 # For Spotify
 CLIENT_SECRET = "5c04ecc65221460587462cd9dabd9eae"
@@ -25,6 +26,7 @@ class Player:
     self.name = name # Name of player
     self.id = id # Spotify username
     self.points = 0
+    self.token = ''
 
 class Room:
   def __init__(self, code):
@@ -35,6 +37,11 @@ ROOMS = []
 PLAYERS = [] 
 
 ##################
+
+@socketio.on('generate_access_token')
+def check_token(data):
+    access_token, refresh_token = generate_access_token(data['code'])
+    socketio.emit("access_token", {'access_token': access_token, 'refresh_token': refresh_token})
 
 @socketio.on('connect')
 def connected():
@@ -56,16 +63,19 @@ def createRoom():
 
 @socketio.on('joinRoom')
 def joinRoom(data):
-    token = data['token']
+    access_token = data['access_token']
     code = data['code']
 
     global ROOMS
     global PLAYERS
 
+    global CLIENT_ID
+    global CLIENT_SECRET
+
     for Room in ROOMS:
         if Room.code == code:
             # sending get request and saving the response as response object
-            r = requests.get(url = "https://api.spotify.com/v1/me", headers={"Authorization": "Bearer " + token})
+            r = requests.get(url = "https://api.spotify.com/v1/me", headers={"Authorization": "Bearer " + access_token})
             
             # extracting data in json format
             data = r.json()
@@ -107,6 +117,35 @@ def joinRoom(data):
                 socketio.emit("listofplayers", {'players': list_of_players})
         else: 
             print(f"[{code}] Room does not exist")
+
+def generate_access_token(code):
+    global CLIENT_ID
+    global CLIENT_SECRET
+
+    req = requests.post(
+        url = "https://accounts.spotify.com/api/token", 
+        headers = {
+            "Accept": "application/json",
+            "Content-Type": "application/x-www-form-urlencoded"
+        },
+        data = {
+            "grant_type": "authorization_code",
+            "code": code,
+            "redirect_uri": "http://localhost:8080/logincallback",
+            'client_id': CLIENT_ID,
+            'client_secret': CLIENT_SECRET
+        }
+    )
+    print(req.json())
+    print("Response code: ", req.status_code)
+
+    if req.status_code == 400: 
+        print(Error)
+    else: 
+        response = req.json()
+        access_token = response['access_token']
+        refresh_token = response['refresh_token']
+        return access_token, refresh_token
 
 """
 Function to add a player to a room
