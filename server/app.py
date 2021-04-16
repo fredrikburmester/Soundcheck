@@ -42,17 +42,78 @@ class Room:
 ROOMS = []
 PLAYERS = [] 
 
+COLOR_COUNTER = 0
+COLORS = [
+    '#FF8360',
+    '#E8E288',
+    '#7DCE82',
+    '#3CDBD3',
+    '#B9C0DA',
+    '#998DA0',
+    '#63585E',
+    '#B5838D'
+]
+
 ##################
 
 @socketio.on('generate_access_token')
 def check_token(data):
     print("[1] - YES")
     access_token, refresh_token = generate_access_token(data['code'])
-    socketio.emit("access_token", {'access_token': access_token, 'refresh_token': refresh_token}, to=request.sid)
+    socketio.emit("access_token", {'access_token': access_token, 'refresh_token': refresh_token, 'sid': request.sid}, to=request.sid)
 
 @socketio.on('connect')
 def connected():
     socketio.emit('connect')
+
+@socketio.on('disconnect')
+def disconnected():
+    global ROOMS
+    for Room in ROOMS:
+        for player in Room.players:
+            if player.sid == request.sid:
+                print(f"{player.name} disconnected!")
+                Room.players.remove(player)
+
+                list_of_players = []
+                for player in Room.players:
+                    list_of_players.append({
+                        'name': player.name,
+                        'id': player.id,
+                        'points': player.points,
+                        'access_token': player.access_token,
+                        'refresh_token': player.refresh_token,
+                        'color': player.color,
+                        'sid': player.sid,
+                    })
+
+                socketio.emit("listofplayers", {'players': list_of_players}, room=Room.code)
+                return
+
+@socketio.on('leave_room')
+def leave_room(data):
+    global ROOMS
+    for Room in ROOMS:
+        if Room.code == data['code']:
+            for player in Room.players:
+                if player.sid == request.sid:
+                    print(f"{player.name} disconnected!")
+                    Room.players.remove(player)
+
+        list_of_players = []
+        for player in Room.players:
+            list_of_players.append({
+                'name': player.name,
+                'id': player.id,
+                'points': player.points,
+                'access_token': player.access_token,
+                'refresh_token': player.refresh_token,
+                'color': player.color,
+                'sid': player.sid,
+            })
+
+        socketio.emit("listofplayers", {'players': list_of_players}, room=data['code'])
+        
 
 @socketio.on('createRoom')
 def createRoom():
@@ -95,11 +156,15 @@ def joinRoom(data):
             # Create player object
             new_player = Player()
 
-            new_player.name = data['display_name']
-            new_player.id = data['id']
+            new_player.name = str(data['display_name'])
+            new_player.id = str(data['id'])
             new_player.points = 0
             new_player.access_token = access_token
             new_player.refresh_token = refresh_token
+            new_player.sid = request.sid
+            new_player.color = getColor()
+
+            # print("[0]", new_player.id)
 
             print(f"[{code}] {new_player.name} joined")
 
@@ -111,30 +176,31 @@ def joinRoom(data):
                     print(f"[{code}] {new_player.name} reconnected")
 
             list_of_players = []
+            
             if reconnected == False:
-                # Tell everyone in the room that player has joined 
-                socketio.emit("playerJoined", {'player': {
-                    'name': new_player.name,
-                    'id': new_player.id,
-                   # 'points': new_player.points,
-                }}, room=code)
-
                 # If the room is empty, make the user host
                 if len(Room.players) == 0:
                     new_player.host = True
                     print(f"[{code}] Making {new_player.name} host")
-                else:
-                    # if the room is not empty, send a list of all players already in the room 
-                    for player in Room.players:
-                        list_of_players.append(player.name)
-                    socketio.emit("listofplayers", {'players': list_of_players}, to=request.sid)
                 
-                # Add the player to the list of players for that room
                 Room.players.append(new_player)
-            else: 
-                for player in Room.players:
-                    list_of_players.append(player.name)
-                socketio.emit("listofplayers", {'players': list_of_players}, to=request.sid)
+
+            for player in Room.players:
+                list_of_players.append({
+                    'name': player.name,
+                    'id': player.id,
+                    'points': player.points,
+                    'access_token': player.access_token,
+                    'refresh_token': player.refresh_token,
+                    'color': player.color,
+                    'sid': player.sid,
+                })
+
+            socketio.emit("listofplayers", {'players': list_of_players}, room=code)
+            return
+    print("not a room") 
+    socketio.emit("not_a_room", to=request.sid)
+
 
 def generate_access_token(code):
     global CLIENT_ID
@@ -164,6 +230,20 @@ def generate_access_token(code):
         access_token = response['access_token']
         refresh_token = response['refresh_token']
         return access_token, refresh_token
+
+def getColor():
+    global COLORS
+    global COLOR_COUNTER
+
+    color = COLORS[COLOR_COUNTER]
+    COLOR_COUNTER += 1
+
+    if( COLOR_COUNTER == len(COLORS) - 1 ):
+        COLOR_COUNTER = 0
+
+    return color
+
+    
 
 """
 Function to add a player to a room
