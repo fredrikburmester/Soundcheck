@@ -1,7 +1,7 @@
 <template>
     <div :style="btnStyles" class="button">
-        <a v-if="external">{{ buttonText_ }}</a>
-        <router-link v-else :to="buttonLink_">{{ buttonText_ }}</router-link>
+        <a :style="aColor" v-if="external">{{ buttonText_ }}</a>
+        <router-link :style="aColor" v-else :to="buttonLink_">{{ buttonText_ }}</router-link>
     </div>
 </template>
 
@@ -40,6 +40,17 @@ export default {
                 'background-color': this.color,
             };
         },
+        aColor() {
+            if(this.color == "#FFF" || this.color == "#FFFFFF") {
+                return {
+                    'color': 'black'
+                }
+            } else {
+                return {
+                    'color': 'white',
+                };
+            }
+        }
     },
     watch: {
         buttonLink: function (value) {
