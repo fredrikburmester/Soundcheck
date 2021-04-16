@@ -123,15 +123,15 @@ def joinRoom(data):
                     print(f"[{code}] Making {new_player.name} host")
                 else:
                     # if the room is not empty, send a list of all players already in the room 
-                    for new_player in Room.players:
-                        list_of_players.append(new_player.name)
+                    for player in Room.players:
+                        list_of_players.append(player.name)
                     socketio.emit("listofplayers", {'players': list_of_players})
                 
                 # Add the player to the list of players for that room
                 Room.players.append(new_player)
             else: 
-                for new_player in Room.players:
-                    list_of_players.append(new_player.name)
+                for player in Room.players:
+                    list_of_players.append(player.name)
                 socketio.emit("listofplayers", {'players': list_of_players})
         else: 
             print(f"[{code}] Room does not exist")
