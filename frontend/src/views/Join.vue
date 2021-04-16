@@ -6,8 +6,11 @@
         <Button :buttonLink="code_" buttonText="Join Room" />
         <br />
         <h1>Or...</h1>
-        <h1>Scan QR-code</h1>
-        <Button buttonLink="/" buttonText="Back" />
+        <h3>Scan QR-code in your camera app</h3>
+        <div class="back">
+            <Button buttonLink="/" buttonText="Back" color="#CD1A2B"/>
+        </div>
+        
     </div>
 </template>
 
@@ -48,6 +51,13 @@ export default {
 
 <style scoped>
 .join {
-    margin-top: 20vh;
+    margin-top: 30vh;
+}
+.back {
+    position: fixed;
+    left: 50%;
+    bottom: 20px;
+    transform: translate(-50%, -50%);
+    margin: 0 auto;
 }
 </style>
