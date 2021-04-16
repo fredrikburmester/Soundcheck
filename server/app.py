@@ -127,14 +127,14 @@ def joinRoom(data):
                     # if the room is not empty, send a list of all players already in the room 
                     for player in Room.players:
                         list_of_players.append(player.name)
-                    socketio.emit("listofplayers", {'players': list_of_players}, room=request.sid)
+                    socketio.emit("listofplayers", {'players': list_of_players}, to=request.sid)
                 
                 # Add the player to the list of players for that room
                 Room.players.append(new_player)
             else: 
                 for player in Room.players:
                     list_of_players.append(player.name)
-                socketio.emit("listofplayers", {'players': list_of_players}, room=request.sid)
+                socketio.emit("listofplayers", {'players': list_of_players}, to=request.sid)
 
 def generate_access_token(code):
     global CLIENT_ID
