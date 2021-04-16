@@ -100,19 +100,20 @@ def leave_room(data):
                     print(f"{player.name} disconnected!")
                     Room.players.remove(player)
 
-        list_of_players = []
-        for player in Room.players:
-            list_of_players.append({
-                'name': player.name,
-                'id': player.id,
-                'points': player.points,
-                'access_token': player.access_token,
-                'refresh_token': player.refresh_token,
-                'color': player.color,
-                'sid': player.sid,
-            })
+                    list_of_players = []
+                    for player in Room.players:
+                        list_of_players.append({
+                            'name': player.name,
+                            'id': player.id,
+                            'points': player.points,
+                            'access_token': player.access_token,
+                            'refresh_token': player.refresh_token,
+                            'color': player.color,
+                            'sid': player.sid,
+                        })
 
-        socketio.emit("listofplayers", {'players': list_of_players}, room=data['code'])
+                    socketio.emit("listofplayers", {'players': list_of_players}, room=data['code'])
+                    return
         
 
 @socketio.on('createRoom')
