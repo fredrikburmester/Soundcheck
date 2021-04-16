@@ -4,6 +4,6 @@ default:
     - npm ci --cache .npm --prefer-offline
 
 publish:
-  stage: release
+  stage: build
   script:
     - npm run build
