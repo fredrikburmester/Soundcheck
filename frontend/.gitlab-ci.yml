@@ -6,5 +6,4 @@ default:
 publish:
   stage: build
   script:
-    - cd frontend
     - npm run build
