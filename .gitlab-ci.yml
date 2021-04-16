@@ -1,18 +1,30 @@
-build-job:
-  stage: build
-  script:
-    - echo "Hello, $GITLAB_USER_LOGIN!"
+default:
+  image: node:latest
+  before_script:
+    - npm ci --cache .npm --prefer-offline
+    - |
+      {
+        echo "@${CI_PROJECT_ROOT_NAMESPACE}:registry=${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/npm/"
+        echo "${CI_API_V4_URL#https?}/projects/${CI_PROJECT_ID}/packages/npm/:_authToken=\${CI_JOB_TOKEN}"
+      } | tee --append .npmrc
+  cache:
+    key: ${CI_COMMIT_REF_SLUG}
+    paths:
+      - .npm/
 
-test-job1:
-  stage: test
-  steps:
-    - uses: actions/checkout@v2
-    - uses: actions/setup-node@v4
-      with: 
-        node-version: 12
-    - run: npm ci
+workflow:
+  rules:
+    - if: $CI_COMMIT_BRANCH
 
-deploy-prod:
-  stage: deploy
+variables:
+  NPM_TOKEN: ${CI_JOB_TOKEN}
+
+stages:
+  - release
+
+publish:
+  stage: release
   script:
-    - echo "This job deploys something from the $CI_COMMIT_BRANCH branch."
+    - npm run semantic-release
+  rules:
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
