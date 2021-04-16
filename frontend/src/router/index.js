@@ -44,6 +44,7 @@ const routes = [
         name: 'Login',
         component: Login,
         beforeEnter: (to, from, next) => {
+            console.log(from, to, next)
             if (localStorage.getItem('access_token')) {
                 next({ name: 'Home' });
             } else {
@@ -54,7 +55,7 @@ const routes = [
     {
         path: '/logincallback',
         name: 'LoginCallback',
-        component: LoginCallback,
+        component: LoginCallback
     },
     {
         path: '/join',
@@ -121,9 +122,12 @@ const routes = [
         name: 'Room',
         component: Room,
         beforeEnter: (to, from, next) => {
+            var code = window.location.href.split('/')
+            code = code[code.length - 1] 
             if (localStorage.getItem('access_token')) {
                 var token = localStorage.getItem('access_token');
             } else {
+                localStorage.setItem('toRoom', code)
                 next({ name: 'Login' });
             }
 
@@ -139,6 +143,7 @@ const routes = [
                     next();
                 })
                 .catch(function () {
+                    localStorage.setItem('toRoom', code)
                     next({ name: 'Login' });
                 })
                 .then(function () {
