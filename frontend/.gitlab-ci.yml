@@ -1,0 +1,10 @@
+default:
+  image: node:latest
+  before_script:
+    - npm ci
+
+publish:
+  stage: build
+  script:
+    - cd frontend
+    - npm run build
