@@ -25,8 +25,17 @@ export default {
         socket.on('access_token', (data) => {
             localStorage.setItem('access_token', data.access_token);
             localStorage.setItem('refresh_token', data.refresh_token);
-            console.log(data.access_token, data.refresh_token);
-            this.$router.push('/');
+            localStorage.setItem('sid', data.sid);
+
+            console.log(data.access_token, data.refresh_token, data.sid);
+
+            if(localStorage.getItem('toRoom')) {
+                var toRoom = localStorage.getItem('toRoom')
+                localStorage.removeItem('toRoom')
+                this.$router.push(`/${toRoom}`);
+            } else {
+                this.$router.push('/');
+            }
         });
     },
 };
