@@ -3,6 +3,7 @@ import os
 from flask import Flask
 from flask_socketio import join_room, leave_room
 from flask_socketio import SocketIO
+from flask import request
 
 # from flask_cors import CORS
 
@@ -46,8 +47,9 @@ PLAYERS = []
 @socketio.on('generate_access_token')
 def check_token(data):
     print("[1] - YES")
+    sid = request.sid
     access_token, refresh_token = generate_access_token(data['code'])
-    socketio.emit("access_token", {'access_token': access_token, 'refresh_token': refresh_token})
+    socketio.emit("access_token", {'access_token': access_token, 'refresh_token': refresh_token}, to=sid)
 
 @socketio.on('connect')
 def connected():
