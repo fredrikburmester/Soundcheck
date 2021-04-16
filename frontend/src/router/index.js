@@ -32,6 +32,8 @@ const routes = [
                     next();
                 })
                 .catch(function () {
+                    localStorage.removeItem('access_token')
+                    localStorage.removeItem('refresh_token')
                     next({ name: 'Login' });
                 })
                 .then(function () {
@@ -80,6 +82,8 @@ const routes = [
                     next();
                 })
                 .catch(function () {
+                    localStorage.removeItem('access_token')
+                    localStorage.removeItem('refresh_token')
                     next({ name: 'Login' });
                 })
                 .then(function () {
@@ -110,6 +114,8 @@ const routes = [
                     next();
                 })
                 .catch(function () {
+                    localStorage.removeItem('access_token')
+                    localStorage.removeItem('refresh_token')
                     next({ name: 'Login' });
                 })
                 .then(function () {
@@ -143,6 +149,8 @@ const routes = [
                     next();
                 })
                 .catch(function () {
+                    localStorage.removeItem('access_token')
+                    localStorage.removeItem('refresh_token')
                     localStorage.setItem('toRoom', code)
                     next({ name: 'Login' });
                 })
