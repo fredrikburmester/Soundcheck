@@ -1,8 +1,10 @@
 <template>
     <div class="create">
         <h1>Almost there...</h1>
-        <Button buttonLink="/" buttonText="Back"></Button>
         <Button v-on:click="createRoom" buttonText="Quick start"></Button>
+        <div class="back">
+            <Button buttonLink="/" buttonText="Back" color="#CD1A2B"></Button>
+        </div>
     </div>
 </template>
 
@@ -41,5 +43,12 @@ export default {
 <style scoped>
 .create {
     margin-top: 30vh;
+}
+.back {
+    position: fixed;
+    left: 50%;
+    bottom: 20px;
+    transform: translate(-50%, -50%);
+    margin: 0 auto;
 }
 </style>
