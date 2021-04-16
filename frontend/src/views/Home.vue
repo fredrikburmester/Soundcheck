@@ -42,40 +42,8 @@ export default {
                     },
                 })
                 .then(function (response) {
-                    // handle success
-                    console.log(response.data);
                     self.name = response.data.display_name;
                 })
-                .catch(function (error) {
-                    // handle error
-                    console.log(error);
-                })
-                .then(function () {
-                    // always executed
-                });
-        },
-        getUserTopTracks: function () {
-            // var self = this;
-            var token = localStorage.getItem('token');
-            console.log(token);
-            console.log(decodeURIComponent(token));
-            axios
-                .get('https://api.spotify.com/v1/me/top/tracks', {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
-                })
-                .then(function (response) {
-                    // handle success
-                    console.log(response.data);
-                })
-                .catch(function (error) {
-                    // handle error
-                    console.log(error);
-                })
-                .then(function () {
-                    // always executed
-                });
         },
         logout: function () {
             localStorage.removeItem('access_token');
@@ -83,7 +51,6 @@ export default {
             this.$router.push('/login');
         },
     },
-    beforeMount() {},
 };
 </script>
 
