@@ -47,9 +47,8 @@ PLAYERS = []
 @socketio.on('generate_access_token')
 def check_token(data):
     print("[1] - YES")
-    sid = request.sid
     access_token, refresh_token = generate_access_token(data['code'])
-    socketio.emit("access_token", {'access_token': access_token, 'refresh_token': refresh_token}, to=sid)
+    socketio.emit("access_token", {'access_token': access_token, 'refresh_token': refresh_token}, to=request.sid)
 
 @socketio.on('connect')
 def connected():
@@ -65,7 +64,7 @@ def createRoom():
 
     ROOMS.append(Room(code))
 
-    socketio.emit('roomCode', {'code': code})
+    socketio.emit('roomCode', {'code': code}, to=request.sid)
 
     print(f"[Server] Creating room: {code}")
 
@@ -82,6 +81,7 @@ def joinRoom(data):
     global CLIENT_SECRET
 
     for Room in ROOMS:
+        print("Room: ", Room.code, code)
         if Room.code == code:
             # sending get request and saving the response as response object
             r = requests.get(url = "https://api.spotify.com/v1/me", headers={"Authorization": "Bearer " + access_token})
@@ -127,16 +127,14 @@ def joinRoom(data):
                     # if the room is not empty, send a list of all players already in the room 
                     for player in Room.players:
                         list_of_players.append(player.name)
-                    socketio.emit("listofplayers", {'players': list_of_players})
+                    socketio.emit("listofplayers", {'players': list_of_players}, room=request.sid)
                 
                 # Add the player to the list of players for that room
                 Room.players.append(new_player)
             else: 
                 for player in Room.players:
                     list_of_players.append(player.name)
-                socketio.emit("listofplayers", {'players': list_of_players})
-        else: 
-            print(f"[{code}] Room does not exist")
+                socketio.emit("listofplayers", {'players': list_of_players}, room=request.sid)
 
 def generate_access_token(code):
     global CLIENT_ID
