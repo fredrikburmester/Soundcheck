@@ -8,9 +8,8 @@
         <h1>Or...</h1>
         <h3>Scan QR-code in your camera app</h3>
         <div class="back">
-            <Button buttonLink="/" buttonText="Back" color="#CD1A2B"/>
+            <Button buttonLink="/" buttonText="Back" color="#CD1A2B" />
         </div>
-        
     </div>
 </template>
 
@@ -37,13 +36,11 @@ export default {
     },
     methods: {
         updateCode(value) {
-            console.log(value);
             if (value.inputType == 'deleteContentBackward') {
                 this.code_ = this.code_.slice(0, -1);
             } else {
                 this.code_ += value.data;
             }
-            console.log(this.code_);
         },
     },
 };

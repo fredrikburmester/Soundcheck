@@ -16,10 +16,9 @@ export default {
         };
     },
     watch: {
-        sendValue: function (value) {
-            console.log(value);
-            this.$emit('changed', 'soee');
-        },
+        // sendValue: function (value) {
+        //     this.$emit('changed', 'soee');
+        // },
     },
 };
 </script>

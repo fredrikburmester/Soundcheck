@@ -12,13 +12,16 @@
         </div>
         <div class="copycode">
             <p>Click to copy</p>
-            <Button @click="copyToClipboard" color="#FFF" :buttonText="clipboardtext" :key="clipboardtext"></Button>
+            <Button
+                @click="copyToClipboard"
+                color="#FFF"
+                :buttonText="clipboardtext"
+                :key="clipboardtext"
+            ></Button>
         </div>
 
         <div class="qr">
-            <img
-                :src="qr"
-            />
+            <img :src="qr" />
         </div>
         <div class="leave">
             <Button
@@ -34,7 +37,7 @@
 import PlayerAvatar from '../components/PlayerAvatar';
 import Button from '../components/Button';
 
-const QRCode = require('qrcode')
+const QRCode = require('qrcode');
 
 const io = require('socket.io-client');
 // const socket = io("https://musicwithfriends.fdrive.se");
@@ -55,7 +58,7 @@ export default {
             found: false,
             qr: '',
             code: this.$route.params.code,
-            clipboardtext: `copy invite link`
+            clipboardtext: `copy invite link`,
         };
     },
     methods: {
@@ -64,22 +67,22 @@ export default {
                 code: this.code,
             });
             this.$router.push('/');
-
         },
         async copyToClipboard() {
             await navigator.clipboard.writeText(window.location.href);
-            this.clipboardtext = "copied!"
-        }
+            this.clipboardtext = 'copied!';
+        },
     },
-    computed: {
-
-    },
-    mounted: function() {
+    computed: {},
+    mounted: function () {
         var self = this;
 
-        QRCode.toDataURL(`https://musicwithfriends.fdrive.se/${this.code}`, function (err, url) {
-            self.qr = url
-        })
+        QRCode.toDataURL(
+            `https://musicwithfriends.fdrive.se/${this.code}`,
+            function (err, url) {
+                self.qr = url;
+            }
+        );
 
         socket.emit('joinRoom', {
             access_token: localStorage.getItem('access_token'),
@@ -88,8 +91,8 @@ export default {
         });
 
         socket.on('not_a_room', () => {
-            self.$router.push('/join')
-        })
+            self.$router.push('/join');
+        });
 
         // socket.on('playerJoined', (data) => {
         //     console.log('Player joined:', data.player.name);
@@ -106,7 +109,7 @@ export default {
             data.players.forEach((player) => {
                 self.players.push(player);
             });
-            self.found = true
+            self.found = true;
         });
     },
 };
@@ -114,7 +117,6 @@ export default {
 
 <style scoped>
 .QR {
-
     transform: scale(0.5);
     border: 5px solid rgb(255, 255, 255);
 }
@@ -143,6 +145,6 @@ export default {
     margin: 0 auto;
 }
 .list {
-    height: calc(100vh - 40vw - 228px)
+    height: calc(100vh - 40vw - 228px);
 }
 </style>

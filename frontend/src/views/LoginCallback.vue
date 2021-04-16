@@ -13,7 +13,6 @@ export default {
     name: 'LoginCallback',
     methods: {
         handleLoginCallback: function () {
-            console.log('callback');
             let uri = window.location.href.split('=')[1];
             let code = uri.split('&')[0];
             socket.emit('generate_access_token', { code: code });
@@ -27,11 +26,9 @@ export default {
             localStorage.setItem('refresh_token', data.refresh_token);
             localStorage.setItem('sid', data.sid);
 
-            console.log(data.access_token, data.refresh_token, data.sid);
-
-            if(localStorage.getItem('toRoom')) {
-                var toRoom = localStorage.getItem('toRoom')
-                localStorage.removeItem('toRoom')
+            if (localStorage.getItem('toRoom')) {
+                var toRoom = localStorage.getItem('toRoom');
+                localStorage.removeItem('toRoom');
                 this.$router.push(`/${toRoom}`);
             } else {
                 this.$router.push('/');
