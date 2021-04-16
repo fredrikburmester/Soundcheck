@@ -8,37 +8,43 @@ import LoginCallback from '../views/LoginCallback.vue';
 
 const axios = require('axios');
 
+function checkAccessToken(to, from, next) {
+    if (localStorage.getItem('access_token')) {
+        var token = localStorage.getItem('access_token');
+    } else {
+        next({ name: 'Login' });
+        return;
+    }
+
+    axios
+        .get('https://api.spotify.com/v1/me', {
+            headers: {
+                Authorization: `Bearer ${token}`,
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+            },
+        })
+        .then(function () {
+            next();
+            return;
+        })
+        .catch(function () {
+            localStorage.removeItem('access_token');
+            localStorage.removeItem('refresh_token');
+            next({ name: 'Login' });
+            return;
+        });
+
+    return;
+}
+
 const routes = [
     {
         path: '/',
         name: 'Home',
         component: Home,
         beforeEnter: (to, from, next) => {
-            if (localStorage.getItem('access_token')) {
-                var token = localStorage.getItem('access_token');
-            } else {
-                next({ name: 'Login' });
-            }
-
-            axios
-                .get('https://api.spotify.com/v1/me', {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                        Accept: 'application/json',
-                        'Content-Type': 'application/json',
-                    },
-                })
-                .then(function () {
-                    next();
-                })
-                .catch(function () {
-                    localStorage.removeItem('access_token')
-                    localStorage.removeItem('refresh_token')
-                    next({ name: 'Login' });
-                })
-                .then(function () {
-                    // always executed
-                });
+            checkAccessToken(to, from, next);
         },
     },
     {
@@ -46,49 +52,26 @@ const routes = [
         name: 'Login',
         component: Login,
         beforeEnter: (to, from, next) => {
-            console.log(from, to, next)
             if (localStorage.getItem('access_token')) {
                 next({ name: 'Home' });
+                return;
             } else {
                 next();
+                return;
             }
         },
     },
     {
         path: '/logincallback',
         name: 'LoginCallback',
-        component: LoginCallback
+        component: LoginCallback,
     },
     {
         path: '/join',
         name: 'Join',
         component: Join,
         beforeEnter: (to, from, next) => {
-            if (localStorage.getItem('access_token')) {
-                var token = localStorage.getItem('access_token');
-            } else {
-                next({ name: 'Login' });
-            }
-
-            axios
-                .get('https://api.spotify.com/v1/me', {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                        Accept: 'application/json',
-                        'Content-Type': 'application/json',
-                    },
-                })
-                .then(function () {
-                    next();
-                })
-                .catch(function () {
-                    localStorage.removeItem('access_token')
-                    localStorage.removeItem('refresh_token')
-                    next({ name: 'Login' });
-                })
-                .then(function () {
-                    // always executed
-                });
+            checkAccessToken(to, from, next);
         },
     },
     {
@@ -96,31 +79,7 @@ const routes = [
         name: 'Create',
         component: Create,
         beforeEnter: (to, from, next) => {
-            if (localStorage.getItem('access_token')) {
-                var token = localStorage.getItem('access_token');
-            } else {
-                next({ name: 'Login' });
-            }
-
-            axios
-                .get('https://api.spotify.com/v1/me', {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                        Accept: 'application/json',
-                        'Content-Type': 'application/json',
-                    },
-                })
-                .then(function () {
-                    next();
-                })
-                .catch(function () {
-                    localStorage.removeItem('access_token')
-                    localStorage.removeItem('refresh_token')
-                    next({ name: 'Login' });
-                })
-                .then(function () {
-                    // always executed
-                });
+            checkAccessToken(to, from, next);
         },
     },
     {
@@ -128,13 +87,15 @@ const routes = [
         name: 'Room',
         component: Room,
         beforeEnter: (to, from, next) => {
-            var code = window.location.href.split('/')
-            code = code[code.length - 1] 
+            var code = window.location.href.split('/');
+            code = code[code.length - 1];
+
             if (localStorage.getItem('access_token')) {
                 var token = localStorage.getItem('access_token');
             } else {
-                localStorage.setItem('toRoom', code)
+                localStorage.setItem('toRoom', code);
                 next({ name: 'Login' });
+                return;
             }
 
             axios
@@ -147,26 +108,16 @@ const routes = [
                 })
                 .then(function () {
                     next();
+                    return;
                 })
                 .catch(function () {
-                    localStorage.removeItem('access_token')
-                    localStorage.removeItem('refresh_token')
-                    localStorage.setItem('toRoom', code)
+                    localStorage.removeItem('access_token');
+                    localStorage.removeItem('refresh_token');
+                    localStorage.setItem('toRoom', code);
                     next({ name: 'Login' });
-                })
-                .then(function () {
-                    // always executed
+                    return;
                 });
         },
-    },
-    {
-        path: '/about',
-        name: 'About',
-        // route level code-splitting
-        // this generates a separate chunk (about.[hash].js) for this route
-        // which is lazy-loaded when the route is visited.
-        component: () =>
-            import(/* webpackChunkName: "about" */ '../views/About.vue'),
     },
 ];
 
