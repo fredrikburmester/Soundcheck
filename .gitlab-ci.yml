@@ -1,7 +1,7 @@
 default:
   image: node:latest
   before_script:
-    - npm ci --cache .npm --prefer-offline
+    - npm ci
 
 publish:
   stage: build
