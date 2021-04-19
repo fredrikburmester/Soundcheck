@@ -107,10 +107,6 @@ def get_top_track(data):
             print(Room.toptracks)
             socketio.emit("top_tracks_list", {'top_tracks_list': Room.toptracks}, room=code)
 
-    
-
-    
-
 @socketio.on('disconnect')
 def disconnected():
     global ROOMS
@@ -160,7 +156,6 @@ def leave_room(data):
                     socketio.emit("listofplayers", {'players': list_of_players}, room=data['code'])
                     return
         
-
 @socketio.on('createRoom')
 def createRoom():
     # Get the global variable (think of the scope)
@@ -249,17 +244,11 @@ def joinRoom(data):
     print("not a room") 
     socketio.emit("not_a_room", to=request.sid)
 
-
 def generate_access_token(code):
     global CLIENT_ID
     global CLIENT_SECRET
 
-    req = requests.post(
-        url = "https://accounts.spotify.com/api/token", 
-        headers = {
-            "Accept": "application/json",
-            "Content-Type": "application/x-www-form-urlencoded"
-        },
+    if ENV == 'production':
         data = {
             "grant_type": "authorization_code",
             "code": code,
@@ -267,12 +256,28 @@ def generate_access_token(code):
             'client_id': CLIENT_ID,
             'client_secret': CLIENT_SECRET
         }
+    else: 
+        data = {
+            "grant_type": "authorization_code",
+            "code": code,
+            "redirect_uri": "http://localhost:8080/logincallback",
+            'client_id': CLIENT_ID,
+            'client_secret': CLIENT_SECRET
+        }
+
+    req = requests.post(
+        url = "https://accounts.spotify.com/api/token", 
+        headers = {
+            "Accept": "application/json",
+            "Content-Type": "application/x-www-form-urlencoded"
+        },
+        data = data
     )
     print(req.json())
     print("Response code: ", req.status_code)
 
     if req.status_code == 400: 
-        print(Error)
+        print("Error")
     else: 
         response = req.json()
         access_token = response['access_token']
@@ -291,60 +296,16 @@ def getColor():
 
     return color
 
-    
-
-"""
-Function to add a player to a room
-@args: none
-@return: none
-"""
-def add_player_to_room():
-    # creates a new Player object and add it to the array ? 
-    pass
-
-"""
-Function to generate random 4 letter room code
-@args: none
-@return: String
-"""
 def generateId():
     letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
     code = ""
     for i in range(4):
         code += letters[random.randint(1, 25)]
 
-    #for Room in ROOMS:
-    #    if Room.code == code:
-    #        code = generateId() # Make sure this works!!!
-    
     return code
 
-# Check if a room exists - not used right now
-# def room_exists(code):
-#     global ROOMS
-#     for ROOM in ROOMS: 
-#         print(ROOM.code)
-#     if ROOM in ROOMS:
-#         if ROOM.code == code:
-#             return True
-#     return False
-
-def delete_room():
-    # call leave_room() for all players
-    pass
-
-def leave_room():
-    # remove the player from the room and delete the player object
-    pass
-
-def re_assign_host(): 
-    # remove old host for the room and assign a new random player as the host
-    pass
-
-def recieve_answer(player, results_object, gamemode):
-    # recieve answer 
-    pass
-
 if __name__ == '__main__':
-    #app.run()
-    socketio.run(app, host='0.0.0.0', port=5000, log_output=True)
+    if ENV == 'production':
+        socketio.run(app, host='0.0.0.0', port=5000, log_output=True)
+    else:
+        socketio.run(app, log_output=True)

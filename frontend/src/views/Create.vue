@@ -19,7 +19,7 @@ if(process.env.NODE_ENV == 'production') {
         path: '/ws/socket.io',
     });
 } else {
-    socket = io();
+    socket = io("localhost:5000");
 }
 
 export default {
