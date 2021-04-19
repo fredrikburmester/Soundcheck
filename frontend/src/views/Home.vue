@@ -43,7 +43,7 @@ export default {
                 })
                 .then(function (response) {
                     self.name = response.data.display_name;
-                })
+                });
         },
         logout: function () {
             localStorage.removeItem('access_token');

@@ -38,6 +38,7 @@ class Room:
   def __init__(self, code):
     self.code = code # Room code
     self.players = []
+    self.toptracks = []
 
 ROOMS = []
 PLAYERS = [] 
@@ -65,6 +66,26 @@ def check_token(data):
 @socketio.on('connect')
 def connected():
     socketio.emit('connect')
+
+@socketio.on('toptrack')
+def get_top_track(data):
+    trackid = data['trackid']
+    code = data['room']
+    sid = data['sid']
+
+    global ROOMS
+    for Room in ROOMS:
+        if code == Room.code:
+            Room.toptracks.append({
+                'id': trackid,
+                'player': sid
+            })
+            print(Room.toptracks)
+            socketio.emit("top_tracks_list", {'top_tracks_list': Room.toptracks}, room=code)
+
+    
+
+    
 
 @socketio.on('disconnect')
 def disconnected():
