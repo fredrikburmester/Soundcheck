@@ -1,9 +1,0 @@
-default:
-  image: node:latest
-  before_script:
-    - npm ci --cache .npm --prefer-offline
-
-publish:
-  stage: build
-  script:
-    - npm run build
