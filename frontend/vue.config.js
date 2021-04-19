@@ -2,6 +2,6 @@ module.exports = {
     devServer: {
         host: '0.0.0.0',
         disableHostCheck: true,
-        public: 'musicwithfriends.fdrive.se',
+        public: `${process.env.VUE_APP_PUBLIC_URL}`,
     },
 };

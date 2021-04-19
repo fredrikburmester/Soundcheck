@@ -12,9 +12,15 @@
 import Button from '../components/Button';
 const io = require('socket.io-client');
 // const socket = io("https://musicwithfriends.fdrive.se");
-const socket = io('https://musicwithfriends.fdrive.se', {
-    path: '/ws/socket.io',
-});
+var socket;
+
+if(process.env.NODE_ENV == 'production') {
+    socket = io('https://musicwithfriends.fdrive.se', {
+        path: '/ws/socket.io',
+    });
+} else {
+    socket = io();
+}
 
 export default {
     name: 'Create',

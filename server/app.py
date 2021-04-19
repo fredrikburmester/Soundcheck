@@ -12,18 +12,24 @@ import json
 import random
 import requests
 import base64
+import sys
 
 # For Spotify
 CLIENT_SECRET = "5c04ecc65221460587462cd9dabd9eae"
 CLIENT_ID = "bad02ecfaf4046638a1daa7f60cbe42b"
+
+ENV = sys.argv[1]
+print("ENV:", ENV)
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'secret!'
 
 # Allow cross origin to be able to do websockets from different servers
 # socketio = SocketIO(app)
-socketio = SocketIO(app, path="/ws/socket.io", cors_allowed_origins='*')
-# CORS(app)
+if ENV == 'production':
+    socketio = SocketIO(app, path="/ws/socket.io", cors_allowed_origins='*')
+else:
+    socketio = SocketIO(app, cors_allowed_origins='*')
 
 #### DATABASE ####
 class Player:
