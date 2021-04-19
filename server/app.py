@@ -4,6 +4,7 @@ from flask import Flask
 from flask_socketio import join_room, leave_room
 from flask_socketio import SocketIO
 from flask import request
+import time
 
 # from flask_cors import CORS
 
@@ -66,6 +67,23 @@ def check_token(data):
 @socketio.on('connect')
 def connected():
     socketio.emit('connect')
+
+@socketio.on('next_song')
+def next_song(data):
+    code = data['code']
+    track_nr = data['track_nr']
+    global ROOMS
+    for Room in ROOMS:
+        if code == Room.code:
+            socketio.emit('new_track', {'trackid': Room.toptracks[track_nr]['id'],'track_nr': track_nr}, room=code)
+
+@socketio.on('start_game')
+def start_game(data):
+    code = data['code']
+    socketio.emit('start_game', room=code)
+
+    print("Game has started!")
+    print(f"Numer of players: {len(current_room.players)}")
 
 @socketio.on('toptrack')
 def get_top_track(data):
@@ -156,6 +174,7 @@ def joinRoom(data):
     access_token = data['access_token']
     refresh_token = data['refresh_token']
     code = data['code']
+    sid = data['sid']
 
     global ROOMS
     global PLAYERS
@@ -183,7 +202,7 @@ def joinRoom(data):
             new_player.points = 0
             new_player.access_token = access_token
             new_player.refresh_token = refresh_token
-            new_player.sid = request.sid
+            new_player.sid = sid
             new_player.color = getColor()
 
             # print("[0]", new_player.id)
@@ -216,6 +235,7 @@ def joinRoom(data):
                     'refresh_token': player.refresh_token,
                     'color': player.color,
                     'sid': player.sid,
+                    'host': player.host
                 })
 
             socketio.emit("listofplayers", {'players': list_of_players}, room=code)

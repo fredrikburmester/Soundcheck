@@ -11,6 +11,7 @@
     "axios": "^0.21.1",
     "core-js": "^3.6.5",
     "cors": "^2.8.5",
+    "progressbar.js": "^1.1.0",
     "qrcode": "^1.4.4",
     "socket.io": "^4.0.1",
     "socket.io-client": "^2.4.0",
