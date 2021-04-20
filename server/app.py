@@ -5,6 +5,7 @@ from flask_socketio import join_room, leave_room, close_room
 from flask_socketio import SocketIO
 from flask import request
 import time
+import logging
 
 # from flask_cors import CORS
 
@@ -23,6 +24,9 @@ print("ENV:", ENV)
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'secret!'
+
+log = logging.getLogger('werkzeug')
+log.disabled = True
 
 # Allow cross origin to be able to do websockets from different servers
 # socketio = SocketIO(app)
@@ -91,9 +95,14 @@ def next_song(data):
 def start_game(data):
     code = data['code']
     socketio.emit('start_game', room=code)
+    num_of_players = 0
+    global ROOMS
+    for Room in ROOMS:
+        if Room.code == code:
+            num_of_players = len(Room.players)
 
-    print("Game has started!")
-    print(f"Numer of players: {len(current_room.players)}")
+    print(f"[{code}] Game has started!")
+    print(f"[{code}] Numer of players: {num_of_players}")
 
 @socketio.on('toptrack')
 def get_top_track(data):
@@ -145,7 +154,6 @@ def disconnected():
 
 @socketio.on('close_room')
 def close_socket_room(data):
-    print("Closing room")
     code = data['code']
     socketio.emit("close_room", room=code)
     close_socket_room(code)
@@ -155,6 +163,7 @@ def close_socket_room(code):
         if Room.code == code:
             ROOMS.remove(Room)
             close_room(code)
+            print(f"[Server] Deleting room {code}")
 
 @socketio.on('leave_room')
 def remove_player_from_room(data):
@@ -195,18 +204,29 @@ def remove_player_from_room(data):
                     return
         
 @socketio.on('createRoom')
-def createRoom():
-    # Get the global variable (think of the scope)
-    global ROOMS
+def createRoom(data):
+    sid = data['sid']
 
     # Generate a random room code, 4 letters
     code = generateId()
 
-    ROOMS.append(Room(code))
+    # Get the global variable (think of the scope?)
+    global ROOMS
 
+    reconnecting = False
+    for _Room in ROOMS:
+        for player in _Room.players:
+            if player.sid == sid and player.host == True:
+                code = _Room.code
+                reconnecting = True
+                print(f"[Server] User {player.name} already has an active room: {code}. Rejoining.")
+
+    if not reconnecting: 
+        ROOMS.append(Room(code))
+        print(f"[Server] Creating room: {code}")
+        
     socketio.emit('roomCode', {'code': code}, to=request.sid)
 
-    print(f"[Server] Creating room: {code}")
 
 @socketio.on('joinRoom')
 def joinRoom(data):
@@ -222,7 +242,6 @@ def joinRoom(data):
     global CLIENT_SECRET
 
     for Room in ROOMS:
-        print("Room: ", Room.code, code)
         if Room.code == code:
             # sending get request and saving the response as response object
             r = requests.get(url = "https://api.spotify.com/v1/me", headers={"Authorization": "Bearer " + access_token})
@@ -246,7 +265,6 @@ def joinRoom(data):
 
             # print("[0]", new_player.id)
 
-            print(f"[{code}] {new_player.name} joined")
 
             # Check if the player already exists, i.e. reconnected
             reconnected = False
@@ -258,6 +276,7 @@ def joinRoom(data):
             list_of_players = []
             
             if reconnected == False:
+                print(f"[{code}] {new_player.name} joined")
                 # If the room is empty, make the user host
                 if len(Room.players) == 0:
                     new_player.host = True
@@ -335,15 +354,24 @@ def getColor():
     return color
 
 def generateId():
-    letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+    letters = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"
     code = ""
     for i in range(4):
-        code += letters[random.randint(1, 25)]
+        code += letters[random.randint(0, 31)]
+
+    # Check for bad words and make sure the room doesn't already exist
+    if code in ['NGGR','FUCK','SHIT','CUNT','DICK','NSFW','BICH','HORE','HORA','KUKA','6969','6666']:
+        code = generateId()
+
+    global ROOMS
+    for Room in ROOMS:
+        if Room.code == code:
+            code = generateId()
 
     return code
 
 if __name__ == '__main__':
     if ENV == 'production':
-        socketio.run(app, host='0.0.0.0', port=5000, log_output=True)
+        socketio.run(app, host='0.0.0.0', port=5000)
     else:
-        socketio.run(app, log_output=True)
+        socketio.run(app, log_output=False)
