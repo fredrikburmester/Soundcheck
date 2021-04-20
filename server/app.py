@@ -20,7 +20,6 @@ CLIENT_SECRET = "5c04ecc65221460587462cd9dabd9eae"
 CLIENT_ID = "bad02ecfaf4046638a1daa7f60cbe42b"
 
 ENV = sys.argv[1]
-print("ENV:", ENV)
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'secret!'
@@ -30,9 +29,11 @@ log.disabled = True
 
 # Allow cross origin to be able to do websockets from different servers
 # socketio = SocketIO(app)
-if ENV == 'production' or 'prod':
+if ENV == 'production' or ENV == 'prod':
+    print("Running production mode")
     socketio = SocketIO(app, path="/ws", cors_allowed_origins='*')
 else:
+    print("Running development mode")
     socketio = SocketIO(app, cors_allowed_origins='*')
 
 #### DATABASE ####
