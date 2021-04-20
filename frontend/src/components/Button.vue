@@ -27,11 +27,11 @@ export default {
         };
     },
     methods: {
-        go: function() {
-            if(!this.external) {
-                this.$router.push(this.buttonLink_)
+        go: function () {
+            if (!this.external) {
+                this.$router.push(this.buttonLink_);
             }
-        }
+        },
     },
     computed: {
         external() {
@@ -42,7 +42,11 @@ export default {
             }
         },
         colorStyles() {
-            if (this.color_ == '#FFF' || this.color_ == '#FFFFFF' || this.color_ == 'white') {
+            if (
+                this.color_ == '#FFF' ||
+                this.color_ == '#FFFFFF' ||
+                this.color_ == 'white'
+            ) {
                 return {
                     'background-color': this.color_,
                     color: 'black',
@@ -54,7 +58,7 @@ export default {
                 };
             }
         },
-    }
+    },
 };
 </script>
 
@@ -74,6 +78,7 @@ export default {
     margin-bottom: 10px;
     cursor: pointer;
 }
+
 .button:active {
     background-color: rgb(63, 63, 63) !important;
 }
