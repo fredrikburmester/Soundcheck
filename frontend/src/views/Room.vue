@@ -1,6 +1,6 @@
 <template>
-    <div v-if="found" class="gameroom">
-        <div v-if="started">
+    <div v-if="found" :key="found" class="gameroom">
+        <div v-if="started" :key="started">
             <ProgressBar class="progressbar" />
             <h1>Guess who this song belongs to!</h1>
             <div class="list">
@@ -9,6 +9,7 @@
                     v-bind:key="player.id"
                     :playerName="player.name"
                     :color="player.color"
+                    :host="player.host"
                     @onclick="guess(player)"
                 />
             </div>
@@ -20,39 +21,53 @@
             ></iframe>
         </div>
         <div v-else>
-            <h1 v-if="host" :key="host">Start game</h1>
-            <h1 v-else>Waiting for host to start game</h1>
-            <p>{{ code }}</p>
+            <h1 class="code">{{ code }}</h1>
+            <div class="hr"></div>
+            <h3 class="title">Players:</h3>
+            <p v-if="!host">{{status}}</p>
             <div class="list">
                 <PlayerAvatar
                     v-for="player in players"
                     v-bind:key="player.id"
                     :playerName="player.name"
                     :color="player.color"
+                    :host="player.host"
                 />
-            </div>
-            <div class="copycode">
-                <p>Click to copy</p>
-                <Button
-                    @click="copyToClipboard"
-                    color="#FFF"
-                    :buttonText="clipboardtext"
-                    :key="clipboardtext"
-                ></Button>
             </div>
 
             <div class="qr">
                 <img :src="qr" />
             </div>
-            <div v-if="host" :key="host" class="startgame">
-                <Button @click="startGame()" buttonText="Start Game"></Button>
-            </div>
-            <div class="leave">
-                <Button
-                    v-on:click="leaveRoom"
-                    buttonText="Leave Room"
-                    color="#CD1A2B"
-                />
+
+            <div class="buttons">
+                <div class="copycode">
+                    <Button
+                        @click="copyToClipboard"
+                        color="#FFF"
+                        :buttonText="clipboardtext"
+                        :key="clipboardtext"
+                    ></Button>
+                </div>
+                <div v-if="host" :key="host" class="startgame">
+                    <Button
+                        @click="startGame()"
+                        buttonText="Start Game"
+                    ></Button>
+                </div>
+                <div class="leave">
+                    <Button
+                        v-if="host"
+                        v-on:click="closeRoom"
+                        buttonText="end game"
+                        color="#CD1A2B"
+                    />
+                    <Button
+                        v-else
+                        v-on:click="leaveRoom"
+                        buttonText="Leave Room"
+                        color="#CD1A2B"
+                    />
+                </div>
             </div>
         </div>
     </div>
@@ -66,16 +81,16 @@ import ProgressBar from '../components/ProgressBar';
 const QRCode = require('qrcode');
 const axios = require('axios');
 
-const io = require('socket.io-client');
-var socket;
+// const io = require('socket.io-client');
+// var socket;
 
-if(process.env.NODE_ENV == 'production') {
-    socket = io('https://musicwithfriends.fdrive.se', {
-        path: '/ws/socket.io',
-    });
-} else {
-    socket = io("localhost:5000");
-}
+// if (process.env.NODE_ENV == 'production') {
+//     socket = io('https://musicwithfriends.fdrive.se', {
+//         path: '/ws/socket.io',
+//     });
+// } else {
+//     socket = io('localhost:5000');
+// }
 
 export default {
     name: 'Home',
@@ -86,39 +101,83 @@ export default {
     },
     data: function () {
         return {
+            clipboardtext: `copy invite link`,
+            currentSong: 0,
+            iframeurl: '',
+            started: false,
             players: [],
             colors: [],
+            status: 'Waiting for host to start the game...',
             found: false,
-            qr: '',
-            code: this.$route.params.code,
-            clipboardtext: `copy invite link`,
-            started: false,
-            iframeurl: '',
             host: false,
-            currentSong: 0,
+            code: this.$route.params.code,
+            qr: '',
         };
     },
-    methods: {
-        leaveRoom: function () {
-            socket.emit('leave_room', {
-                code: this.code,
-            });
-            this.$router.push('/');
+    sockets: {
+        not_a_room() {
+            this.$router.push('/join');
         },
+        new_track(data) {
+            console.log(data);
+            this.setIframeUrl(data.trackid);
+        },
+        start_game() {
+            console.log('Game starting!');
+            this.started = true;
+            this.nextTrack();
+        },
+        top_tracks_list(data) {
+            console.log(data.top_tracks_list);
+        },
+        close_room() {
+            this.status = "The host has ended the game!"
+            this.players = []
+            // this.$router.push('/join');
+        },
+        list_of_players(data) {
+            console.log('list_of_players', this.players);
+            this.players.length = 0;
+            var self = this;
+            data.players.forEach((player) => {
+                if (player.sid == localStorage.getItem('sid')) {
+                    if (player.host == true) {
+                        self.host = true;
+                    }
+                }
+                self.players.push(player);
+            });
+            self.found = true;
+        }
+    },
+    methods: {
         async copyToClipboard() {
             await navigator.clipboard.writeText(window.location.href);
             this.clipboardtext = 'copied!';
+        },
+        leaveRoom: function () {
+            this.$socket.client.emit('leave_room', {
+                code: this.code,
+                sid: localStorage.getItem('sid')
+            });
+            this.$router.push('/');
+        },
+        closeRoom: function() {
+            this.$socket.client.emit('close_room', {
+                code: this.code,
+            });
+            this.$router.push('/');
         },
         setIframeUrl(id) {
             this.iframeurl = `https://open.spotify.com/embed?uri=spotify:track:${id}`;
         },
         startGame() {
-            socket.emit('start_game', { code: this.code });
+            this.$socket.client.emit('start_game', { code: this.code });
         },
         nextTrack() {
             if (this.currentSong < this.players.length) {
                 console.log('Current Song:', this.currentSong);
-                socket.emit('next_song', {
+                this.$socket.client.emit('next_song', {
                     track_nr: this.currentSong,
                     code: this.code,
                 });
@@ -131,6 +190,14 @@ export default {
         guess(player) {
             console.log(`You guessed on ${player.name}`);
         },
+        joinedRoom() {
+            this.$socket.client.emit('joinRoom', {
+                access_token: localStorage.getItem('access_token'),
+                refresh_token: localStorage.getItem('refresh_token'),
+                code: this.code,
+                sid: localStorage.getItem('sid'),
+            });
+        }
     },
 
     computed: {},
@@ -144,48 +211,9 @@ export default {
             }
         );
 
-        socket.emit('joinRoom', {
-            access_token: localStorage.getItem('access_token'),
-            refresh_token: localStorage.getItem('refresh_token'),
-            code: this.code,
-            sid: localStorage.getItem('sid'),
-        });
-
-        socket.on('not_a_room', () => {
-            self.$router.push('/join');
-        });
-
-        socket.on('new_track', (data) => {
-            console.log(data);
-            self.setIframeUrl(data.trackid);
-        });
-
-        socket.on('start_game', () => {
-            console.log('Game starting!');
-            self.started = true;
-            this.nextTrack();
-        });
-
-        socket.on('top_tracks_list', (data) => {
-            console.log(data.top_tracks_list);
-        });
-
-        socket.on('listofplayers', (data) => {
-            console.log('listofplayers', self.players);
-            self.players.length = 0;
-            data.players.forEach((player) => {
-                if (player.sid == localStorage.getItem('sid')) {
-                    if (player.host == true) {
-                        self.host = true;
-                    }
-                }
-                self.players.push(player);
-            });
-            self.found = true;
-        });
+        this.joinedRoom()
 
         var token = localStorage.getItem('access_token');
-
         axios
             .get(
                 'https://api.spotify.com/v1/me/top/tracks?time_range=short_term&limit=1',
@@ -198,10 +226,8 @@ export default {
                 }
             )
             .then(function (response) {
-                var trackid = response.data.items[0].uri;
-                trackid = trackid.split(':');
-                trackid = trackid[2];
-                socket.emit('toptrack', {
+                var trackid = response.data.items[0].uri.split(':')[2];
+                self.$socket.client.emit('toptrack', {
                     trackid: trackid,
                     sid: localStorage.getItem('sid'),
                     room: self.code,
@@ -212,44 +238,62 @@ export default {
 </script>
 
 <style scoped>
+.code {
+    text-align: left;
+    margin-left: 2rem;
+    margin-bottom: 0;
+}
+.title {
+    font-style: italic;
+    color: darkgrey;
+    text-align: left;
+    margin-left: 2rem;
+    margin-top: 0;
+    margin-bottom: 20px;
+}
+.hr {
+    height: 2px;
+    background-color: rgb(63, 63, 63);
+    margin: 1rem 2rem 1rem 2rem;
+}
 .QR {
     transform: scale(0.5);
     border: 5px solid rgb(255, 255, 255);
 }
-.leave {
+.qr {
+    position: fixed;
+    right: 0;
+    top: 0;
+    padding: 1rem 2rem;
+}
+.qr > img {
+    width: 50px;
+}
+.list {
+    height: calc(100vh - 420px);
+    overflow-y: scroll;
+    margin-left: 2rem;
+    margin-right: 2rem;
+    overflow-x: hidden;
+}
+.startgame {
     position: fixed;
     left: 50%;
-    bottom: 20px;
+    bottom: 160px;
     transform: translate(-50%, -50%);
     margin: 0 auto;
 }
 .copycode {
     position: fixed;
     left: 50%;
-    bottom: 240px;
+    bottom: 90px;
     transform: translate(-50%, -50%);
     margin: 0 auto;
 }
-.qr {
-    width: auto;
-    height: 300px;
-    height: auto;
+.leave {
     position: fixed;
     left: 50%;
-    bottom: 50px;
-    transform: translate(-50%, -50%);
-    margin: 0 auto;
-}
-.list {
-    height: 200px;
-    overflow: scroll;
-    padding-left: 1em;
-    padding-right: 1em;
-}
-.startgame {
-    position: fixed;
-    left: 50%;
-    bottom: 370px;
+    bottom: 20px;
     transform: translate(-50%, -50%);
     margin: 0 auto;
 }

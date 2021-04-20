@@ -10,39 +10,22 @@
 
 <script>
 import Button from '../components/Button';
-const io = require('socket.io-client');
-// const socket = io("https://musicwithfriends.fdrive.se");
-var socket;
-
-if(process.env.NODE_ENV == 'production') {
-    socket = io('https://musicwithfriends.fdrive.se', {
-        path: '/ws/socket.io',
-    });
-} else {
-    socket = io("localhost:5000");
-}
 
 export default {
     name: 'Create',
     components: {
         Button,
     },
-    data() {
-        return {};
+    sockets: {
+        roomCode(data) {
+            this.$router.push(data.code);        
+        }
     },
     methods: {
-        // Function for creating a room.
         createRoom: function () {
-            socket.emit('createRoom');
+            this.$socket.client.emit('createRoom');
         },
-    },
-
-    mounted() {
-        // When room is created the server will return a code that we can go to to join the room.
-        socket.on('roomCode', (data) => {
-            this.$router.push(data.code);
-        });
-    },
+    }
 };
 </script>
 
