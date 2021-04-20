@@ -1,5 +1,8 @@
 <template>
     <div v-if="found" :key="found" class="gameroom">
+        <div v-if="showQR" class="bigQR" @click="showQR = false"> 
+            <img :src="qr" @click="showQR = false" />
+        </div>
         <div v-if="started" :key="started">
             <ProgressBar class="progressbar" />
             <h1>Guess who this song belongs to!</h1>
@@ -36,7 +39,7 @@
             </div>
 
             <div class="qr">
-                <img :src="qr" />
+                <img :src="qr" @click="showQR = true" />
             </div>
 
             <div class="buttons">
@@ -107,6 +110,7 @@ export default {
             started: false,
             players: [],
             colors: [],
+            showQR: false,
             status: 'Waiting for host to start the game...',
             found: false,
             host: false,
@@ -238,6 +242,12 @@ export default {
 </script>
 
 <style scoped>
+.gameroom {
+    height: 100vh;
+    width: 100vw;
+    position: fixed;
+    top: 0;
+}
 .code {
     text-align: left;
     margin-left: 2rem;
@@ -282,6 +292,7 @@ export default {
     bottom: 160px;
     transform: translate(-50%, -50%);
     margin: 0 auto;
+    z-index: 1;
 }
 .copycode {
     position: fixed;
@@ -289,6 +300,7 @@ export default {
     bottom: 90px;
     transform: translate(-50%, -50%);
     margin: 0 auto;
+    z-index: 1;
 }
 .leave {
     position: fixed;
@@ -296,6 +308,7 @@ export default {
     bottom: 20px;
     transform: translate(-50%, -50%);
     margin: 0 auto;
+    z-index: 1;
 }
 .webplayer {
     position: fixed;
@@ -308,5 +321,28 @@ export default {
     position: fixed;
     bottom: 85px;
     width: 100%;
+}
+.bigQR {
+    position: fixed;
+    top: 0;
+    left: 0;
+    background-color:rgba(0,0,0,0.7);
+    width: 100vw;
+    height: 100vh;
+    z-index: 100;
+}
+.bigQR > img {
+    width: 60vw;
+    height: auto;
+    position: fixed;
+    top: 20%;
+    left: 50%;
+    transform: translateX(-50%);
+}
+@media only screen and (min-width: 600px) {
+    .bigQR > img {
+        height: 30vh;
+        width: auto;
+    }
 }
 </style>
