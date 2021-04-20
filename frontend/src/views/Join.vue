@@ -1,9 +1,9 @@
 <template>
     <div class="join">
         <h1>Enter room code...</h1>
-        <!-- <input v-model="code" placeholder="Enter Room Code..."> -->
-        <InputField @input="updateCode" placeholder="ABCD" />
-        <Button :buttonLink="code_" buttonText="Join Room" />
+        <p>{{ error }}</p>
+        <InputField :text="code" placeholder="ABCD" />
+        <Button @click="isRoom" buttonText="Join Room" />
         <br />
         <h1>Or...</h1>
         <h3>Scan QR-code in your camera app</h3>
@@ -19,28 +19,32 @@ import InputField from '../components/InputField';
 
 export default {
     name: 'Join',
-    props: {
-        code: {
-            type: String,
-            default: '/',
-        },
-    },
-    data() {
-        return {
-            code_: this.code,
-        };
-    },
     components: {
         Button,
         InputField,
     },
-    methods: {
-        updateCode(value) {
-            if (value.inputType == 'deleteContentBackward') {
-                this.code_ = this.code_.slice(0, -1);
+    data() {
+        return {
+            error: '',
+        };
+    },
+    sockets: {
+        isRoom(data) {
+            if (data.isRoom == 'true' || data.isRoom == true) {
+                this.$router.push(this.code);
             } else {
-                this.code_ += value.data;
+                this.error = 'Room does not exist';
             }
+        },
+    },
+    methods: {
+        isRoom: function () {
+            this.$socket.client.emit('isRoom', { code: this.code });
+        },
+    },
+    computed: {
+        code() {
+            return this.$store.state.roomCode;
         },
     },
 };
