@@ -60,4 +60,7 @@ For the frontend:
 For the backend:
 
 `python3 app.py production`
+
+## Issues and Bugs
+https://trello.com/b/7ShV1pMC/spotifygame
  
