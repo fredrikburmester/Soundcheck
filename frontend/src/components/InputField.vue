@@ -37,18 +37,17 @@ export default {
 <style scoped>
 @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap');
 input {
+    display: inline-block;
     font-size: 15px;
     font-family: 'Roboto', sans-serif;
     font-weight: 500;
     letter-spacing: 10px;
     background-color: white;
     border-radius: 100px;
-    padding: 15px 0px 15px 0px;
-    width: 60vw;
-    text-align: center;
-    margin-left: auto;
-    margin-right: auto;
+    padding: 15px 20px 15px 20px;
+    width: 50vw;
     margin-bottom: 10px;
-    box-sizing: border-box;
+    cursor: pointer;
+    text-align: center;
 }
 </style>
