@@ -30,8 +30,8 @@ log.disabled = True
 
 # Allow cross origin to be able to do websockets from different servers
 # socketio = SocketIO(app)
-if ENV == 'production':
-    socketio = SocketIO(app, path="/ws/socket.io", cors_allowed_origins='*')
+if ENV == 'production' or 'prod':
+    socketio = SocketIO(app, path="/ws", cors_allowed_origins='*')
 else:
     socketio = SocketIO(app, cors_allowed_origins='*')
 
@@ -371,7 +371,7 @@ def generateId():
     return code
 
 if __name__ == '__main__':
-    if ENV == 'production':
+    if ENV == 'production' or 'prod':
         socketio.run(app, host='0.0.0.0', port=5000)
     else:
         socketio.run(app)
