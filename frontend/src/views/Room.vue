@@ -5,7 +5,7 @@
         </div>
         <div v-if="started" :key="started">
             <ProgressBar class="progressbar" />
-            <h1>Guess who this song belongs to!</h1>
+            <h2>Guess who this song belongs to!</h2>
             <div class="list">
                 <PlayerAvatar
                     class="player-guess"
@@ -19,18 +19,18 @@
                 />
             </div>
             <div class="leave-started-game">
-                    <Button
-                        v-if="host"
-                        v-on:click="closeRoom"
-                        buttonText="end game"
-                        color="#CD1A2B"
-                    />
-                    <Button
-                        v-else
-                        v-on:click="leaveRoom"
-                        buttonText="Leave Room"
-                        color="#CD1A2B"
-                    />
+                <Button
+                    v-if="host"
+                    v-on:click="closeRoom"
+                    buttonText="end game"
+                    color="#CD1A2B"
+                />
+                <Button
+                    v-else
+                    v-on:click="leaveRoom"
+                    buttonText="Leave Room"
+                    color="#CD1A2B"
+                />
             </div>
             <iframe
                 class="webplayer"
@@ -128,16 +128,16 @@ export default {
             this.$router.push('/join');
         },
         new_track(data) {
-            console.log("[Server] Next song")
+            console.log('[Server] Next song');
             this.setIframeUrl(data.trackid);
         },
         start_game() {
-            console.log("[Server] Start game")
+            console.log('[Server] Start game');
             this.started = true;
             this.gameLoop();
         },
         top_tracks_list(data) {
-            console.log("[Server] Top tracks list: ",data.top_tracks_list);
+            console.log('[Server] Top tracks list: ', data.top_tracks_list);
         },
         close_room() {
             this.status = 'The host has ended the game!';
@@ -183,30 +183,30 @@ export default {
             this.$socket.client.emit('start_game', { code: this.code });
         },
         gameLoop() {
-            this.nextTrack()
+            this.nextTrack();
         },
         nextTrack() {
             var self = this;
-            if(this.currentSong < this.players.length) {
+            if (this.currentSong < this.players.length) {
                 this.$socket.client.emit('next_song', {
                     track_nr: this.currentSong,
                     code: this.code,
                 });
                 this.currentSong += 1;
-                setTimeout(function() {
-                    self.nextTrack()
+                setTimeout(function () {
+                    self.nextTrack();
                 }, 10000);
             } else {
                 // game ended
             }
         },
         guess(player) {
-            var divs = document.getElementsByClassName('player-guess')
-            Array.from(divs).forEach(div => {
-                div.style.backgroundColor = ""
-            })
-            console.log("You guessed on", player.name);
-            document.getElementById(player.id).style.backgroundColor = "green"
+            var divs = document.getElementsByClassName('player-guess');
+            Array.from(divs).forEach((div) => {
+                div.style.backgroundColor = '';
+            });
+            console.log('You guessed on', player.name);
+            document.getElementById(player.id).style.backgroundColor = 'green';
         },
         joinedRoom() {
             this.$socket.client.emit('joinRoom', {
@@ -274,7 +274,7 @@ export default {
                                     )
                                     .then(function (response) {
                                         if (response.data.items.length == 0) {
-                                            self.leaveRoom()
+                                            self.leaveRoom();
                                         } else {
                                             var trackid = response.data.items[0].uri.split(
                                                 ':'
