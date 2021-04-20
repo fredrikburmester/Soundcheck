@@ -23,7 +23,7 @@ export default {
     },
     methods: {
         createRoom: function () {
-            this.$socket.client.emit('createRoom');
+            this.$socket.client.emit('createRoom', {'sid': localStorage.getItem('sid')});
         },
     }
 };
