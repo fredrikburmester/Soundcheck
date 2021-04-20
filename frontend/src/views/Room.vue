@@ -84,17 +84,6 @@ import ProgressBar from '../components/ProgressBar';
 const QRCode = require('qrcode');
 const axios = require('axios');
 
-// const io = require('socket.io-client');
-// var socket;
-
-// if (process.env.NODE_ENV == 'production') {
-//     socket = io('https://musicwithfriends.fdrive.se', {
-//         path: '/ws/socket.io',
-//     });
-// } else {
-//     socket = io('localhost:5000');
-// }
-
 export default {
     name: 'Home',
     components: {
