@@ -1,5 +1,11 @@
 <template>
-    <input type="text" name="" id="" :placeholder="placeholder_" />
+    <input
+        type="text"
+        v-model="text_"
+        @input="sendValue()"
+        id="input"
+        :placeholder="placeholder_"
+    />
 </template>
 
 <script>
@@ -9,16 +15,20 @@ export default {
         placeholder: {
             type: String,
         },
+        text: {
+            type: String,
+        },
     },
     data() {
         return {
             placeholder_: this.placeholder,
+            text_: this.text,
         };
     },
-    watch: {
-        // sendValue: function (value) {
-        //     this.$emit('changed', 'soee');
-        // },
+    methods: {
+        sendValue: function () {
+            this.$store.commit('updateRoomCode', this.text_);
+        },
     },
 };
 </script>
