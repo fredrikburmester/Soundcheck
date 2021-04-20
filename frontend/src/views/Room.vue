@@ -24,7 +24,7 @@
             <h1 class="code">{{ code }}</h1>
             <div class="hr"></div>
             <h3 class="title">Players:</h3>
-            <p v-if="!host">{{status}}</p>
+            <p v-if="!host">{{ status }}</p>
             <div class="list">
                 <PlayerAvatar
                     v-for="player in players"
@@ -131,8 +131,8 @@ export default {
             console.log(data.top_tracks_list);
         },
         close_room() {
-            this.status = "The host has ended the game!"
-            this.players = []
+            this.status = 'The host has ended the game!';
+            this.players = [];
             // this.$router.push('/join');
         },
         list_of_players(data) {
@@ -148,7 +148,7 @@ export default {
                 self.players.push(player);
             });
             self.found = true;
-        }
+        },
     },
     methods: {
         async copyToClipboard() {
@@ -158,11 +158,11 @@ export default {
         leaveRoom: function () {
             this.$socket.client.emit('leave_room', {
                 code: this.code,
-                sid: localStorage.getItem('sid')
+                sid: localStorage.getItem('sid'),
             });
             this.$router.push('/');
         },
-        closeRoom: function() {
+        closeRoom: function () {
             this.$socket.client.emit('close_room', {
                 code: this.code,
             });
@@ -197,7 +197,7 @@ export default {
                 code: this.code,
                 sid: localStorage.getItem('sid'),
             });
-        }
+        },
     },
 
     computed: {},
@@ -211,7 +211,7 @@ export default {
             }
         );
 
-        this.joinedRoom()
+        this.joinedRoom();
 
         var token = localStorage.getItem('access_token');
         axios

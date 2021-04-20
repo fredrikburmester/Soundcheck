@@ -7,7 +7,7 @@ export default {
     name: 'LoginCallback',
     sockets: {
         connect() {
-            console.log('socket connected')
+            console.log('socket connected');
         },
         access_token(data) {
             localStorage.setItem('access_token', data.access_token);
@@ -21,7 +21,7 @@ export default {
             } else {
                 this.$router.push('/');
             }
-        }
+        },
     },
     methods: {
         handleLoginCallback: function () {

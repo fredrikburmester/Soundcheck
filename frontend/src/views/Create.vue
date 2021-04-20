@@ -18,14 +18,16 @@ export default {
     },
     sockets: {
         roomCode(data) {
-            this.$router.push(data.code);        
-        }
+            this.$router.push(data.code);
+        },
     },
     methods: {
         createRoom: function () {
-            this.$socket.client.emit('createRoom', {'sid': localStorage.getItem('sid')});
+            this.$socket.client.emit('createRoom', {
+                sid: localStorage.getItem('sid'),
+            });
         },
-    }
+    },
 };
 </script>
 
