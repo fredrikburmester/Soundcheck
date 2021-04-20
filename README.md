@@ -43,7 +43,24 @@ This is the frontend for the project, made with Vue. Make sure to have NPM, Node
 
 Run `npm install` inside the frontend folder to install all dependencies. 
 
-Now you can run `npm run serve` to run the server in development. 
+### Run locally 
+For the frontend:
 
-Run `npm run build` to build the project for production. 
+`npm run dev`
+
+For the backend:
+
+`python3 app.py dev`
+
+### Run in production 
+For the frontend:
+
+`npm run prod`
+
+For the backend:
+
+`python3 app.py production`
+
+## Issues and Bugs
+https://trello.com/b/7ShV1pMC/spotifygame
  
