@@ -1,9 +1,6 @@
 <template>
-    <div :style="btnStyles" class="button">
-        <a :style="aColor" v-if="external">{{ buttonText_ }}</a>
-        <router-link :style="aColor" v-else :to="buttonLink_">{{
-            buttonText_
-        }}</router-link>
+    <div @click="go" :style="colorStyles" class="button">
+        {{ buttonText_ }}
     </div>
 </template>
 
@@ -29,6 +26,13 @@ export default {
             color_: this.color,
         };
     },
+    methods: {
+        go: function() {
+            if(!this.external) {
+                this.$router.push(this.buttonLink_)
+            }
+        }
+    },
     computed: {
         external() {
             if (this.buttonLink_ === undefined) {
@@ -37,28 +41,20 @@ export default {
                 return false;
             }
         },
-        btnStyles() {
-            return {
-                'background-color': this.color,
-            };
-        },
-        aColor() {
-            if (this.color == '#FFF' || this.color == '#FFFFFF') {
+        colorStyles() {
+            if (this.color_ == '#FFF' || this.color_ == '#FFFFFF' || this.color_ == 'white') {
                 return {
+                    'background-color': this.color_,
                     color: 'black',
                 };
             } else {
                 return {
+                    'background-color': this.color_,
                     color: 'white',
                 };
             }
         },
-    },
-    watch: {
-        buttonLink: function (value) {
-            this.buttonLink_ = value;
-        },
-    },
+    }
 };
 </script>
 
@@ -79,10 +75,10 @@ export default {
     cursor: pointer;
 }
 .button:active {
-    background-color: rgb(9, 160, 52) !important;
+    background-color: rgb(63, 63, 63) !important;
 }
 
-.button a {
+.button {
     color: white;
     text-transform: uppercase;
     text-decoration: none;
@@ -90,7 +86,7 @@ export default {
     margin-right: auto;
 }
 @media only screen and (max-width: 315px) {
-    a {
+    .button {
         font-size: 0.75em;
     }
 }
