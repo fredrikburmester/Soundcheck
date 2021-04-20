@@ -61,6 +61,12 @@ For the backend:
 
 `python3 app.py production`
 
+## Run with PM2
+
+`pm2 start app.py --name "TDDD27-Backend" --watch -- production`
+
+`pm2 start npm --name "TDDD27-Frontend" -- run prod`
+
 ## Issues and Bugs
 https://trello.com/b/7ShV1pMC/spotifygame
  

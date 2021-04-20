@@ -53,12 +53,15 @@ export default {
     display: flex;
     flex-direction: row;
     margin-bottom: 20px;
+    overflow-x: hidden;
+    flex-wrap: nowrap;
 }
 .circle {
     border-radius: 50%;
     font-family: 'Roboto', sans-serif;
     width: 60px;
     height: 60px;
+    display: inline-table;
 }
 .initials {
     margin-top: 20px;
@@ -67,5 +70,6 @@ export default {
 .name {
     margin-top: 20px;
     margin-left: 20px;
+    white-space: nowrap;
 }
 </style>
