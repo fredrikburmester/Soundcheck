@@ -75,13 +75,20 @@ def check_token(data):
     access_token, refresh_token = generate_access_token(data['code'])
     socketio.emit("access_token", {'access_token': access_token, 'refresh_token': refresh_token, 'sid': request.sid}, to=request.sid)
 
-@socketio.on('connect')
-def connected():
-    socketio.emit('connect')
+# @socketio.on('connect')
+# def connected():
+#     socketio.emit('connect')
 
-@socketio.on('disconnect')
-def disconect():
-    print("disconnect!!")
+@socketio.on('isRoom')
+def isRoom(data):
+    global ROOMS
+    for Room in ROOMS:
+        if Room.code == data['code']:
+            socketio.emit('isRoom', {'isRoom':'true'}, to=request.sid)
+            return
+            
+    socketio.emit('isRoom', {'isRoom':'false'}, to=request.sid)
+    return
 
 @socketio.on('next_song')
 def next_song(data):
