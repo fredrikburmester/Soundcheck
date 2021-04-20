@@ -11,7 +11,7 @@ export default {
     mounted: function () {
         var line = new ProgressBar.Line('#container');
         line.animate(1, {
-            duration: 6000,
+            duration: 30000,
             color: '#1DB954',
             trailColor: '#eee',
             trailWidth: 1,
