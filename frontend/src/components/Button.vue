@@ -76,7 +76,12 @@ export default {
     padding: 15px 20px 15px 20px;
     width: 50vw;
     margin-bottom: 10px;
+    cursor: pointer;
 }
+.button:active {
+    background-color: rgb(9, 160, 52) !important;
+}
+
 .button a {
     color: white;
     text-transform: uppercase;
