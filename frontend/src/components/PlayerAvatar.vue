@@ -49,7 +49,6 @@ export default {
 <style scoped>
 @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap');
 .playerAvatar {
-    width: 70vw;
     display: flex;
     flex-direction: row;
     margin-bottom: 20px;
