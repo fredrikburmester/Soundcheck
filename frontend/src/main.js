@@ -12,7 +12,7 @@ var socket;
 if (process.env.NODE_ENV == 'development') {
     socket = io('http://localhost:5000');
 } else {
-    socket = io('https://musicwithfriends.fdrive.se/', { path: '/ws' });
+    socket = io('https://musicwithfriends.fdrive.se/', { path: '/ws/socket.io' });
 }
 
 const app = createApp(App);
