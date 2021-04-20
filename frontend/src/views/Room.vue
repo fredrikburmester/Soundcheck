@@ -1,6 +1,6 @@
 <template>
     <div v-if="found" :key="found" class="gameroom">
-        <div v-if="showQR" class="bigQR" @click="showQR = false"> 
+        <div v-if="showQR" class="bigQR" @click="showQR = false">
             <img :src="qr" @click="showQR = false" />
         </div>
         <div v-if="started" :key="started">
@@ -8,13 +8,29 @@
             <h1>Guess who this song belongs to!</h1>
             <div class="list">
                 <PlayerAvatar
+                    class="player-guess"
+                    :id="player.id"
                     v-for="player in players"
                     v-bind:key="player.id"
                     :playerName="player.name"
                     :color="player.color"
                     :host="player.host"
-                    @onclick="guess(player)"
+                    @click="guess(player)"
                 />
+            </div>
+            <div class="leave-started-game">
+                    <Button
+                        v-if="host"
+                        v-on:click="closeRoom"
+                        buttonText="end game"
+                        color="#CD1A2B"
+                    />
+                    <Button
+                        v-else
+                        v-on:click="leaveRoom"
+                        buttonText="Leave Room"
+                        color="#CD1A2B"
+                    />
             </div>
             <iframe
                 class="webplayer"
@@ -112,16 +128,16 @@ export default {
             this.$router.push('/join');
         },
         new_track(data) {
-            console.log(data);
+            console.log("[Server] Next song")
             this.setIframeUrl(data.trackid);
         },
         start_game() {
-            console.log('Game starting!');
+            console.log("[Server] Start game")
             this.started = true;
-            this.nextTrack();
+            this.gameLoop();
         },
         top_tracks_list(data) {
-            console.log(data.top_tracks_list);
+            console.log("[Server] Top tracks list: ",data.top_tracks_list);
         },
         close_room() {
             this.status = 'The host has ended the game!';
@@ -129,7 +145,6 @@ export default {
             // this.$router.push('/join');
         },
         list_of_players(data) {
-            console.log('list_of_players', this.players);
             this.players.length = 0;
             var self = this;
             data.players.forEach((player) => {
@@ -167,21 +182,31 @@ export default {
         startGame() {
             this.$socket.client.emit('start_game', { code: this.code });
         },
+        gameLoop() {
+            this.nextTrack()
+        },
         nextTrack() {
-            if (this.currentSong < this.players.length) {
-                console.log('Current Song:', this.currentSong);
+            var self = this;
+            if(this.currentSong < this.players.length) {
                 this.$socket.client.emit('next_song', {
                     track_nr: this.currentSong,
                     code: this.code,
                 });
                 this.currentSong += 1;
-                setTimeout(this.nextTrack(), 5000);
+                setTimeout(function() {
+                    self.nextTrack()
+                }, 10000);
             } else {
-                //game end
+                // game ended
             }
         },
         guess(player) {
-            console.log(`You guessed on ${player.name}`);
+            var divs = document.getElementsByClassName('player-guess')
+            Array.from(divs).forEach(div => {
+                div.style.backgroundColor = ""
+            })
+            console.log("You guessed on", player.name);
+            document.getElementById(player.id).style.backgroundColor = "green"
         },
         joinedRoom() {
             this.$socket.client.emit('joinRoom', {
@@ -219,12 +244,72 @@ export default {
                 }
             )
             .then(function (response) {
-                var trackid = response.data.items[0].uri.split(':')[2];
-                self.$socket.client.emit('toptrack', {
-                    trackid: trackid,
-                    sid: localStorage.getItem('sid'),
-                    room: self.code,
-                });
+                if (response.data.items.length == 0) {
+                    // no top song
+                    axios
+                        .get(
+                            'https://api.spotify.com/v1/me/top/tracks?time_range=medium_term&limit=1',
+                            {
+                                headers: {
+                                    Authorization: `Bearer ${token}`,
+                                    Accept: 'application/json',
+                                    'Content-Type': 'application/json',
+                                },
+                            }
+                        )
+                        .then(function (response) {
+                            if (response.data.items.length == 0) {
+                                // no top song
+                                axios
+                                    .get(
+                                        'https://api.spotify.com/v1/me/top/tracks?time_range=long_term&limit=1',
+                                        {
+                                            headers: {
+                                                Authorization: `Bearer ${token}`,
+                                                Accept: 'application/json',
+                                                'Content-Type':
+                                                    'application/json',
+                                            },
+                                        }
+                                    )
+                                    .then(function (response) {
+                                        if (response.data.items.length == 0) {
+                                            self.leaveRoom()
+                                        } else {
+                                            var trackid = response.data.items[0].uri.split(
+                                                ':'
+                                            )[2];
+                                            self.$socket.client.emit(
+                                                'toptrack',
+                                                {
+                                                    trackid: trackid,
+                                                    sid: localStorage.getItem(
+                                                        'sid'
+                                                    ),
+                                                    room: self.code,
+                                                }
+                                            );
+                                        }
+                                    });
+                            } else {
+                                var trackid = response.data.items[0].uri.split(
+                                    ':'
+                                )[2];
+                                self.$socket.client.emit('toptrack', {
+                                    trackid: trackid,
+                                    sid: localStorage.getItem('sid'),
+                                    room: self.code,
+                                });
+                            }
+                        });
+                } else {
+                    var trackid = response.data.items[0].uri.split(':')[2];
+                    self.$socket.client.emit('toptrack', {
+                        trackid: trackid,
+                        sid: localStorage.getItem('sid'),
+                        room: self.code,
+                    });
+                }
             });
     },
 };
@@ -315,7 +400,7 @@ export default {
     position: fixed;
     top: 0;
     left: 0;
-    background-color:rgba(0,0,0,0.7);
+    background-color: rgba(0, 0, 0, 0.7);
     width: 100vw;
     height: 100vh;
     z-index: 100;
@@ -325,6 +410,12 @@ export default {
     height: auto;
     position: fixed;
     top: 20%;
+    left: 50%;
+    transform: translateX(-50%);
+}
+.leave-started-game {
+    position: fixed;
+    bottom: 100px;
     left: 50%;
     transform: translateX(-50%);
 }
