@@ -374,4 +374,4 @@ if __name__ == '__main__':
     if ENV == 'production':
         socketio.run(app, host='0.0.0.0', port=5000)
     else:
-        socketio.run(app, log_output=False)
+        socketio.run(app)
