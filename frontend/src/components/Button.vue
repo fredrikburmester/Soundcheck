@@ -84,4 +84,9 @@ export default {
     margin-left: auto;
     margin-right: auto;
 }
+@media only screen and (max-width: 315px) {
+  a {
+      font-size: 0.75em;
+  }
+}
 </style>
