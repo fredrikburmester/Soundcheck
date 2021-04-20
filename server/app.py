@@ -1,7 +1,7 @@
 import os
 
 from flask import Flask
-from flask_socketio import join_room, leave_room
+from flask_socketio import join_room, leave_room, close_room
 from flask_socketio import SocketIO
 from flask import request
 import time
@@ -74,6 +74,10 @@ def check_token(data):
 def connected():
     socketio.emit('connect')
 
+@socketio.on('disconnect')
+def disconect():
+    print("disconnect!!")
+
 @socketio.on('next_song')
 def next_song(data):
     code = data['code']
@@ -98,14 +102,21 @@ def get_top_track(data):
     sid = data['sid']
 
     global ROOMS
+    # Go thorugh each room and find the one sending the 'toptrack' emit
     for Room in ROOMS:
         if code == Room.code:
+            # When we find the room, double check if the player isn't just reconnecting
+            for pair in Room.toptracks:
+                if sid == pair['player']:
+                    socketio.emit("top_tracks_list", {'top_tracks_list': Room.toptracks}, room=code)
+                    return
+            # Send out top tracks to all players in the room
             Room.toptracks.append({
                 'id': trackid,
                 'player': sid
             })
-            print(Room.toptracks)
             socketio.emit("top_tracks_list", {'top_tracks_list': Room.toptracks}, room=code)
+
 
 @socketio.on('disconnect')
 def disconnected():
@@ -128,19 +139,46 @@ def disconnected():
                         'sid': player.sid,
                     })
 
-                socketio.emit("listofplayers", {'players': list_of_players}, room=Room.code)
+                socketio.emit("list_of_players", {'players': list_of_players}, room=Room.code)
                 return
 
+
+@socketio.on('close_room')
+def close_socket_room(data):
+    print("Closing room")
+    code = data['code']
+    socketio.emit("close_room", room=code)
+    close_socket_room(code)
+
+def close_socket_room(code):
+    for Room in ROOMS:
+        if Room.code == code:
+            ROOMS.remove(Room)
+            close_room(code)
+
 @socketio.on('leave_room')
-def leave_room(data):
+def remove_player_from_room(data):
+    print("leaving room")
+    code = data['code']
+    sid = data['sid']
+
     global ROOMS
     for Room in ROOMS:
-        if Room.code == data['code']:
+        if Room.code == code:
             for player in Room.players:
-                if player.sid == request.sid:
+                if player.sid == sid:
                     print(f"{player.name} disconnected!")
+
+                    # Remove the player from the list of players for that room
                     Room.players.remove(player)
 
+                    # Remove the player from the websocket room
+                    if len(Room.players) == 0:
+                        close_socket_room(code)
+                    else:
+                        leave_room(code)
+
+                    # Send out an updated list of players to the room
                     list_of_players = []
                     for player in Room.players:
                         list_of_players.append({
@@ -153,7 +191,7 @@ def leave_room(data):
                             'sid': player.sid,
                         })
 
-                    socketio.emit("listofplayers", {'players': list_of_players}, room=data['code'])
+                    socketio.emit("list_of_players", {'players': list_of_players}, room=code)
                     return
         
 @socketio.on('createRoom')
@@ -239,7 +277,7 @@ def joinRoom(data):
                     'host': player.host
                 })
 
-            socketio.emit("listofplayers", {'players': list_of_players}, room=code)
+            socketio.emit("list_of_players", {'players': list_of_players}, room=code)
             return
     print("not a room") 
     socketio.emit("not_a_room", to=request.sid)
