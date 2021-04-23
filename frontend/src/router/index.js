@@ -5,6 +5,7 @@ import Join from '../views/Join.vue';
 import Create from '../views/Create.vue';
 import Room from '../views/Room.vue';
 import GameRoom from '../views/GameRoom.vue';
+import Results from '../views/Results.vue';
 import LoginCallback from '../views/LoginCallback.vue';
 
 const axios = require('axios');
@@ -87,6 +88,14 @@ const routes = [
         path: '/gameroom',
         name: 'GameRoom',
         component: GameRoom,
+        beforeEnter: (to, from, next) => {
+            checkAccessToken(to, from, next);
+        },
+    },
+    {
+        path: '/:code/results',
+        name: 'Results',
+        component: Results,
         beforeEnter: (to, from, next) => {
             checkAccessToken(to, from, next);
         },
