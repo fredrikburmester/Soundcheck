@@ -18,6 +18,13 @@
                     @click="guess(player)"
                 />
             </div>
+            <div v-if="host" class="next-song">
+                <Button
+                    v-on:click="sendNextQuestion"
+                    buttonText="next question"
+                    color="#1DB954"
+                />
+            </div>
             <div class="leave-started-game">
                 <Button
                     v-if="host"
@@ -110,7 +117,7 @@ export default {
     data: function () {
         return {
             clipboardtext: `copy invite link`,
-            currentSong: 0,
+            current_question: 0,
             iframeurl: '',
             started: false,
             players: [],
@@ -118,6 +125,7 @@ export default {
             showQR: false,
             status: 'Waiting for host to start the game...',
             found: false,
+            my_guess: '',
             host: false,
             code: this.$route.params.code,
             qr: '',
@@ -127,14 +135,21 @@ export default {
         not_a_room() {
             this.$router.push('/join');
         },
-        new_track(data) {
-            console.log('[Server] Next song');
-            this.setIframeUrl(data.trackid);
+        next_question(data) {
+            console.log('[Server] Next question');
+            console.log(data)
+            if(this.current_question > 0) {
+                this.sendGuess()
+            }
+            this.current_question += 1;
+            this.setIframeUrl(data.answer);
+        },
+        game_ended() {
+            this.sendGuess()
         },
         start_game() {
             console.log('[Server] Start game');
             this.started = true;
-            this.gameLoop();
         },
         top_tracks_list(data) {
             console.log('[Server] Top tracks list: ', data.top_tracks_list);
@@ -170,6 +185,14 @@ export default {
             });
             this.$router.push('/');
         },
+        sendGuess() {
+            this.$socket.client.emit('guess', {
+                'guess': this.my_guess,
+                'sid': localStorage.getItem('sid'),
+                'current_question': this.current_question - 1,
+                'code': this.code
+            })
+        },
         closeRoom: function () {
             this.$socket.client.emit('close_room', {
                 code: this.code,
@@ -181,23 +204,18 @@ export default {
         },
         startGame() {
             this.$socket.client.emit('start_game', { code: this.code });
+            this.sendNextQuestion()
         },
-        gameLoop() {
-            this.nextTrack();
-        },
-        nextTrack() {
-            var self = this;
-            if (this.currentSong < this.players.length) {
-                this.$socket.client.emit('next_song', {
-                    track_nr: this.currentSong,
+        sendNextQuestion() {
+            // var self = this;
+            if (this.current_question < this.players.length) {
+                this.$socket.client.emit('next_question', {
+                    current_question: this.current_question,
                     code: this.code,
                 });
-                this.currentSong += 1;
-                setTimeout(function () {
-                    self.nextTrack();
-                }, 10000);
             } else {
-                // game ended
+                this.$socket.client.emit('game_ended', { code: this.code });
+                console.log("Game has ended")
             }
         },
         guess(player) {
@@ -206,6 +224,7 @@ export default {
                 div.style.backgroundColor = '';
             });
             console.log('You guessed on', player.name);
+            this.guess = player.sid;
             document.getElementById(player.id).style.backgroundColor = 'green';
         },
         joinedRoom() {
@@ -232,6 +251,7 @@ export default {
         this.joinedRoom();
 
         var token = localStorage.getItem('access_token');
+      
         axios
             .get(
                 'https://api.spotify.com/v1/me/top/tracks?time_range=short_term&limit=1',
@@ -276,6 +296,7 @@ export default {
                                         if (response.data.items.length == 0) {
                                             self.leaveRoom();
                                         } else {
+                                            console.log(response.data.items[0])
                                             var trackid = response.data.items[0].uri.split(
                                                 ':'
                                             )[2];
@@ -295,6 +316,7 @@ export default {
                                 var trackid = response.data.items[0].uri.split(
                                     ':'
                                 )[2];
+                                console.log(response.data.items[0])
                                 self.$socket.client.emit('toptrack', {
                                     trackid: trackid,
                                     sid: localStorage.getItem('sid'),
@@ -304,6 +326,7 @@ export default {
                         });
                 } else {
                     var trackid = response.data.items[0].uri.split(':')[2];
+                    console.log(response.data.items[0])
                     self.$socket.client.emit('toptrack', {
                         trackid: trackid,
                         sid: localStorage.getItem('sid'),
@@ -416,6 +439,12 @@ export default {
 .leave-started-game {
     position: fixed;
     bottom: 100px;
+    left: 50%;
+    transform: translateX(-50%);
+}
+.next-song {
+    position: fixed;
+    bottom: 170px;
     left: 50%;
     transform: translateX(-50%);
 }
