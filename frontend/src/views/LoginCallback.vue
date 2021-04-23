@@ -18,14 +18,14 @@ export default {
             } else {
                 this.$router.push('/');
             }
-        },
+        }
     },
     methods: {
         handleLoginCallback: function () {
             let uri = window.location.href.split('=')[1];
             let code = uri.split('&')[0];
             this.$socket.client.emit('generate_access_token', { code: code });
-        },
+        }
     },
     mounted() {
         this.handleLoginCallback();
