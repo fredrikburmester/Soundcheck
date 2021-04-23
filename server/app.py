@@ -1,9 +1,8 @@
 import os
-
 from flask import Flask
 from flask_socketio import join_room, leave_room, close_room
 from flask_socketio import SocketIO
-from flask import request
+from flask import request, jsonify, Response
 import time
 import logging
 
@@ -24,8 +23,8 @@ ENV = sys.argv[1]
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'secret!'
 
-log = logging.getLogger('werkzeug')
-log.disabled = True
+# log = logging.getLogger('werkzeug')
+# log.disabled = True
 
 # Allow cross origin to be able to do websockets from different servers
 # socketio = SocketIO(app)
@@ -45,12 +44,20 @@ class Player:
     self.points = 0
     self.access_token = ''
     self.refresh_token = ''
+    self.guesses = []
+
+    def toJSON(self):
+        return json.dumps(self, default=lambda o: o.__dict__, 
+            sort_keys=True, indent=4)
 
 class Room:
   def __init__(self, code):
+    self.questions = ["Who's top song is this?"]
     self.code = code # Room code
-    self.players = []
-    self.toptracks = []
+    self.players = [] # player object 
+    self.answers = [] # every persons top track for example {player: sid, answer: trackid}
+    self.results = [] # points for each person
+
 
 ROOMS = []
 PLAYERS = [] 
@@ -68,6 +75,30 @@ COLORS = [
 ]
 
 ##################
+
+@app.route('/api/<code>/results', methods=['GET'])
+def results(code):
+    global ROOMS
+    for Room in ROOMS:
+        if Room.code == code:
+            players = []
+            for player in Room.players:
+                players.append({
+                    'host': player.host,
+                    'name': player.name,
+                    'id': player.id,
+                    'points': player.points,
+                    'guesses': player.guesses
+                })
+            return Response(json.dumps({
+                'questions': Room.questions,
+                'code': Room.code,
+                'players': players,
+                'answers': Room.answers,
+                'results': Room.results
+            }), status=200, mimetype='application/json')
+    return Response(status=404)
+    
 
 @socketio.on('generate_access_token')
 def check_token(data):
@@ -90,14 +121,48 @@ def isRoom(data):
     socketio.emit('isRoom', {'isRoom':'false'}, to=request.sid)
     return
 
-@socketio.on('next_song')
-def next_song(data):
+@socketio.on('guess')
+def guess(data):
+    player_sid = data['sid']
+    player_guess_sid = data['guess']
+    current_question = data['current_question']
     code = data['code']
-    track_nr = data['track_nr']
+
+    global ROOMS
+    for Room in ROOMS:
+        if Room.code == code:
+            for player in Room.players:
+                if player.sid == player_sid:
+                    player.guesses.append({
+                        'question': current_question,
+                        'guess': player_guess_sid,
+                        'correct_answer': Room.answers[current_question]['answer']
+                    })
+                    return
+
+@socketio.on('game_ended')
+def game_ended(data):
+    code = data['code']
+    global ROOMS 
+
+    socketio.emit('game_ended', room=code)
+
+    for Room in ROOMS:
+        if Room.code == code:
+            for player in Room.players:
+                for guess in player.guesses:
+                    if guess['correct_answer'] == guess['guess']:
+                        player.points += 10
+                        
+@socketio.on('next_question')
+def next_question(data):
+    code = data['code']
+    current_question = data['current_question']
     global ROOMS
     for Room in ROOMS:
         if code == Room.code:
-            socketio.emit('new_track', {'trackid': Room.toptracks[track_nr]['id'],'track_nr': track_nr}, room=code)
+            # answer is track id in this case
+            socketio.emit('next_question', {'answer': Room.answers[current_question]['answer'],'current_question': current_question}, room=code)
 
 @socketio.on('start_game')
 def start_game(data):
@@ -123,16 +188,16 @@ def get_top_track(data):
     for Room in ROOMS:
         if code == Room.code:
             # When we find the room, double check if the player isn't just reconnecting
-            for pair in Room.toptracks:
+            for pair in Room.answers:
                 if sid == pair['player']:
-                    socketio.emit("top_tracks_list", {'top_tracks_list': Room.toptracks}, room=code)
+                    socketio.emit("top_tracks_list", {'top_tracks_list': Room.answers}, room=code)
                     return
             # Send out top tracks to all players in the room
-            Room.toptracks.append({
-                'id': trackid,
+            Room.answers.append({
+                'answer': trackid,
                 'player': sid
             })
-            socketio.emit("top_tracks_list", {'top_tracks_list': Room.toptracks}, room=code)
+            socketio.emit("top_tracks_list", {'top_tracks_list': Room.answers}, room=code)
 
 
 @socketio.on('disconnect')
@@ -368,7 +433,7 @@ def generateId():
         code += letters[random.randint(0, 31)]
 
     # Check for bad words and make sure the room doesn't already exist
-    if code in ['NGGR','FUCK','SHIT','CUNT','DICK','NSFW','BICH','HORE','HORA','KUKA','6969','6666']:
+    if code in ['NGGR','FUCK','SHIT','CUNT','DICK','NSFW','BICH','HORE','HORA','KUKA','6969','6666','8008']:
         code = generateId()
 
     global ROOMS
