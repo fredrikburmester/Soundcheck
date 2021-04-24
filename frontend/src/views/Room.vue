@@ -136,16 +136,19 @@ export default {
             this.$router.push('/join');
         },
         next_question(data) {
-            console.log('[Server] Next question');
-            console.log(data)
-            if(this.current_question > 0) {
-                this.sendGuess()
+            console.log('[Server] Incoming next question');
+            if (this.current_question > 0) {
+                this.sendGuess();
             }
             this.current_question += 1;
-            this.setIframeUrl(data.answer);
+            this.setIframeUrl(data.trackid);
+
+            this.resetGuessBackgroundColor();
         },
         game_ended() {
-            this.sendGuess()
+            this.sendGuess();
+            this.$router.push(`/${this.code}/results`);
+            console.log('[Server] Game ended!°!');
         },
         start_game() {
             console.log('[Server] Start game');
@@ -186,12 +189,13 @@ export default {
             this.$router.push('/');
         },
         sendGuess() {
+            console.log(this.my_guess);
             this.$socket.client.emit('guess', {
-                'guess': this.my_guess,
-                'sid': localStorage.getItem('sid'),
-                'current_question': this.current_question - 1,
-                'code': this.code
-            })
+                guess: this.my_guess,
+                sid: localStorage.getItem('sid'),
+                current_question: this.current_question - 1,
+                code: this.code,
+            });
         },
         closeRoom: function () {
             this.$socket.client.emit('close_room', {
@@ -204,7 +208,7 @@ export default {
         },
         startGame() {
             this.$socket.client.emit('start_game', { code: this.code });
-            this.sendNextQuestion()
+            this.sendNextQuestion();
         },
         sendNextQuestion() {
             // var self = this;
@@ -215,16 +219,18 @@ export default {
                 });
             } else {
                 this.$socket.client.emit('game_ended', { code: this.code });
-                console.log("Game has ended")
             }
         },
-        guess(player) {
+        resetGuessBackgroundColor() {
             var divs = document.getElementsByClassName('player-guess');
             Array.from(divs).forEach((div) => {
                 div.style.backgroundColor = '';
             });
+        },
+        guess(player) {
+            this.resetGuessBackgroundColor();
             console.log('You guessed on', player.name);
-            this.guess = player.sid;
+            this.my_guess = player.sid;
             document.getElementById(player.id).style.backgroundColor = 'green';
         },
         joinedRoom() {
@@ -235,105 +241,74 @@ export default {
                 sid: localStorage.getItem('sid'),
             });
         },
+        generateQR() {
+            var self = this;
+            QRCode.toDataURL(
+                `https://musicwithfriends.fdrive.se/${this.code}`,
+                function (err, url) {
+                    self.qr = url;
+                }
+            );
+        },
+        getTopTrack() {
+            var self = this;
+            var token = localStorage.getItem('access_token');
+            axios
+                .get(
+                    'https://api.spotify.com/v1/me/top/tracks?time_range=short_term&limit=1',
+                    {
+                        headers: {
+                            Authorization: `Bearer ${token}`,
+                            Accept: 'application/json',
+                            'Content-Type': 'application/json',
+                        },
+                    }
+                )
+                .then(function (response) {
+                    if (response.data.items.length == 0) {
+                        axios
+                            .get(
+                                'https://api.spotify.com/v1/me/top/tracks?time_range=medium_term&limit=1',
+                                {
+                                    headers: {
+                                        Authorization: `Bearer ${token}`,
+                                        Accept: 'application/json',
+                                        'Content-Type': 'application/json',
+                                    },
+                                }
+                            )
+                            .then(function (response) {
+                                if (response.data.items.length == 0) {
+                                    self.leaveRoom();
+                                } else {
+                                    console.log(response.data.items[0]);
+                                    var trackid = response.data.items[0].uri.split(
+                                        ':'
+                                    )[2];
+                                    self.$socket.client.emit('toptrack', {
+                                        trackid: trackid,
+                                        sid: localStorage.getItem('sid'),
+                                        room: self.code,
+                                    });
+                                }
+                            });
+                    } else {
+                        console.log(response.data.items[0]);
+                        var trackid = response.data.items[0].uri.split(':')[2];
+                        self.$socket.client.emit('toptrack', {
+                            trackid: trackid,
+                            sid: localStorage.getItem('sid'),
+                            room: self.code,
+                        });
+                    }
+                });
+        },
     },
-
     computed: {},
     mounted: function () {
-        var self = this;
-
-        QRCode.toDataURL(
-            `https://musicwithfriends.fdrive.se/${this.code}`,
-            function (err, url) {
-                self.qr = url;
-            }
-        );
-
+        this.generateQR();
         this.joinedRoom();
-
-        var token = localStorage.getItem('access_token');
-      
-        axios
-            .get(
-                'https://api.spotify.com/v1/me/top/tracks?time_range=short_term&limit=1',
-                {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                        Accept: 'application/json',
-                        'Content-Type': 'application/json',
-                    },
-                }
-            )
-            .then(function (response) {
-                if (response.data.items.length == 0) {
-                    // no top song
-                    axios
-                        .get(
-                            'https://api.spotify.com/v1/me/top/tracks?time_range=medium_term&limit=1',
-                            {
-                                headers: {
-                                    Authorization: `Bearer ${token}`,
-                                    Accept: 'application/json',
-                                    'Content-Type': 'application/json',
-                                },
-                            }
-                        )
-                        .then(function (response) {
-                            if (response.data.items.length == 0) {
-                                // no top song
-                                axios
-                                    .get(
-                                        'https://api.spotify.com/v1/me/top/tracks?time_range=long_term&limit=1',
-                                        {
-                                            headers: {
-                                                Authorization: `Bearer ${token}`,
-                                                Accept: 'application/json',
-                                                'Content-Type':
-                                                    'application/json',
-                                            },
-                                        }
-                                    )
-                                    .then(function (response) {
-                                        if (response.data.items.length == 0) {
-                                            self.leaveRoom();
-                                        } else {
-                                            console.log(response.data.items[0])
-                                            var trackid = response.data.items[0].uri.split(
-                                                ':'
-                                            )[2];
-                                            self.$socket.client.emit(
-                                                'toptrack',
-                                                {
-                                                    trackid: trackid,
-                                                    sid: localStorage.getItem(
-                                                        'sid'
-                                                    ),
-                                                    room: self.code,
-                                                }
-                                            );
-                                        }
-                                    });
-                            } else {
-                                var trackid = response.data.items[0].uri.split(
-                                    ':'
-                                )[2];
-                                console.log(response.data.items[0])
-                                self.$socket.client.emit('toptrack', {
-                                    trackid: trackid,
-                                    sid: localStorage.getItem('sid'),
-                                    room: self.code,
-                                });
-                            }
-                        });
-                } else {
-                    var trackid = response.data.items[0].uri.split(':')[2];
-                    console.log(response.data.items[0])
-                    self.$socket.client.emit('toptrack', {
-                        trackid: trackid,
-                        sid: localStorage.getItem('sid'),
-                        room: self.code,
-                    });
-                }
-            });
+        this.getTopTrack();
     },
 };
 </script>
