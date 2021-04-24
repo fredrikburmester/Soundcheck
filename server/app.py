@@ -6,7 +6,7 @@ from flask import request, jsonify, Response
 import time
 import logging
 
-# from flask_cors import CORS
+from flask_cors import CORS
 
 import json
 import random
@@ -22,7 +22,7 @@ ENV = sys.argv[1]
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'secret!'
-
+cors = CORS(app, resources={r"/api/*": {"origins": "*"}})
 # log = logging.getLogger('werkzeug')
 # log.disabled = True
 
@@ -81,6 +81,11 @@ def results(code):
     global ROOMS
     for Room in ROOMS:
         if Room.code == code:
+            for player in Room.players:
+                player.points = 0;
+                for guess in player.guesses:
+                    if guess['correct_answer'] == guess['guess']:
+                        player.points += 10
             players = []
             for player in Room.players:
                 players.append({
@@ -96,8 +101,12 @@ def results(code):
                 'players': players,
                 'answers': Room.answers,
                 'results': Room.results
-            }), status=200, mimetype='application/json')
-    return Response(status=404)
+            }), status=200, mimetype='application/json',headers={
+                "Access-Control-Allow-Origin": "*"
+            })
+    return Response(status=404, headers={
+        "Access-Control-Allow-Origin": "*"
+    })
     
 
 @socketio.on('generate_access_token')
@@ -132,11 +141,12 @@ def guess(data):
     for Room in ROOMS:
         if Room.code == code:
             for player in Room.players:
-                if player.sid == player_sid:
+                if player.sid == player_sid: # looking for self
                     player.guesses.append({
                         'question': current_question,
                         'guess': player_guess_sid,
-                        'correct_answer': Room.answers[current_question]['answer']
+                        'correct_answer': Room.answers[current_question]['player'],
+                        'info': Room.answers[current_question]['info']
                     })
                     return
 
@@ -146,13 +156,6 @@ def game_ended(data):
     global ROOMS 
 
     socketio.emit('game_ended', room=code)
-
-    for Room in ROOMS:
-        if Room.code == code:
-            for player in Room.players:
-                for guess in player.guesses:
-                    if guess['correct_answer'] == guess['guess']:
-                        player.points += 10
                         
 @socketio.on('next_question')
 def next_question(data):
@@ -162,7 +165,7 @@ def next_question(data):
     for Room in ROOMS:
         if code == Room.code:
             # answer is track id in this case
-            socketio.emit('next_question', {'answer': Room.answers[current_question]['answer'],'current_question': current_question}, room=code)
+            socketio.emit('next_question', {'answer': Room.answers[current_question]['player'],'current_question': current_question, 'trackid': Room.answers[current_question]['info']}, room=code)
 
 @socketio.on('start_game')
 def start_game(data):
@@ -194,8 +197,8 @@ def get_top_track(data):
                     return
             # Send out top tracks to all players in the room
             Room.answers.append({
-                'answer': trackid,
-                'player': sid
+                'player': sid,
+                'info': trackid
             })
             socketio.emit("top_tracks_list", {'top_tracks_list': Room.answers}, room=code)
 
