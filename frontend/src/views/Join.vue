@@ -25,7 +25,7 @@ export default {
     },
     data() {
         return {
-            error: '',
+            error: this.$store.state.error,
         };
     },
     sockets: {
@@ -45,7 +45,7 @@ export default {
     computed: {
         code() {
             return this.$store.state.roomCode;
-        },
+        }
     },
 };
 </script>

@@ -13,17 +13,21 @@
                 :color="player.color"
             />
         </div>
+        <Button class="goHome" buttonLink="/" buttonText="Play again"/>
     </div>
 </template>
 
 <script>
 import PlayerAvatar from '../components/PlayerAvatar';
+import Button from '../components/Button';
+
 const axios = require('axios');
 
 export default {
     name: 'Results',
     components: {
         PlayerAvatar,
+        Button
     },
     data: function () {
         return {
@@ -33,14 +37,19 @@ export default {
     },
     mounted() {
         var self = this;
-        axios
-            .get(
-                `http://${process.env.VUE_APP_SERVER_URL}/api/${this.code}/results`
-            )
-            .then(function (response) {
-                console.log(response);
-                self.players = response.data.players;
-            });
+        var url;
+        if (
+            process.env.NODE_ENV == 'development' ||
+            process.env.NODE_ENV == 'dev'
+        ) {
+            url = `http://${process.env.VUE_APP_SERVER_URL}/api/${this.code}/results`;
+        } else {
+            url = `https://${process.env.VUE_APP_SERVER_URL}/api/${this.code}/results`;
+        }
+        axios.get(url).then(function (response) {
+            console.log(response);
+            self.players = response.data.players;
+        });
     },
     methods: {
         getPoints: function (player) {
@@ -75,5 +84,13 @@ export default {
     margin-left: 2rem;
     margin-right: 2rem;
     overflow-x: hidden;
+}
+.goHome {
+    position: fixed;
+    left: 50%;
+    bottom: 20px;
+    transform: translate(-50%, -50%);
+    margin: 0 auto;
+    z-index: 1;
 }
 </style>

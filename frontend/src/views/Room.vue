@@ -136,6 +136,22 @@ export default {
         not_a_room() {
             this.$router.push('/join');
         },
+        room_access(data) {
+            if (data.access == 'true') {
+                this.isRoomStarted();
+            } else {
+                this.$router.push('/join');
+            }
+        },
+        is_room_started(data) {
+            if (data.started == 'true') {
+                // do nothing
+            } else {
+                this.generateQR();
+                this.joinedRoom();
+                this.getTopTrack();
+            }
+        },
         next_question(data) {
             console.log('[Server] Incoming next question');
             if (this.current_question > 0) {
@@ -143,8 +159,7 @@ export default {
             }
             this.current_question += 1;
             this.setIframeUrl(data.trackid);
-
-            this.resetGuessBackgroundColor();
+            this.my_guess = '';
         },
         game_ended() {
             this.sendGuess();
@@ -189,6 +204,12 @@ export default {
             });
             this.$router.push('/');
         },
+        isRoomStarted() {
+            this.$socket.client.emit('is_room_started', {
+                code: this.code,
+                sid: localStorage.getItem('sid'),
+            });
+        },
         sendGuess() {
             console.log(this.my_guess);
             this.$socket.client.emit('guess', {
@@ -222,12 +243,6 @@ export default {
                 this.$socket.client.emit('game_ended', { code: this.code });
             }
         },
-        resetGuessBackgroundColor() {
-            var divs = document.getElementsByClassName('player-guess');
-            Array.from(divs).forEach((div) => {
-                div.style.backgroundColor = '';
-            });
-        },
         guess(player) {
             // this.resetGuessBackgroundColor();
             console.log('You guessed on', player.name);
@@ -252,10 +267,10 @@ export default {
             );
         },
         selected(id) {
-            if(id == this.my_guess) {
-                return true
+            if (id == this.my_guess) {
+                return true;
             }
-            return false
+            return false;
         },
         getTopTrack() {
             var self = this;
@@ -310,11 +325,15 @@ export default {
                     }
                 });
         },
+        connectToRoom() {
+            this.$socket.client.emit('connect_to_room', {
+                code: this.code,
+                sid: localStorage.getItem('sid'),
+            });
+        },
     },
     mounted: function () {
-        this.generateQR();
-        this.joinedRoom();
-        this.getTopTrack();
+        this.connectToRoom();
     },
 };
 </script>

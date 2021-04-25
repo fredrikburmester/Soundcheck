@@ -45,6 +45,7 @@ class Player:
     self.access_token = ''
     self.refresh_token = ''
     self.guesses = []
+    self.color = ''
 
     def toJSON(self):
         return json.dumps(self, default=lambda o: o.__dict__, 
@@ -57,6 +58,9 @@ class Room:
     self.players = [] # player object 
     self.answers = [] # every persons top track for example {player: sid, answer: trackid}
     self.results = [] # points for each person
+    self.started = False
+    self.ended = False
+    self.current_question = 0
 
 
 ROOMS = []
@@ -93,7 +97,8 @@ def results(code):
                     'name': player.name,
                     'id': player.id,
                     'points': player.points,
-                    'guesses': player.guesses
+                    'guesses': player.guesses,
+                    'color': player.color
                 })
             return Response(json.dumps({
                 'questions': Room.questions,
@@ -142,28 +147,135 @@ def guess(data):
         if Room.code == code:
             for player in Room.players:
                 if player.sid == player_sid: # looking for self
-                    player.guesses.append({
-                        'question': current_question,
-                        'guess': player_guess_sid,
-                        'correct_answer': Room.answers[current_question]['player'],
-                        'info': Room.answers[current_question]['info']
-                    })
-                    return
+                    if len(player.guesses) == current_question:
+                        player.guesses.append({
+                            'question': current_question,
+                            'guess': player_guess_sid,
+                            'correct_answer': Room.answers[current_question]['player'],
+                            'info': Room.answers[current_question]['info']
+                        })
+                        return
 
 @socketio.on('game_ended')
 def game_ended(data):
     code = data['code']
     global ROOMS 
+    for Room in ROOMS:
+        if Room.code == code: 
+            Room.ended = True
+            socketio.emit('game_ended', room=code)
+            return
 
-    socketio.emit('game_ended', room=code)
-                        
+@socketio.on('connect_to_room')
+def connect_to_room(data):
+    code = data['code']
+    sid = data['sid']
+    access_token = data['access_token']
+    refresh_token = data['refresh_token']
+
+    player_in_room = False
+    started = False
+
+    global ROOMS 
+    for Room in ROOMS:
+        if Room.code == code:
+            for player in Room.players:
+                if player.sid == sid: 
+                    player_in_room = True
+
+            if Room.started == False and Room.ended == False and not player_in_room:
+                # join first time
+
+                # sending get request and saving the response as response object
+                r = requests.get(url = "https://api.spotify.com/v1/me", headers={"Authorization": "Bearer " + access_token})
+                
+                # extracting data in json format
+                data = r.json()
+
+                # Have the player join the room
+                join_room(code)
+
+                # Create player object
+                new_player = Player()
+
+                new_player.name = str(data['display_name'])
+                new_player.id = str(data['id'])
+                new_player.points = 0
+                new_player.access_token = access_token
+                new_player.refresh_token = refresh_token
+                new_player.sid = sid
+                new_player.color = getColor()
+
+                
+                print(f"[{code}] {new_player.name} joined")
+
+                # If the room is empty, make the user host
+                if len(Room.players) == 0:
+                    new_player.host = True
+                    print(f"[{code}] Making {new_player.name} host")
+                
+                Room.players.append(new_player)
+
+                # create list of players array
+                list_of_players = []
+                for player in Room.players:
+                    list_of_players.append({
+                        'name': player.name,
+                        'id': player.id,
+                        'points': player.points,
+                        'access_token': player.access_token,
+                        'refresh_token': player.refresh_token,
+                        'color': player.color,
+                        'sid': player.sid,
+                        'host': player.host
+                    })
+
+                socketio.emit("join_room_first_time", {'players': list_of_players}, to=request.sid)
+                socketio.emit("update_players_list", {'players': list_of_players}, room=code)
+            elif Room.started == False and Room.ended == False and player_in_room:
+                list_of_players = []
+                for player in Room.players:
+                    list_of_players.append({
+                        'name': player.name,
+                        'id': player.id,
+                        'points': player.points,
+                        'access_token': player.access_token,
+                        'refresh_token': player.refresh_token,
+                        'color': player.color,
+                        'sid': player.sid,
+                        'host': player.host
+                    })
+
+                socketio.emit("reconnect_to_room", {'players': list_of_players}, to=request.sid)
+            elif Room.started == True and Room.ended == False and player_in_room:
+                # create list of players array
+                pass
+            elif Room.started == True and Room.ended == False and not player_in_room:
+                # no access
+                socketio.emit('no_access_to_room', to=request.sid)
+            elif Room.ended == True:
+                # go to result
+                socketio.emit('go_to_result', to=request.sid)
+
+        else:
+            socketio.emit('not_a_room', to=request.sid)
+            
+
+
+
+
+
+
+
 @socketio.on('next_question')
 def next_question(data):
     code = data['code']
     current_question = data['current_question']
+
     global ROOMS
     for Room in ROOMS:
         if code == Room.code:
+            Room.current_question = current_question
             # answer is track id in this case
             socketio.emit('next_question', {'answer': Room.answers[current_question]['player'],'current_question': current_question, 'trackid': Room.answers[current_question]['info']}, room=code)
 
@@ -176,6 +288,7 @@ def start_game(data):
     for Room in ROOMS:
         if Room.code == code:
             num_of_players = len(Room.players)
+            Room.started = True
 
     print(f"[{code}] Game has started!")
     print(f"[{code}] Numer of players: {num_of_players}")
@@ -190,17 +303,17 @@ def get_top_track(data):
     # Go thorugh each room and find the one sending the 'toptrack' emit
     for Room in ROOMS:
         if code == Room.code:
-            # When we find the room, double check if the player isn't just reconnecting
-            for pair in Room.answers:
-                if sid == pair['player']:
-                    socketio.emit("top_tracks_list", {'top_tracks_list': Room.answers}, room=code)
-                    return
+            # # When we find the room, double check if the player isn't just reconnecting
+            # for pair in Room.answers:
+            #     if sid == pair['player']:
+            #         socketio.emit("top_tracks_list", {'top_tracks_list': Room.answers}, room=code)
+            #         return
             # Send out top tracks to all players in the room
             Room.answers.append({
                 'player': sid,
                 'info': trackid
             })
-            socketio.emit("top_tracks_list", {'top_tracks_list': Room.answers}, room=code)
+            # socketio.emit("top_tracks_list", {'top_tracks_list': Room.answers}, room=code)
 
 
 @socketio.on('disconnect')
@@ -226,13 +339,6 @@ def disconnected():
 
                 socketio.emit("list_of_players", {'players': list_of_players}, room=Room.code)
                 return
-
-
-@socketio.on('close_room')
-def close_socket_room(data):
-    code = data['code']
-    socketio.emit("close_room", room=code)
-    close_socket_room(code)
 
 def close_socket_room(code):
     for Room in ROOMS:
@@ -260,6 +366,7 @@ def remove_player_from_room(data):
                     # Remove the player from the websocket room
                     if len(Room.players) == 0:
                         close_socket_room(code)
+                        return
                     else:
                         leave_room(code)
 
@@ -276,7 +383,7 @@ def remove_player_from_room(data):
                             'sid': player.sid,
                         })
 
-                    socketio.emit("list_of_players", {'players': list_of_players}, room=code)
+                    socketio.emit("update_players_list", {'players': list_of_players}, room=code)
                     return
         
 @socketio.on('createRoom')
@@ -292,7 +399,7 @@ def createRoom(data):
     reconnecting = False
     for _Room in ROOMS:
         for player in _Room.players:
-            if player.sid == sid and player.host == True:
+            if player.sid == sid and player.host == True and _Room.ended == False:
                 code = _Room.code
                 reconnecting = True
                 print(f"[Server] User {player.name} already has an active room: {code}. Rejoining.")
@@ -319,6 +426,10 @@ def joinRoom(data):
 
     for Room in ROOMS:
         if Room.code == code:
+            if Room.started == True:
+                socketio.emit("game_in_progress", to=request.sid)
+                return
+
             # sending get request and saving the response as response object
             r = requests.get(url = "https://api.spotify.com/v1/me", headers={"Authorization": "Bearer " + access_token})
             
@@ -381,7 +492,7 @@ def generate_access_token(code):
     global CLIENT_ID
     global CLIENT_SECRET
 
-    if ENV == 'production':
+    if ENV == 'production' or ENV == 'prod':
         data = {
             "grant_type": "authorization_code",
             "code": code,

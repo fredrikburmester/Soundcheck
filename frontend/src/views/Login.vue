@@ -34,7 +34,7 @@ export default {
     margin-top: 30vh;
 }
 p {
-    opacity: 70%;
+    color: rgba(255, 255, 255, 0.68);
     font-style: italic;
 }
 </style>

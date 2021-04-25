@@ -1,13 +1,21 @@
 <template>
     <div class="playerAvatar">
         <div>
-            <div :class="selected_ ? 'selected' : ''" :style="playerIconStyles" class="circle">
+            <div
+                :class="selected_ ? 'selected' : ''"
+                :style="playerIconStyles"
+                class="circle"
+            >
                 <p class="initials">{{ initials }}</p>
             </div>
         </div>
         <div class="name">
-            <p :class="selected_ ? 'selected-text' : ''" v-if="host">{{ playerName_ }} (Host)</p>
-            <p :class="selected_ ? 'selected-text' : ''" v-else>{{ playerName_ }}</p>
+            <p :class="selected_ ? 'selected-text' : ''" v-if="host">
+                {{ playerName_ }} (Host)
+            </p>
+            <p :class="selected_ ? 'selected-text' : ''" v-else>
+                {{ playerName_ }}
+            </p>
         </div>
     </div>
 </template>
@@ -37,17 +45,17 @@ export default {
             initials: this.playerName[0] + this.playerName[1],
             color_: this.color,
             host_: this.host,
-            selected_: this.selected
+            selected_: this.selected,
         };
     },
     computed: {
         playerIconStyles() {
-            console.log(this.selected_)
+            console.log(this.selected_);
             return {
                 'background-color': this.color,
-            }
-        }
-    }
+            };
+        },
+    },
 };
 </script>
 
@@ -82,9 +90,15 @@ export default {
     color: #00ff74;
 }
 @keyframes pulse {
-  0% {box-shadow: 0 0 0 4px #00ff74;}
-  50% {box-shadow: 0 0 0 4px black;}
-  100% {box-shadow: 0 0 0 4px #00ff74;}
+    0% {
+        box-shadow: 0 0 0 4px #00ff74;
+    }
+    50% {
+        box-shadow: 0 0 0 4px black;
+    }
+    100% {
+        box-shadow: 0 0 0 4px #00ff74;
+    }
 }
 .initials {
     font-family: 'Roboto', sans-serif;
