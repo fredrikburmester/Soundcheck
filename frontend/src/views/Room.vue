@@ -6,16 +6,17 @@
         <div v-if="started" :key="started">
             <ProgressBar class="progressbar" />
             <h2>Guess who this song belongs to!</h2>
-            <div class="list">
+            <div class="list" v-bind:key="my_guess">
                 <PlayerAvatar
-                    class="player-guess"
-                    :id="player.id"
+                    @click="guess(player)"
                     v-for="player in players"
+                    class="player-guess"
                     v-bind:key="player.id"
+                    :id="player.id"
                     :playerName="player.name"
                     :color="player.color"
                     :host="player.host"
-                    @click="guess(player)"
+                    :selected="selected(player.sid)"
                 />
             </div>
             <div v-if="host" class="next-song">
@@ -228,10 +229,10 @@ export default {
             });
         },
         guess(player) {
-            this.resetGuessBackgroundColor();
+            // this.resetGuessBackgroundColor();
             console.log('You guessed on', player.name);
             this.my_guess = player.sid;
-            document.getElementById(player.id).style.backgroundColor = 'green';
+            // document.getElementById(player.id).style.backgroundColor = 'green';
         },
         joinedRoom() {
             this.$socket.client.emit('joinRoom', {
@@ -249,6 +250,12 @@ export default {
                     self.qr = url;
                 }
             );
+        },
+        selected(id) {
+            if(id == this.my_guess) {
+                return true
+            }
+            return false
         },
         getTopTrack() {
             var self = this;
@@ -304,7 +311,6 @@ export default {
                 });
         },
     },
-    computed: {},
     mounted: function () {
         this.generateQR();
         this.joinedRoom();
