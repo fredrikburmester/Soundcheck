@@ -134,8 +134,9 @@ export default {
     },
     sockets: {
         not_a_room() {
+            console.log("room does not exist")
             this.$store.commit('updateError', 'Room does not exist!');
-            this.$router.push('/join');
+            // this.$router.push('/join');
         },
         no_access_to_room() {
             this.$store.commit('updateError', 'Game already started!');
@@ -151,7 +152,7 @@ export default {
             // Show page!
             this.found = true;
         },
-        reconnect_to_room(data) {
+        reconnect_to_lobby(data) {
             // Do things before page load
             this.players = data.players;
             this.generateQR();
@@ -159,6 +160,16 @@ export default {
 
             // Show page!
             this.found = true;
+        },
+        reconnect_to_game(data) {
+
+            // Do things before page load
+            this.players = data.players;
+            this.isHost();
+
+            // Show page!
+            this.found = true;
+
         },
         update_players_list(data) {
             this.players = data.players;
@@ -190,7 +201,6 @@ export default {
         connectToRoom() {
             var access_token = localStorage.getItem('access_token');
             var refresh_token = localStorage.getItem('refresh_token');
-            console.log(this.code)
             this.$socket.client.emit('connect_to_room', {
                 code: this.code,
                 sid: localStorage.getItem('sid'),
@@ -234,7 +244,6 @@ export default {
         },
         guess(player) {
             // this.resetGuessBackgroundColor();
-            console.log('You guessed on', player.name);
             this.my_guess = player.sid;
             // document.getElementById(player.id).style.backgroundColor = 'green';
         },
@@ -245,7 +254,6 @@ export default {
             return false;
         },
         sendGuess() {
-            console.log(this.my_guess);
             this.$socket.client.emit('guess', {
                 guess: this.my_guess,
                 sid: localStorage.getItem('sid'),
@@ -294,7 +302,6 @@ export default {
                                 if (response.data.items.length == 0) {
                                     self.leaveRoom();
                                 } else {
-                                    console.log(response.data.items[0]);
                                     var trackid = response.data.items[0].uri.split(
                                         ':'
                                     )[2];
@@ -306,7 +313,6 @@ export default {
                                 }
                             });
                     } else {
-                        console.log(response.data.items[0]);
                         var trackid = response.data.items[0].uri.split(':')[2];
                         self.$socket.client.emit('toptrack', {
                             trackid: trackid,
