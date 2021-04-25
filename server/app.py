@@ -178,6 +178,7 @@ def connect_to_room(data):
 
     global ROOMS 
     for Room in ROOMS:
+        print(Room.code)
         if Room.code == code:
             for player in Room.players:
                 if player.sid == sid: 
@@ -232,6 +233,7 @@ def connect_to_room(data):
 
                 socketio.emit("join_room_first_time", {'players': list_of_players}, to=request.sid)
                 socketio.emit("update_players_list", {'players': list_of_players}, room=code)
+                return
             elif Room.started == False and Room.ended == False and player_in_room:
                 list_of_players = []
                 for player in Room.players:
@@ -246,19 +248,36 @@ def connect_to_room(data):
                         'host': player.host
                     })
 
-                socketio.emit("reconnect_to_room", {'players': list_of_players}, to=request.sid)
+                socketio.emit("reconnect_to_lobby", {'players': list_of_players}, to=request.sid)
+                return
             elif Room.started == True and Room.ended == False and player_in_room:
                 # create list of players array
-                pass
+                list_of_players = []
+                for player in Room.players:
+                    list_of_players.append({
+                        'name': player.name,
+                        'id': player.id,
+                        'points': player.points,
+                        'access_token': player.access_token,
+                        'refresh_token': player.refresh_token,
+                        'color': player.color,
+                        'sid': player.sid,
+                        'host': player.host
+                    })
+
+                current_question = Room.current_question
+                socketio.emit("reconnect_to_game", {'players': list_of_players}, to=request.sid)
+                socketio.emit('next_question', {'answer': Room.answers[current_question]['player'],'current_question': current_question, 'trackid': Room.answers[current_question]['info']}, to=request.sid)
+                return
             elif Room.started == True and Room.ended == False and not player_in_room:
                 # no access
                 socketio.emit('no_access_to_room', to=request.sid)
+                return
             elif Room.ended == True:
                 # go to result
                 socketio.emit('go_to_result', to=request.sid)
-
-        else:
-            socketio.emit('not_a_room', to=request.sid)
+                return
+    socketio.emit('not_a_room', to=request.sid)
             
 
 
@@ -282,13 +301,14 @@ def next_question(data):
 @socketio.on('start_game')
 def start_game(data):
     code = data['code']
-    socketio.emit('start_game', room=code)
     num_of_players = 0
     global ROOMS
     for Room in ROOMS:
         if Room.code == code:
             num_of_players = len(Room.players)
             Room.started = True
+            random.shuffle(Room.answers)
+            socketio.emit('start_game', room=code)
 
     print(f"[{code}] Game has started!")
     print(f"[{code}] Numer of players: {num_of_players}")
@@ -404,6 +424,7 @@ def createRoom(data):
                 reconnecting = True
                 print(f"[Server] User {player.name} already has an active room: {code}. Rejoining.")
 
+    print(reconnecting)
     if not reconnecting: 
         ROOMS.append(Room(code))
         print(f"[Server] Creating room: {code}")
