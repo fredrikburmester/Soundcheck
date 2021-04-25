@@ -34,17 +34,19 @@ export default {
     mounted() {
         var self = this;
         axios
-            .get(`http://${process.env.VUE_APP_SERVER_URL}/api/${this.code}/results`)
+            .get(
+                `http://${process.env.VUE_APP_SERVER_URL}/api/${this.code}/results`
+            )
             .then(function (response) {
                 console.log(response);
                 self.players = response.data.players;
             });
     },
     methods: {
-        getPoints: function(player) {
-            return `${player.name} - ${player.points}`
-        }
-    }
+        getPoints: function (player) {
+            return `${player.name} - ${player.points}`;
+        },
+    },
 };
 </script>
 
