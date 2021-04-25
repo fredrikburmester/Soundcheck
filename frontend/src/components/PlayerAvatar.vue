@@ -1,14 +1,14 @@
 <template>
     <div class="playerAvatar">
-        <div :style="playerIconStyles" class="circle">
-            <p class="initials">
-                {{ initials }}
-            </p>
+        <div>
+            <div :class="selected_ ? 'selected' : ''" :style="playerIconStyles" class="circle">
+                <p class="initials">{{ initials }}</p>
+            </div>
         </div>
-        <p class="name" v-if="host">{{ playerName_ }} (Host)</p>
-        <p class="name" v-else>
-            {{ playerName_ }}
-        </p>
+        <div class="name">
+            <p :class="selected_ ? 'selected-text' : ''" v-if="host">{{ playerName_ }} (Host)</p>
+            <p :class="selected_ ? 'selected-text' : ''" v-else>{{ playerName_ }}</p>
+        </div>
     </div>
 </template>
 
@@ -27,6 +27,9 @@ export default {
             type: Boolean,
             default: false,
         },
+        selected: {
+            type: Boolean,
+        },
     },
     data() {
         return {
@@ -34,15 +37,17 @@ export default {
             initials: this.playerName[0] + this.playerName[1],
             color_: this.color,
             host_: this.host,
+            selected_: this.selected
         };
     },
     computed: {
         playerIconStyles() {
+            console.log(this.selected_)
             return {
                 'background-color': this.color,
-            };
-        },
-    },
+            }
+        }
+    }
 };
 </script>
 
@@ -50,25 +55,45 @@ export default {
 @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap');
 .playerAvatar {
     display: flex;
-    flex-direction: row;
     margin-bottom: 20px;
     overflow-x: hidden;
     flex-wrap: nowrap;
+    justify-content: start;
+    align-items: center;
 }
 .circle {
     border-radius: 50%;
     font-family: 'Roboto', sans-serif;
     width: 60px;
     height: 60px;
-    display: inline-table;
+    left: 0;
+    margin: 5px;
+    display: grid;
+    align-items: center;
+}
+.selected {
+    box-shadow: 0 0 0 3px #00ff74;
+    box-sizing: border-box;
+    animation-name: pulse;
+    animation-duration: 1s;
+    animation-iteration-count: infinite;
+}
+.selected-text {
+    color: #00ff74;
+}
+@keyframes pulse {
+  0% {box-shadow: 0 0 0 4px #00ff74;}
+  50% {box-shadow: 0 0 0 4px black;}
+  100% {box-shadow: 0 0 0 4px #00ff74;}
 }
 .initials {
-    margin-top: 20px;
     font-family: 'Roboto', sans-serif;
+    z-index: 1;
+    top: 0;
+    padding: 0;
 }
-.name {
-    margin-top: 20px;
-    margin-left: 20px;
+.name > p {
     white-space: nowrap;
+    margin-left: 10px;
 }
 </style>
