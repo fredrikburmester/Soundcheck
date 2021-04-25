@@ -50,7 +50,6 @@ export default {
     },
     computed: {
         playerIconStyles() {
-            console.log(this.selected_);
             return {
                 'background-color': this.color,
             };
