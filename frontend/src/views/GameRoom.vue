@@ -140,7 +140,7 @@ export default {
             host: false,
             code: this.$route.params.code,
             qr: '',
-            loading: false
+            loading: false,
         };
     },
     sockets: {
@@ -194,9 +194,9 @@ export default {
             if (this.current_question > 0) {
                 this.sendGuess();
             }
-            if (data.current_question == "-1") {
+            if (data.current_question == '-1') {
                 this.my_guess = '';
-                this.loading = true
+                this.loading = true;
             } else {
                 this.current_question += 1;
                 this.setIframeUrl(data.trackid);
@@ -253,7 +253,7 @@ export default {
         },
         sendNextQuestion() {
             // var self = this;
-            if (this.current_question < this.players.length) {
+            if (this.current_question === 0 || this.current_question != this.nr_of_questions) {
                 this.$socket.client.emit('next_question', {
                     current_question: this.current_question,
                     code: this.code,
@@ -263,9 +263,9 @@ export default {
                     current_question: this.current_question,
                     code: this.code,
                 });
-                
-                setTimeout(() => {  
-                    this.$socket.client.emit('game_ended', { code: this.code }); 
+
+                setTimeout(() => {
+                    this.$socket.client.emit('game_ended', { code: this.code });
                 }, 1000);
             }
         },
@@ -348,7 +348,12 @@ export default {
                                 }
                             });
                     } else {
-                        var trackid = response.data.items[0].uri.split(':')[2];
+                        var trackid = [];
+                        for (var i = 0; i < no_songs; i++) {
+                            trackid.push(
+                                response.data.items[i].uri.split(':')[2]
+                            );
+                        }
                         self.$socket.client.emit('toptrack', {
                             trackid: trackid,
                             sid: localStorage.getItem('sid'),
