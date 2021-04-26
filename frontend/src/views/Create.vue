@@ -90,9 +90,9 @@ export default {
     margin: 0.5rem 2rem 0.5rem 2rem;
 }
 @media only screen and (min-width: 900px) {
-    .settingsbox{
+    /* .settingsbox{
         margin-top: 15vh;
         overflow: hidden;
-    }
+    } */
 }
 </style>

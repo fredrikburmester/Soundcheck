@@ -19,11 +19,11 @@
                     />
                     <div v-if="selected == player.id">
                         <div v-for="guess in player.guesses" v-bind:key="guess">
-                           {{ guess }}
-                           {{guess.question}}
-                           {{guess.question}}
-                           {{guess.question}}
-                           {{guess.question}}
+                            <GuessIcon 
+                                :trackID="guess.info" 
+                                :guess="guess.guess" 
+                                :answer="guess.correct_answer"
+                            />
                         </div>
                     </div>
                 </div>
@@ -41,6 +41,7 @@
 import PlayerAvatar from '../components/PlayerAvatar';
 import Button from '../components/Button';
 import NotFound from '../components/NotFound';
+import GuessIcon from '../components/GuessIcon';
 
 const axios = require('axios');
 
@@ -50,6 +51,7 @@ export default {
         PlayerAvatar,
         Button,
         NotFound,
+        GuessIcon
     },
     data: function () {
         return {
@@ -90,14 +92,13 @@ export default {
                 /* eslint-enable */
                 
                 // Convert answer ids to names
-                for(let player of data.players) { // for all players
-
+                for(let player of data.players) { 
                     for(let guess of player.guesses) {
                         for(let player2 of data.players) {
-                            if(player2.id == guess.guess) {
+                            if(player2.sid == guess.guess) {
                                 guess.guess = player.name
                             }
-                            if(player2.id == guess.correct_answer) {
+                            if(player2.sid == guess.correct_answer) {
                                 guess.correct_answer = player.name
                             }
                         }

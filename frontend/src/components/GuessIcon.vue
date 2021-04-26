@@ -1,37 +1,62 @@
 <template>
     <div class="playerAvatar">
-        <div>
-            <img class="circle">
+        <div class="image">
+            <img :src="imgSrc" class="circle">
         </div>
         <div class="name">
-            Hej
+            Guess: {{guess}}<br>
+            Answer: {{answer}}
         </div>
     </div>
 </template>
 
 <script>
+const axios = require('axios');
+
 export default {
     name: 'PlayerAvatar',
     props: {
-        trackid: {
+        trackID: {
             type: String,
         },
         guess: {
             type: String,
-            default: '#FFF',
         },
         answer: {
-            type: Boolean,
-            default: false,
+            type: String,
+            default: '',
         }
     },
     data() {
         return {
-
+            trackID_: this.trackID,
+            imgSrc: '',
+            loaded: false
         };
     },
-    computed: {
-
+    methods: {
+        async getAlbumArt(uri) {
+            console.log("getting art")
+            var token = localStorage.getItem('access_token')
+            var self = this;
+            axios
+                .get(
+                    `https://api.spotify.com/v1/tracks/${uri}`,
+                    {
+                        headers: {
+                            Authorization: `Bearer ${token}`,
+                            Accept: 'application/json',
+                            'Content-Type': 'application/json',
+                        },
+                    }
+                )
+                .then(function (response) {
+                    self.imgSrc = response.data.album.images[0].url
+                })
+        }
+    },
+    mounted() {
+        this.getAlbumArt(this.trackID_)
     },
 };
 </script>
@@ -39,4 +64,22 @@ export default {
 <style scoped>
 @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap');
 
+.playerAvatar {
+display: flex;
+flex-direction: row;
+}
+.image {
+    width: 60px;
+    height: 60px;
+}
+.image img {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+
+}
+.name {
+    margin-left: 20px;
+    text-align: left;
+}
 </style>
