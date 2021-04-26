@@ -202,9 +202,6 @@ export default {
                 this.setIframeUrl(data.trackid);
                 this.my_guess = '';
             }
-            this.current_question += 1;
-            this.setIframeUrl(data.trackid);
-            this.my_guess = '';
             this.$store.commit('clearPlayersGuessed');
         },
         game_ended() {
