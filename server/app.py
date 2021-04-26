@@ -99,12 +99,14 @@ def results(code):
     result = table_Rooms.search(where('code') == code)
     if result:
         result = result[0]
+    
         return Response(json.dumps({
             'questions': result['questions'],
             'code': result['code'],
             'players': result['players'],
             'answers': result['answers'],
-            'results': result['results']
+            'results': result['results'],
+            'date': result['date']
         }), status=200, mimetype='application/json',headers={
             "Access-Control-Allow-Origin": "*"
         })
@@ -158,7 +160,15 @@ def game_ended(data):
     global ROOMS 
     for Room in ROOMS:
         if Room.code == code:
+
+            for player in Room.players:
+                for guess in player.guesses:
+                    print(guess)
+                    if guess['guess'] == guess['correct_answer']:
+                        player.points += 10
+
             players = []
+
             for player in Room.players:
                 players.append({
                     'id': player.id,
@@ -166,7 +176,8 @@ def game_ended(data):
                     'name': player.name,
                     'points': player.points,
                     'color': player.color,
-                    'guesses': player.guesses
+                    'guesses': player.guesses,
+                    'sid': player.sid
                 })
             db.table('Rooms').insert({
                 "code": code,
@@ -315,7 +326,10 @@ def next_question(data):
         if code == Room.code:
             Room.current_question = current_question
             # answer is track id in this case
-            socketio.emit('next_question', {'answer': Room.answers[current_question]['player'],'current_question': current_question, 'trackid': Room.answers[current_question]['info']}, room=code)
+            if current_question == len(Room.answers):
+                socketio.emit('next_question', {'current_question': "-1"}, room=code)
+            else:
+                socketio.emit('next_question', {'answer': Room.answers[current_question]['player'],'current_question': current_question, 'trackid': Room.answers[current_question]['info']}, room=code)
 
 @socketio.on('start_game')
 def start_game(data):
