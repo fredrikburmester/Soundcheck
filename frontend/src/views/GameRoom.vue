@@ -6,6 +6,12 @@
         <div v-if="started" :key="started">
             <ProgressBar class="progressbar" />
             <h2>Guess who this song belongs to!</h2>
+            <p>
+                Players guessed: {{ getPlayersGuessed }} / {{ players.length }}
+            </p>
+            <p>
+                Current_question: {{ current_question }} / {{ nr_of_questions }}
+            </p>
             <div class="list" v-bind:key="my_guess">
                 <PlayerAvatar
                     @click="guess(player)"
@@ -126,6 +132,7 @@ export default {
             showQR: false,
             status: 'Waiting for host to start the game...',
             found: false,
+            nr_of_questions: 0,
             my_guess: '',
             host: false,
             code: this.$route.params.code,
@@ -134,7 +141,7 @@ export default {
     },
     sockets: {
         not_a_room() {
-            console.log("room does not exist")
+            console.log('room does not exist');
             this.$store.commit('updateError', 'Room does not exist!');
             this.$router.push('/join');
         },
@@ -162,20 +169,22 @@ export default {
             this.found = true;
         },
         reconnect_to_game(data) {
-
             // Do things before page load
             this.players = data.players;
             this.isHost();
 
             // Show page!
             this.found = true;
-
         },
         update_players_list(data) {
             this.players = data.players;
         },
         go_to_result() {
-            this.$router.push(`/${this.code}/results`)
+            this.$router.push(`/${this.code}/results`);
+        },
+        players_guess(data) {
+            //mark player that guessed
+            this.$store.commit('updatePlayersGuessed', data['sid']);
         },
         next_question(data) {
             if (this.current_question > 0) {
@@ -184,12 +193,14 @@ export default {
             this.current_question += 1;
             this.setIframeUrl(data.trackid);
             this.my_guess = '';
+            this.$store.commit('clearPlayersGuessed');
         },
         game_ended() {
             this.sendGuess();
             this.$router.push(`/${this.code}/results`);
         },
-        start_game() {
+        start_game(data) {
+            this.nr_of_questions = data.nr_of_questions;
             this.started = true;
         },
     },
@@ -246,7 +257,12 @@ export default {
             // this.resetGuessBackgroundColor();
             this.my_guess = player.sid;
             // document.getElementById(player.id).style.backgroundColor = 'green';
+            this.$socket.client.emit('player_guess', {
+                sid: localStorage.getItem('sid'),
+                code: this.code,
+            });
         },
+
         selected(id) {
             if (id == this.my_guess) {
                 return true;
@@ -321,6 +337,11 @@ export default {
                         });
                     }
                 });
+        },
+    },
+    computed: {
+        getPlayersGuessed() {
+            return this.$store.state.players_guessed.length;
         },
     },
     mounted: function () {
