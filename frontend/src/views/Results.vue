@@ -5,22 +5,29 @@
         </div>
         <div v-if="state == 'found'">
             <h1 class="code">{{ code }}</h1>
+            <p class="date">{{ date }}</p>
             <div class="hr"></div>
             <h3 class="title">Results</h3>
             <div class="list">
-                <PlayerAvatar
-                    class="player-guess"
-                    :id="player.id"
-                    v-for="player in players"
-                    v-bind:key="player.id"
-                    :playerName="getPoints(player)"
-                    :color="player.color"
-                />
+                <div :class="selected == player.id ? 'expand player-block' : 'player-block'" v-for="player in players" v-bind:key="player.id">
+                    <PlayerAvatar
+                        class="player-guess"
+                        :id="player.id"
+                        :playerName="getPoints(player)"
+                        :color="player.color"
+                        @click="selectPlayer(player)"
+                    />
+                    <div v-if="selected == player.id">
+                        <div v-for="guess in player.guesses" v-bind:key="guess">
+                           Hej
+                        </div>
+                    </div>
+                </div>
             </div>
-            <Button class="goHome" buttonLink="/" buttonText="Play again"/>
+            <Button class="goHome" buttonLink="/" buttonText="Play again" />
         </div>
         <div v-if="state == 'not-found'">
-            <NotFound /> 
+            <NotFound />
         </div>
     </div>
 </template>
@@ -37,13 +44,15 @@ export default {
     components: {
         PlayerAvatar,
         Button,
-        NotFound
+        NotFound,
     },
     data: function () {
         return {
             code: this.$route.params.code,
             players: null,
-            state: 'loading'
+            state: 'loading',
+            date: null,
+            selected: ''
         };
     },
     mounted() {
@@ -57,19 +66,46 @@ export default {
         } else {
             url = `https://${process.env.VUE_APP_SERVER_URL}/api/${this.code}/results`;
         }
-        axios.get(url).then(function (response) {
-            console.log(response);
-            self.state = 'found'
-            self.players = response.data.players;
-        }).catch(function(error) {
-            console.log(error)
-            self.state = 'not-found'
-        });
+        axios
+            .get(url)
+            .then(function (response) {
+                console.log(response);
+                var data = response.data;
+                self.state = 'found';
+                self.players = data.players;
+                var date = new Date(data.date * 1000);
+                var date_string = date.toLocaleDateString('se');
+                var hour = date.getHours();
+                var minute = date.getMinutes();
+                if(minute < 10) minute = '0' + minute.toString()
+                // var second = date.getSeconds()
+
+                /* eslint-disable */
+                self.date = `Played on ${date_string} @ ${hour}:${minute}`;
+                /* eslint-enable */
+                
+                // Convert answer ids to names
+                for(let answer of data.answers) {
+                    for(let player of data.players) {
+                        if(answer.player == player.sid) {
+                            answer.player = player.name
+                        }
+                    }
+                }
+            })
+            .catch(function (error) {
+                console.log(error);
+                self.state = 'not-found';
+            });
     },
     methods: {
         getPoints: function (player) {
-            return `${player.name} - ${player.points}`;
+            return `${player.name}: ${player.points} points`;
         },
+        selectPlayer(player) {
+            console.log("select player")
+            this.selected = player.id
+        }
     },
 };
 </script>
@@ -79,6 +115,12 @@ export default {
     text-align: left;
     margin-left: 2rem;
     margin-bottom: 0;
+}
+.date {
+    text-align: left;
+    margin-left: 2rem;
+    margin-bottom: 0;
+    color: gray;
 }
 .hr {
     height: 2px;
@@ -107,5 +149,14 @@ export default {
     transform: translate(-50%, -50%);
     margin: 0 auto;
     z-index: 1;
+}
+.player-block {
+    height: 90px;
+    transition: 1s;
+    overflow: hidden;
+}
+.expand {
+    transition: 1s;
+    height: 200px;
 }
 </style>
