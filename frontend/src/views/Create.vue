@@ -1,26 +1,26 @@
 <template>
     <div class="create">
-        <h1>Settings</h1>
-        
-        <h3>Select Time Range</h3>
-        <Button @click="onTimeChange(`4 weeks`)"  buttonText="last 4 weeks"></Button>
-        <Button @click="onTimeChange(`6 months`)" buttonText="last 6 months"></Button>
-        <Button @click="onTimeChange(`More than a year`)" buttonText="more than a year"></Button>
-        <p>Time range: {{time_range}}</p>
-        
-        <h3>Number of songs per player</h3>
-        <SettingsButton @clicked="onClickChild" :marked="1==no_songs" v-bind:key="no_songs" buttonText="1"/>
-        <SettingsButton @clicked="onClickChild" :marked="2==no_songs" v-bind:key="no_songs" buttonText="2"/>
-        <SettingsButton @clicked="onClickChild" :marked="3==no_songs" v-bind:key="no_songs" buttonText="3"/>
-        <SettingsButton @clicked="onClickChild" :marked="4==no_songs" v-bind:key="no_songs" buttonText="4"/>
-        
-        <h3> Include Top Genre </h3>
-        <ToggleSwitch @clicked="onToggleChild"/>
-        <div class="back">
+        <h1 class="head">Settings</h1>
+        <div class="hr"></div>
+        <div class="settingsbox">
+            <h3>Select Time Range</h3>
+            <Button @click="onTimeChange(`4 weeks`)"  buttonText="last 4 weeks"></Button>
+            <Button @click="onTimeChange(`6 months`)" buttonText="last 6 months"></Button>
+            <Button @click="onTimeChange(`More than a year`)" buttonText="more than a year"></Button>
+            <p>Time range: {{time_range}}</p>
+            
+            <h3>Number of songs per player</h3>
+            <SettingsButton @clicked="onClickChild" :marked="1==no_songs" v-bind:key="no_songs" buttonText="1"/>
+            <SettingsButton @clicked="onClickChild" :marked="2==no_songs" v-bind:key="no_songs" buttonText="2"/>
+            <SettingsButton @clicked="onClickChild" :marked="3==no_songs" v-bind:key="no_songs" buttonText="3"/>
+            <SettingsButton @clicked="onClickChild" :marked="4==no_songs" v-bind:key="no_songs" buttonText="4"/>
+            
+            <h3> Include Top Genre </h3>
+            <ToggleSwitch @clicked="onToggleChild"/>    
+            <br>
             <Button v-on:click="createRoom" buttonText="Start Game"></Button>
             <Button buttonLink="/" buttonText="Back" color="#CD1A2B"></Button>
         </div>
-        
     </div>
 </template>
 
@@ -71,14 +71,28 @@ export default {
 </script>
 
 <style scoped>
+.head{
+    display: inline-block;
+ }
 .create {
-    margin-top: 10vh;
+    margin-top: 3vh;
 }
-.back {
-    position: fixed;
-    left: 50%;
-    bottom: 20px;
-    transform: translate(-50%, -50%);
-    margin: 0 auto;
+
+.settingsbox{
+    height: calc(100vh - 118px);
+    overflow-y: scroll;
+    overflow-x: hidden;
+    
+}
+.hr {
+    height: 2px;
+    background-color: rgb(63, 63, 63);
+    margin: 0.5rem 2rem 0.5rem 2rem;
+}
+@media only screen and (min-width: 900px) {
+    .settingsbox{
+        margin-top: 15vh;
+        overflow: hidden;
+    }
 }
 </style>

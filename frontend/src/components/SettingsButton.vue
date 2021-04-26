@@ -53,6 +53,7 @@ export default {
 @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap');
 
 .settingbutton{
+    position: relative;
     display: inline-block;
     font-size: 15px;
     font-family: 'Roboto', sans-serif;
