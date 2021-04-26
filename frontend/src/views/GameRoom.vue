@@ -1,5 +1,8 @@
 <template>
     <div v-if="found" :key="found" class="gameroom">
+        <div class="loading" v-if="loading">
+            <p>Loading...</p>
+        </div>
         <div v-if="showQR" class="bigQR" @click="showQR = false">
             <img :src="qr" @click="showQR = false" />
         </div>
@@ -130,11 +133,12 @@ export default {
             host: false,
             code: this.$route.params.code,
             qr: '',
+            loading: false
         };
     },
     sockets: {
         not_a_room() {
-            console.log("room does not exist")
+            console.log('room does not exist');
             this.$store.commit('updateError', 'Room does not exist!');
             this.$router.push(`/${this.code}/notfound`);
         },
@@ -162,28 +166,31 @@ export default {
             this.found = true;
         },
         reconnect_to_game(data) {
-
             // Do things before page load
             this.players = data.players;
             this.isHost();
 
             // Show page!
             this.found = true;
-
         },
         update_players_list(data) {
             this.players = data.players;
         },
         go_to_result() {
-            this.$router.push(`/${this.code}/results`)
+            this.$router.push(`/${this.code}/results`);
         },
         next_question(data) {
             if (this.current_question > 0) {
                 this.sendGuess();
             }
-            this.current_question += 1;
-            this.setIframeUrl(data.trackid);
-            this.my_guess = '';
+            if (data.current_question == "-1") {
+                this.my_guess = '';
+                this.loading = true
+            } else {
+                this.current_question += 1;
+                this.setIframeUrl(data.trackid);
+                this.my_guess = '';
+            }
         },
         game_ended() {
             this.sendGuess();
@@ -239,7 +246,14 @@ export default {
                     code: this.code,
                 });
             } else {
-                this.$socket.client.emit('game_ended', { code: this.code });
+                this.$socket.client.emit('next_question', {
+                    current_question: this.current_question,
+                    code: this.code,
+                });
+                
+                setTimeout(() => {  
+                    this.$socket.client.emit('game_ended', { code: this.code }); 
+                }, 1000);
             }
         },
         guess(player) {
@@ -438,6 +452,17 @@ export default {
     bottom: 170px;
     left: 50%;
     transform: translateX(-50%);
+}
+.loading {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    width: 100vw;
+    background-color: rgba(0, 0, 0, 0.832);
+    display: grid;
+    place-items: center;
+    z-index: 2;
 }
 @media only screen and (min-width: 600px) {
     .bigQR > img {
