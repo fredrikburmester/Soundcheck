@@ -19,7 +19,11 @@
                     />
                     <div v-if="selected == player.id">
                         <div v-for="guess in player.guesses" v-bind:key="guess">
-                           Hej
+                           {{ guess }}
+                           {{guess.question}}
+                           {{guess.question}}
+                           {{guess.question}}
+                           {{guess.question}}
                         </div>
                     </div>
                 </div>
@@ -85,10 +89,16 @@ export default {
                 /* eslint-enable */
                 
                 // Convert answer ids to names
-                for(let answer of data.answers) {
-                    for(let player of data.players) {
-                        if(answer.player == player.sid) {
-                            answer.player = player.name
+                for(let player of data.players) { // for all players
+
+                    for(let guess of player.guesses) {
+                        for(let player2 of data.players) {
+                            if(player2.id == guess.guess) {
+                                guess.guess = player.name
+                            }
+                            if(player2.id == guess.correct_answer) {
+                                guess.correct_answer = player.name
+                            }
                         }
                     }
                 }
