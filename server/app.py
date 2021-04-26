@@ -120,10 +120,6 @@ def check_token(data):
     access_token, refresh_token = generate_access_token(data['code'])
     socketio.emit("access_token", {'access_token': access_token, 'refresh_token': refresh_token, 'sid': request.sid}, to=request.sid)
 
-# @socketio.on('connect')
-# def connected():
-#     socketio.emit('connect')
-
 @socketio.on('isRoom')
 def isRoom(data):
     global ROOMS
@@ -235,6 +231,7 @@ def connect_to_room(data):
                 socketio.emit("update_players_list", {'players': list_of_players}, room=code)
                 return
             elif Room.started == False and Room.ended == False and player_in_room:
+                # reconnect to lobby, game not started
                 list_of_players = []
                 for player in Room.players:
                     list_of_players.append({
@@ -251,6 +248,8 @@ def connect_to_room(data):
                 socketio.emit("reconnect_to_lobby", {'players': list_of_players}, to=request.sid)
                 return
             elif Room.started == True and Room.ended == False and player_in_room:
+                # reconnect to ongoing game
+                
                 # create list of players array
                 list_of_players = []
                 for player in Room.players:
