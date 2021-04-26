@@ -1,11 +1,11 @@
 <template>
     <div class="playerAvatar">
         <div class="image">
-            <img :src="imgSrc" class="circle">
+            <img :src="imgSrc" class="circle" />
         </div>
         <div class="name">
-            Guess: {{guess}}<br>
-            Answer: {{answer}}
+            Guess: {{ guess }}<br />
+            Answer: {{ answer }}
         </div>
     </div>
 </template>
@@ -25,38 +25,35 @@ export default {
         answer: {
             type: String,
             default: '',
-        }
+        },
     },
     data() {
         return {
             trackID_: this.trackID,
             imgSrc: '',
-            loaded: false
+            loaded: false,
         };
     },
     methods: {
         async getAlbumArt(uri) {
-            console.log("getting art")
-            var token = localStorage.getItem('access_token')
+            console.log('getting art');
+            var token = localStorage.getItem('access_token');
             var self = this;
             axios
-                .get(
-                    `https://api.spotify.com/v1/tracks/${uri}`,
-                    {
-                        headers: {
-                            Authorization: `Bearer ${token}`,
-                            Accept: 'application/json',
-                            'Content-Type': 'application/json',
-                        },
-                    }
-                )
-                .then(function (response) {
-                    self.imgSrc = response.data.album.images[0].url
+                .get(`https://api.spotify.com/v1/tracks/${uri}`, {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                        Accept: 'application/json',
+                        'Content-Type': 'application/json',
+                    },
                 })
-        }
+                .then(function (response) {
+                    self.imgSrc = response.data.album.images[0].url;
+                });
+        },
     },
     mounted() {
-        this.getAlbumArt(this.trackID_)
+        this.getAlbumArt(this.trackID_);
     },
 };
 </script>
@@ -65,8 +62,8 @@ export default {
 @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap');
 
 .playerAvatar {
-display: flex;
-flex-direction: row;
+    display: flex;
+    flex-direction: row;
 }
 .image {
     width: 60px;
@@ -76,7 +73,6 @@ flex-direction: row;
     width: 60px;
     height: 60px;
     border-radius: 50%;
-
 }
 .name {
     margin-left: 20px;
