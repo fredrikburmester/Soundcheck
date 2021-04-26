@@ -13,7 +13,7 @@
                 :color="player.color"
             />
         </div>
-        <Button class="goHome" buttonLink="/" buttonText="Play again"/>
+        <Button class="goHome" buttonLink="/" buttonText="Play again" />
     </div>
 </template>
 
@@ -27,7 +27,7 @@ export default {
     name: 'Results',
     components: {
         PlayerAvatar,
-        Button
+        Button,
     },
     data: function () {
         return {

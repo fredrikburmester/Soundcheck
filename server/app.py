@@ -58,6 +58,7 @@ class Room:
     self.players = [] # player object 
     self.answers = [] # every persons top track for example {player: sid, answer: trackid}
     self.results = [] # points for each person
+    self.players_guessed = []
     self.started = False
     self.ended = False
     self.current_question = 0
@@ -151,6 +152,13 @@ def guess(data):
                             'info': Room.answers[current_question]['info']
                         })
                         return
+
+#Used to calculate show how many players have guessed
+@socketio.on('player_guess')
+def player_guess(data):
+    sid = data['sid']
+    socketio.emit('players_guess', {'sid': sid}, room=data['code'])
+
 
 @socketio.on('game_ended')
 def game_ended(data):
@@ -305,12 +313,13 @@ def start_game(data):
     for Room in ROOMS:
         if Room.code == code:
             num_of_players = len(Room.players)
+            nr_of_questions = len(Room.answers)
             Room.started = True
             random.shuffle(Room.answers)
-            socketio.emit('start_game', room=code)
+            socketio.emit('start_game', {'nr_of_questions': nr_of_questions}, room=code)
 
     print(f"[{code}] Game has started!")
-    print(f"[{code}] Numer of players: {num_of_players}")
+    print(f"[{code}] Number of players: {num_of_players}")
 
 @socketio.on('toptrack')
 def get_top_track(data):

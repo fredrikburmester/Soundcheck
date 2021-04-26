@@ -45,7 +45,7 @@ export default {
     computed: {
         code() {
             return this.$store.state.roomCode;
-        }
+        },
     },
 };
 </script>
