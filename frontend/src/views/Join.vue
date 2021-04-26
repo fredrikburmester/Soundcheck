@@ -33,6 +33,7 @@ export default {
             if (data.isRoom == 'true' || data.isRoom == true) {
                 this.$router.push(this.code);
             } else {
+                this.$store.commit('updateError', 'Room does not exist!');
                 this.error = 'Room does not exist!';
             }
         },
@@ -45,7 +46,7 @@ export default {
     computed: {
         code() {
             return this.$store.state.roomCode;
-        }
+        },
     },
 };
 </script>
