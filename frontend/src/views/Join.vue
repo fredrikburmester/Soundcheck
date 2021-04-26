@@ -33,7 +33,7 @@ export default {
             if (data.isRoom == 'true' || data.isRoom == true) {
                 this.$router.push(this.code);
             } else {
-                this.error = 'Room does not exist';
+                this.error = 'Room does not exist!';
             }
         },
     },
