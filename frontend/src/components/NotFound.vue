@@ -8,16 +8,15 @@
     </div>
 </template>
 <script>
-import Button from '../components/Button'
+import Button from '../components/Button';
 export default {
     name: 'NotFound',
     components: {
-        Button
-    }
-}
+        Button,
+    },
+};
 </script>
 <style scoped>
-
 .page {
     height: 100vh;
     width: 100vw;
