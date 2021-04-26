@@ -306,9 +306,12 @@ export default {
         getTopTrack() {
             var self = this;
             var token = localStorage.getItem('access_token');
+            var time_range = self.$store.state.time_range;
+            var no_songs = self.$store.state.no_songs;
+
             axios
                 .get(
-                    'https://api.spotify.com/v1/me/top/tracks?time_range=short_term&limit=1',
+                    `https://api.spotify.com/v1/me/top/tracks?time_range=${time_range}&limit=${no_songs}`,
                     {
                         headers: {
                             Authorization: `Bearer ${token}`,
@@ -321,7 +324,7 @@ export default {
                     if (response.data.items.length == 0) {
                         axios
                             .get(
-                                'https://api.spotify.com/v1/me/top/tracks?time_range=medium_term&limit=1',
+                                `https://api.spotify.com/v1/me/top/tracks?time_range=medium_term&limit=${no_songs}`,
                                 {
                                     headers: {
                                         Authorization: `Bearer ${token}`,

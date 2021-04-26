@@ -6,7 +6,7 @@ export default createStore({
         error: '',
         players_guessed: [],
         genre: false,
-        no_songs: '',
+        no_songs: '1',
         time_range: 'short_term'
     },
     mutations: {
