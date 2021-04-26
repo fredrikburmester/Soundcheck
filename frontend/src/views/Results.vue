@@ -1,25 +1,34 @@
 <template>
-    <div>
-        <h1 class="code">{{ code }}</h1>
-        <div class="hr"></div>
-        <h3 class="title">Results</h3>
-        <div class="list">
-            <PlayerAvatar
-                class="player-guess"
-                :id="player.id"
-                v-for="player in players"
-                v-bind:key="player.id"
-                :playerName="getPoints(player)"
-                :color="player.color"
-            />
+    <div v-bind:key="state">
+        <div v-if="state == 'loading'">
+            <p>Loading...</p>
         </div>
-        <Button class="goHome" buttonLink="/" buttonText="Play again"/>
+        <div v-if="state == 'found'">
+            <h1 class="code">{{ code }}</h1>
+            <div class="hr"></div>
+            <h3 class="title">Results</h3>
+            <div class="list">
+                <PlayerAvatar
+                    class="player-guess"
+                    :id="player.id"
+                    v-for="player in players"
+                    v-bind:key="player.id"
+                    :playerName="getPoints(player)"
+                    :color="player.color"
+                />
+            </div>
+            <Button class="goHome" buttonLink="/" buttonText="Play again"/>
+        </div>
+        <div v-if="state == 'not-found'">
+            <NotFound /> 
+        </div>
     </div>
 </template>
 
 <script>
 import PlayerAvatar from '../components/PlayerAvatar';
 import Button from '../components/Button';
+import NotFound from '../components/NotFound';
 
 const axios = require('axios');
 
@@ -27,12 +36,14 @@ export default {
     name: 'Results',
     components: {
         PlayerAvatar,
-        Button
+        Button,
+        NotFound
     },
     data: function () {
         return {
             code: this.$route.params.code,
             players: null,
+            state: 'loading'
         };
     },
     mounted() {
@@ -48,7 +59,11 @@ export default {
         }
         axios.get(url).then(function (response) {
             console.log(response);
+            self.state = 'found'
             self.players = response.data.players;
+        }).catch(function(error) {
+            console.log(error)
+            self.state = 'not-found'
         });
     },
     methods: {

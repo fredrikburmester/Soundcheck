@@ -14,6 +14,17 @@ import requests
 import base64
 import sys
 
+
+# Database
+from tinydb import TinyDB, Query, where
+from datetime import date
+import time
+
+db = TinyDB('db.json')
+# Rooms = db.table("Rooms")
+# Rooms.insert({'code':'FDSA'})
+
+
 # For Spotify
 CLIENT_SECRET = "5c04ecc65221460587462cd9dabd9eae"
 CLIENT_ID = "bad02ecfaf4046638a1daa7f60cbe42b"
@@ -34,6 +45,7 @@ if ENV == 'production' or ENV == 'prod':
 else:
     print("Running development mode")
     socketio = SocketIO(app, cors_allowed_origins='*')
+
 
 #### DATABASE ####
 class Player:
@@ -83,32 +95,20 @@ COLORS = [
 @app.route('/api/<code>/results', methods=['GET'])
 def results(code):
     global ROOMS
-    for Room in ROOMS:
-        if Room.code == code:
-            for player in Room.players:
-                player.points = 0;
-                for guess in player.guesses:
-                    if guess['correct_answer'] == guess['guess']:
-                        player.points += 10
-            players = []
-            for player in Room.players:
-                players.append({
-                    'host': player.host,
-                    'name': player.name,
-                    'id': player.id,
-                    'points': player.points,
-                    'guesses': player.guesses,
-                    'color': player.color
-                })
-            return Response(json.dumps({
-                'questions': Room.questions,
-                'code': Room.code,
-                'players': players,
-                'answers': Room.answers,
-                'results': Room.results
-            }), status=200, mimetype='application/json',headers={
-                "Access-Control-Allow-Origin": "*"
-            })
+    table_Rooms = db.table("Rooms")
+    result = table_Rooms.search(where('code') == code)
+    if result:
+        result = result[0]
+        return Response(json.dumps({
+            'questions': result['questions'],
+            'code': result['code'],
+            'players': result['players'],
+            'answers': result['answers'],
+            'results': result['results']
+        }), status=200, mimetype='application/json',headers={
+            "Access-Control-Allow-Origin": "*"
+        })
+
     return Response(status=404, headers={
         "Access-Control-Allow-Origin": "*"
     })
@@ -157,7 +157,27 @@ def game_ended(data):
     code = data['code']
     global ROOMS 
     for Room in ROOMS:
-        if Room.code == code: 
+        if Room.code == code:
+            players = []
+            for player in Room.players:
+                players.append({
+                    'id': player.id,
+                    'host': player.host,
+                    'name': player.name,
+                    'points': player.points,
+                    'color': player.color,
+                    'guesses': player.guesses
+                })
+            db.table('Rooms').insert({
+                "code": code,
+                "questions": Room.questions,
+                "answers": Room.answers,     
+                "results": Room.results, 
+                "started": Room.started,
+                "ended": Room.ended, 
+                "players": players,
+                "date": str(time.time()),
+            })
             Room.ended = True
             socketio.emit('game_ended', room=code)
             return
@@ -570,10 +590,16 @@ def generateId():
     if code in ['NGGR','FUCK','SHIT','CUNT','DICK','NSFW','BICH','HORE','HORA','KUKA','6969','6666','8008']:
         code = generateId()
 
-    global ROOMS
-    for Room in ROOMS:
-        if Room.code == code:
-            code = generateId()
+    table_Rooms = db.table("Rooms")
+    result = table_Rooms.search(where('code') == code)
+    if result:
+        print(f"[Server] Room code {code} in use, creating new")
+        code = generateId()
+        
+    # global ROOMS
+    # for Room in ROOMS:
+    #     if Room.code == code:
+    #         code = generateId()
 
     return code
 
