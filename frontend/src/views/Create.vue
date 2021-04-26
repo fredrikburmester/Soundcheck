@@ -79,7 +79,7 @@ export default {
 }
 
 .settingsbox{
-    height: calc(100vh - 118px);
+    height: calc(100vh - 190px);
     overflow-y: scroll;
     overflow-x: hidden;
     

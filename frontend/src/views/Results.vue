@@ -33,6 +33,7 @@
         <div v-if="state == 'not-found'">
             <NotFound />
         </div>
+        <Button class="goHome" buttonLink="/" buttonText="Play again" />
     </div>
 </template>
 

@@ -1,8 +1,0 @@
-# created by virtualenv automatically
-./bin
-./lib
-./pyvenv.cfg
-./.Python
-*.xml
-*.iml
-
