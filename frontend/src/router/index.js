@@ -7,6 +7,7 @@ import Create from '../views/Create.vue';
 import GameRoom from '../views/GameRoom.vue';
 import Results from '../views/Results.vue';
 import LoginCallback from '../views/LoginCallback.vue';
+import NotFound from '../components/NotFound.vue';
 
 const axios = require('axios');
 
@@ -129,6 +130,11 @@ const routes = [
                 });
         },
     },
+    {
+        path: '/:pathMatch(.*)*',
+        name: 'NotFound',
+        component: NotFound,
+    }
 ];
 
 const router = createRouter({

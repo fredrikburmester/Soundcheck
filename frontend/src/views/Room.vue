@@ -134,13 +134,13 @@ export default {
     },
     sockets: {
         not_a_room() {
-            this.$router.push('/join');
+            // this.$router.push('/404');
         },
         room_access(data) {
             if (data.access == 'true') {
                 this.isRoomStarted();
             } else {
-                this.$router.push('/join');
+                // this.$router.push('/join');
             }
         },
         is_room_started(data) {

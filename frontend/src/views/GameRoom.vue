@@ -143,7 +143,7 @@ export default {
         not_a_room() {
             console.log('room does not exist');
             this.$store.commit('updateError', 'Room does not exist!');
-            this.$router.push('/join');
+            this.$router.push(`/${this.code}/notfound`);
         },
         no_access_to_room() {
             this.$store.commit('updateError', 'Game already started!');
