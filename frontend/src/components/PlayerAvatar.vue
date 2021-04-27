@@ -10,12 +10,12 @@
             </div>
         </div>
         <div class="name">
-            <p :class="selected_ ? 'selected-text' : ''" v-if="host">
-                {{ playerName_ }} (Host)
-            </p>
-            <p :class="selected_ ? 'selected-text' : ''" v-else>
+            <p :class="selected_ ? 'selected-text' : ''">
                 {{ playerName_ }}
             </p>
+        </div>
+        <div class="star" v-if="host">
+            ⭐️
         </div>
     </div>
 </template>
@@ -62,7 +62,7 @@ export default {
 @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap');
 .playerAvatar {
     display: flex;
-    margin-bottom: 20px;
+    margin-bottom: 10px;
     overflow-x: hidden;
     flex-wrap: nowrap;
     justify-content: start;
@@ -108,5 +108,11 @@ export default {
 .name > p {
     white-space: nowrap;
     margin-left: 10px;
+}
+.star {
+    position: absolute;
+    margin-top: 35px;
+    margin-left: 45px;
+    font-size: 20px;
 }
 </style>
