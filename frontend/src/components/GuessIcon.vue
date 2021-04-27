@@ -67,6 +67,7 @@ export default {
 .playerAvatar {
 display: flex;
 flex-direction: row;
+margin-bottom: 10px;
 }
 .image {
     width: 60px;
