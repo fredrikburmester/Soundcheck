@@ -47,7 +47,7 @@
             <h3>Include Top Genre</h3>
             <ToggleSwitch @clicked="onToggleChild" />
             <br />
-            <Button v-on:click="createRoom" buttonText="Start Game"></Button>
+            <Button v-on:click="createRoom" buttonText="Create Room"></Button>
             <Button buttonLink="/" buttonText="Back" color="#CD1A2B"></Button>
         </div>
     </div>
@@ -80,6 +80,8 @@ export default {
         createRoom: function () {
             this.$socket.client.emit('createRoom', {
                 sid: localStorage.getItem('sid'),
+                time_range: this.$store.state.time_range,
+                no_songs: this.$store.state.no_songs,
             });
         },
         onClickChild(value) {

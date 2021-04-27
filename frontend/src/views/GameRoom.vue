@@ -156,6 +156,8 @@ export default {
         join_room_first_time(data) {
             // Do things before page load
             this.players = data.players;
+            this.$store.commit('update_time_range', data.settings[0])
+            this.$store.commit('update_no_songs', data.settings[1])
             this.generateQR();
             this.isHost();
             this.getTopTrack();
@@ -359,6 +361,7 @@ export default {
                             sid: localStorage.getItem('sid'),
                             room: self.code,
                         });
+                        console.log(trackid)
                     }
                 });
         },
