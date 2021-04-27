@@ -190,6 +190,8 @@ export default {
 
             // Do things before page load
             this.players = data.players;
+            this.$store.commit('update_time_range', data.settings[0][0])
+            this.$store.commit('update_no_songs', data.settings[0][1])
             this.generateQR();
             this.isHost();
             this.getTopTrack();
@@ -365,7 +367,7 @@ export default {
                     if (response.data.items.length == 0) {
                         axios
                             .get(
-                                `https://api.spotify.com/v1/me/top/tracks?time_range=medium_term&limit=${no_songs}`,
+                                `https://api.spotify.com/v1/me/top/tracks?time_range=long_term&limit=${no_songs}`,
                                 {
                                     headers: {
                                         Authorization: `Bearer ${token}`,
@@ -378,9 +380,12 @@ export default {
                                 if (response.data.items.length == 0) {
                                     self.leaveRoom();
                                 } else {
-                                    var trackid = response.data.items[0].uri.split(
-                                        ':'
-                                    )[2];
+                                    var trackid = [];
+                                    for(var i = 0; i < no_songs; i++){
+                                        trackid.push(
+                                            response.data.items[0].uri.split(':')[2]
+                                        );
+                                    }
                                     self.$socket.client.emit('toptrack', {
                                         trackid: trackid,
                                         sid: localStorage.getItem('sid'),
@@ -400,6 +405,7 @@ export default {
                             sid: localStorage.getItem('sid'),
                             room: self.code,
                         });
+                        console.log(trackid)
                     }
                 });
         },
