@@ -9,7 +9,15 @@
             <div class="hr"></div>
             <h3 class="title">Results</h3>
             <div class="list">
-                <div :class="selected == player.id ? 'expand player-block' : 'player-block'" v-for="player in players" v-bind:key="player.id">
+                <div
+                    :class="
+                        selected == player.id
+                            ? 'expand player-block'
+                            : 'player-block'
+                    "
+                    v-for="player in players"
+                    v-bind:key="player.id"
+                >
                     <PlayerAvatar
                         class="player-guess"
                         :id="player.id"
@@ -19,9 +27,9 @@
                     />
                     <div v-if="selected == player.id">
                         <div v-for="guess in player.guesses" v-bind:key="guess">
-                            <GuessIcon 
-                                :trackID="guess.info" 
-                                :guess="guess.guess" 
+                            <GuessIcon
+                                :trackID="guess.info"
+                                :guess="guess.guess"
                                 :answer="guess.correct_answer"
                             />
                         </div>
@@ -51,7 +59,7 @@ export default {
         PlayerAvatar,
         Button,
         NotFound,
-        GuessIcon
+        GuessIcon,
     },
     data: function () {
         return {
@@ -59,7 +67,7 @@ export default {
             players: null,
             state: 'loading',
             date: null,
-            selected: ''
+            selected: '',
         };
     },
     mounted() {
@@ -84,22 +92,22 @@ export default {
                 var date_string = date.toLocaleDateString('se');
                 var hour = date.getHours();
                 var minute = date.getMinutes();
-                if(minute < 10) minute = '0' + minute.toString()
+                if (minute < 10) minute = '0' + minute.toString();
                 // var second = date.getSeconds()
 
                 /* eslint-disable */
                 self.date = `Played on ${date_string} @ ${hour}:${minute}`;
                 /* eslint-enable */
-                
+
                 // Convert answer ids to names
-                for(let player of data.players) { 
-                    for(let guess of player.guesses) {
-                        for(let player2 of data.players) {
-                            if(player2.sid == guess.guess) {
-                                guess.guess = player.name
+                for (let player of data.players) {
+                    for (let guess of player.guesses) {
+                        for (let player2 of data.players) {
+                            if (player2.sid == guess.guess) {
+                                guess.guess = player.name;
                             }
-                            if(player2.sid == guess.correct_answer) {
-                                guess.correct_answer = player.name
+                            if (player2.sid == guess.correct_answer) {
+                                guess.correct_answer = player.name;
                             }
                         }
                     }
@@ -115,9 +123,9 @@ export default {
             return `${player.name}: ${player.points} points`;
         },
         selectPlayer(player) {
-            console.log("select player")
-            this.selected = player.id
-        }
+            console.log('select player');
+            this.selected = player.id;
+        },
     },
 };
 </script>

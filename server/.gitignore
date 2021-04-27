@@ -1,0 +1,6 @@
+./bin
+./lib
+./pyvenv.cfg
+./.Python
+*.xml
+*.iml

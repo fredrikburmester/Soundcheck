@@ -305,7 +305,8 @@ def connect_to_room(data):
 
                 current_question = Room.current_question
                 socketio.emit("reconnect_to_game", {'players': list_of_players}, to=request.sid)
-                socketio.emit('next_question', {'answer': Room.answers[current_question]['player'],'current_question': current_question, 'trackid': Room.answers[current_question]['info']}, to=request.sid)
+                print(Room.answers[current_question][0]['info'])
+                socketio.emit('next_question', {'answer': Room.answers[current_question]['player'],'current_question': current_question, 'trackid': Room.answers[current_question][0]['info']}, to=request.sid)
                 return
             elif Room.started == True and Room.ended == False and not player_in_room:
                 # no access
@@ -334,7 +335,7 @@ def next_question(data):
         if code == Room.code:
             Room.current_question = current_question
             # answer is track id in this case
-            if current_question == len(Room.answers):
+            if current_question == len(Room.answers) and len(Room.answers) is not 0:
                 socketio.emit('next_question', {'current_question': "-1"}, room=code)
             else:
                 socketio.emit('next_question', {'answer': Room.answers[current_question]['player'],'current_question': current_question, 'trackid': Room.answers[current_question]['info']}, room=code)
@@ -357,7 +358,9 @@ def start_game(data):
 
 @socketio.on('toptrack')
 def get_top_track(data):
-    trackid = data['trackid']
+    trackid = []
+    trackid.append(data['trackid'])
+    print(trackid)
     code = data['room']
     sid = data['sid']
 
@@ -371,10 +374,11 @@ def get_top_track(data):
             #         socketio.emit("top_tracks_list", {'top_tracks_list': Room.answers}, room=code)
             #         return
             # Send out top tracks to all players in the room
-            Room.answers.append({
-                'player': sid,
-                'info': trackid
-            })
+            for x in range(len(trackid[0])):
+                Room.answers.append({
+                    'player': sid,
+                    'info': trackid[0][x],
+                })
             # socketio.emit("top_tracks_list", {'top_tracks_list': Room.answers}, room=code)
 
 
