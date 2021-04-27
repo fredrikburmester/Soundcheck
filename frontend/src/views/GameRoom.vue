@@ -339,9 +339,12 @@ export default {
                                 if (response.data.items.length == 0) {
                                     self.leaveRoom();
                                 } else {
-                                    var trackid = response.data.items[0].uri.split(
-                                        ':'
-                                    )[2];
+                                    var trackid = [];
+                                    for(var i = 0; i < no_songs; i++){
+                                        trackid.push(
+                                            response.data.items[0].uri.split(':')[2]
+                                        );
+                                    }
                                     self.$socket.client.emit('toptrack', {
                                         trackid: trackid,
                                         sid: localStorage.getItem('sid'),
