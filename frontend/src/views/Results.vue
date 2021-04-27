@@ -169,6 +169,6 @@ export default {
 }
 .expand {
     transition: 1s;
-    height: 200px;
+    height: 250px;
 }
 </style>
