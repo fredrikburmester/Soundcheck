@@ -4,6 +4,15 @@
             <p>Loading...</p>
         </div>
         <div v-if="state == 'found'">
+            <div class="personalResultsModal" v-if="selected == player.id">
+                <div v-for="guess in player.guesses" v-bind:key="guess">
+                    <GuessIcon
+                        :trackID="guess.info"
+                        :guess="guess.guess"
+                        :answer="guess.correct_answer"
+                    />
+                </div>
+            </div>
             <h1 class="code">{{ code }}</h1>
             <p class="date">{{ date }}</p>
             <div class="hr"></div>
@@ -25,15 +34,7 @@
                         :color="player.color"
                         @click="selectPlayer(player)"
                     />
-                    <div v-if="selected == player.id">
-                        <div v-for="guess in player.guesses" v-bind:key="guess">
-                            <GuessIcon
-                                :trackID="guess.info"
-                                :guess="guess.guess"
-                                :answer="guess.correct_answer"
-                            />
-                        </div>
-                    </div>
+                    
                 </div>
             </div>
             <Button class="goHome" buttonLink="/" buttonText="Play again" />
@@ -124,7 +125,11 @@ export default {
         },
         selectPlayer(player) {
             console.log('select player');
-            this.selected = player.id;
+            if(this.selected == player.id) {
+                this.selected = ''
+            } else {
+                this.selected = player.id;
+            }
         },
     },
 };
@@ -170,13 +175,12 @@ export default {
     margin: 0 auto;
     z-index: 1;
 }
-.player-block {
-    height: 90px;
-    transition: 1s;
-    overflow: hidden;
-}
-.expand {
-    transition: 1s;
-    height: 250px;
+.personalResultsModal {
+    background-color: black;
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    width: 100vw;
 }
 </style>
