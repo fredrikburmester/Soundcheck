@@ -9,13 +9,14 @@ export default {
     components: {},
 
     mounted: function () {
-        var line = new ProgressBar.Line('#container');
+        var line = new ProgressBar.Line('#container', {
+            strokeWidth: 10,
+            trailWidth: 10
+        });
         line.animate(1, {
             duration: 30000,
             color: '#1DB954',
             trailColor: '#eee',
-            trailWidth: 1,
-            svgStyle: { width: '100%', height: '100%' },
             from: { color: '#1DB954' },
             to: { color: '#CD1A2B' },
             step: (state, bar) => {
@@ -28,7 +29,4 @@ export default {
 </script>
 
 <style scoped>
-#container > svg {
-    height: 10px;
-}
 </style>
