@@ -6,15 +6,41 @@
         <div v-if="showQR" class="bigQR" @click="showQR = false">
             <img :src="qr" @click="showQR = false" />
         </div>
+        <div v-if="leaveRoomModal == true" v-bind:key="leaveRoomModal" class="leaveroom-modal">
+            <div>
+                <h2 v-if="host">Do you really want to end the game?</h2>
+                <h2 v-else>Do you really want to leave?</h2>
+                <Button
+                    v-if="host"
+                    v-on:click="leaveRoom"
+                    buttonText="Close room"
+                    color="#CD1A2B"
+                />
+                <Button
+                    v-else
+                    v-on:click="leaveRoom"
+                    buttonText="Leave room"
+                    color="#CD1A2B"
+                />
+                <Button
+                    v-on:click="toggleModal"
+                    buttonText="Go back"
+                    color="#1DB954"
+                />
+            </div>
+        </div>
         <div v-if="started" :key="started">
-            <ProgressBar class="progressbar" />
-            <h2>Guess who this song belongs to!</h2>
-            <p>
-                Players guessed: {{ getPlayersGuessed }} / {{ players.length }}
-            </p>
-            <p>
-                Current_question: {{ current_question }} / {{ nr_of_questions }}
-            </p>
+            <ProgressBar class="progressbar" v-bind:key="current_question"/>
+            <h2 class="code">Guess!</h2>
+            <p class="title">Who's song is this?</p>
+            <div class="stats">
+                <p>
+                    Players guessed: {{ getPlayersGuessed }} / {{ players.length }}
+                </p>
+                <p>
+                    Question: {{ current_question }} / {{ nr_of_questions }}
+                </p>
+            </div>
             <div class="list" v-bind:key="my_guess">
                 <PlayerAvatar
                     @click="guess(player)"
@@ -35,7 +61,7 @@
                     color="#1DB954"
                 />
             </div>
-            <div class="leave-started-game">
+            <!-- <div class="leave-started-game">
                 <Button
                     v-if="host"
                     v-on:click="leaveRoom"
@@ -48,7 +74,12 @@
                     buttonText="Leave Room"
                     color="#CD1A2B"
                 />
+            </div> -->
+            <div class="close-button" @click="toggleModal">
+                <div class="line" id="line1"></div>
+                <div class="line" id="line2"></div>
             </div>
+            
             <iframe
                 class="webplayer"
                 :src="iframeurl"
@@ -93,13 +124,13 @@
                 <div class="leave">
                     <Button
                         v-if="host"
-                        v-on:click="leaveRoom"
+                        v-on:click="toggleModal"
                         buttonText="end game"
                         color="#CD1A2B"
                     />
                     <Button
                         v-else
-                        v-on:click="leaveRoom"
+                        v-on:click="toggleModal"
                         buttonText="Leave Room"
                         color="#CD1A2B"
                     />
@@ -141,6 +172,7 @@ export default {
             code: this.$route.params.code,
             qr: '',
             loading: false,
+            leaveRoomModal: false
         };
     },
     sockets: {
@@ -154,6 +186,8 @@ export default {
             this.$router.push('/join');
         },
         join_room_first_time(data) {
+            console.log("[1]")
+
             // Do things before page load
             this.players = data.players;
             this.$store.commit('update_time_range', data.settings[0][0])
@@ -166,6 +200,7 @@ export default {
             this.found = true;
         },
         reconnect_to_lobby(data) {
+            console.log("[2]")
             // Do things before page load
             this.players = data.players;
             this.generateQR();
@@ -175,6 +210,8 @@ export default {
             this.found = true;
         },
         reconnect_to_game(data) {
+            console.log("[3]")
+
             // Do things before page load
             this.players = data.players;
             this.isHost();
@@ -216,6 +253,9 @@ export default {
         },
     },
     methods: {
+        toggleModal() {
+            this.leaveRoomModal = !this.leaveRoomModal
+        },
         async copyToClipboard() {
             await navigator.clipboard.writeText(window.location.href);
             this.clipboardtext = 'copied!';
@@ -235,6 +275,7 @@ export default {
             QRCode.toDataURL(
                 `https://musicwithfriends.fdrive.se/${this.code}`,
                 function (err, url) {
+                    console.log(url)
                     self.qr = url;
                 }
             );
@@ -400,6 +441,17 @@ export default {
     margin-top: 0;
     margin-bottom: 20px;
 }
+.stats {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    text-align: center;
+    color: darkgrey;
+    margin-left: 2rem;
+    margin-right: 2rem;
+    margin-top: 0;
+    margin-bottom: 20px;
+}
 .hr {
     height: 2px;
     background-color: rgb(63, 63, 63);
@@ -458,8 +510,14 @@ export default {
 }
 .progressbar {
     position: fixed;
-    bottom: 85px;
-    width: 100%;
+    top: 90px;
+    width: calc(100vw - 4rem);
+    margin-left: 50%;
+    transform: translateX(-50%);
+}
+.progressbar {
+    height: 5px !important;
+    overflow: hidden;
 }
 .bigQR {
     position: fixed;
@@ -486,7 +544,7 @@ export default {
 }
 .next-song {
     position: fixed;
-    bottom: 170px;
+    bottom: 100px;
     left: 50%;
     transform: translateX(-50%);
 }
@@ -500,6 +558,34 @@ export default {
     display: grid;
     place-items: center;
     z-index: 2;
+}
+.leaveroom-modal {
+    display: grid;
+    place-items: center;
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    width: 100vw;
+    background-color: black;
+    z-index: 2;
+}
+.close-button {
+    position: fixed;
+    top: 35px;
+    right: 2rem;
+}
+.line {
+    background-color: red;
+    height: 3px;
+    width: 25px;
+    cursor: pointer;
+}
+#line1 {
+    transform: translateY(3px) rotate(45deg);
+}
+#line2 {
+    transform: rotate(-45deg);
 }
 @media only screen and (min-width: 600px) {
     .bigQR > img {
