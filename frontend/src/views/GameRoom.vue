@@ -326,7 +326,7 @@ export default {
                     if (response.data.items.length == 0) {
                         axios
                             .get(
-                                `https://api.spotify.com/v1/me/top/tracks?time_range=medium_term&limit=${no_songs}`,
+                                `https://api.spotify.com/v1/me/top/tracks?time_range=long_term&limit=${no_songs}`,
                                 {
                                     headers: {
                                         Authorization: `Bearer ${token}`,
