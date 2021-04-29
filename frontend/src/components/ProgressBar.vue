@@ -7,14 +7,26 @@ var ProgressBar = require('progressbar.js');
 export default {
     name: 'ProgressBar',
     components: {},
-
+    props: {
+        time: {
+            type: Number,
+            default: 0
+        }
+    },
+    data() {
+        return {
+            time_: this.time
+        }
+    },
     mounted: function () {
         var line = new ProgressBar.Line('#container', {
             strokeWidth: 10,
             trailWidth: 10
         });
+        line.set(this.time_)
+        var duration = (30 - (30* this.time_)) * 1000
         line.animate(1, {
-            duration: 30000,
+            duration: duration,
             color: '#1DB954',
             trailColor: '#eee',
             from: { color: '#1DB954' },
@@ -23,7 +35,6 @@ export default {
                 bar.path.setAttribute('stroke', state.color);
             },
         });
-        console.log(line);
     },
 };
 </script>
