@@ -4,7 +4,7 @@
             <p>Loading...</p>
         </div>
         <div v-if="state == 'found'">
-            <div class="personalResultsModal" v-if="selected == player.id">
+            <!-- <div class="personalResultsModal" v-if="selected == player.sid">
                 <div v-for="guess in player.guesses" v-bind:key="guess">
                     <GuessIcon
                         :trackID="guess.info"
@@ -12,7 +12,7 @@
                         :answer="guess.correct_answer"
                     />
                 </div>
-            </div>
+            </div> -->
             <h1 class="code">{{ code }}</h1>
             <p class="date">{{ date }}</p>
             <div class="hr"></div>
@@ -20,16 +20,16 @@
             <div class="list">
                 <div
                     :class="
-                        selected == player.id
+                        selected == player.sid
                             ? 'expand player-block'
                             : 'player-block'
                     "
                     v-for="player in players"
-                    v-bind:key="player.id"
+                    v-bind:key="player.sid"
                 >
                     <PlayerAvatar
                         class="player-guess"
-                        :id="player.id"
+                        :id="player.sid"
                         :playerName="getPoints(player)"
                         :color="player.color"
                         @click="selectPlayer(player)"
@@ -50,7 +50,7 @@
 import PlayerAvatar from '../components/PlayerAvatar';
 import Button from '../components/Button';
 import NotFound from '../components/NotFound';
-import GuessIcon from '../components/GuessIcon';
+// import GuessIcon from '../components/GuessIcon';
 
 const axios = require('axios');
 
@@ -60,14 +60,14 @@ export default {
         PlayerAvatar,
         Button,
         NotFound,
-        GuessIcon,
+        // GuessIcon,
     },
     data: function () {
         return {
             code: this.$route.params.code,
-            players: null,
+            players: [],
             state: 'loading',
-            date: null,
+            date: '',
             selected: '',
         };
     },
@@ -85,9 +85,8 @@ export default {
         axios
             .get(url)
             .then(function (response) {
-                console.log(response);
+                console.log("Answers: ",response);
                 var data = response.data;
-                self.state = 'found';
                 self.players = data.players;
                 var date = new Date(data.date * 1000);
                 var date_string = date.toLocaleDateString('se');
@@ -113,6 +112,9 @@ export default {
                         }
                     }
                 }
+                
+                console.log(self.players)
+                self.state = 'found';
             })
             .catch(function (error) {
                 console.log(error);
@@ -125,10 +127,10 @@ export default {
         },
         selectPlayer(player) {
             console.log('select player');
-            if(this.selected == player.id) {
+            if(this.selected == player.sid) {
                 this.selected = ''
             } else {
-                this.selected = player.id;
+                this.selected = player.sid;
             }
         },
     },
