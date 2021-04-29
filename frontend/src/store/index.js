@@ -17,12 +17,7 @@ export default createStore({
             state.error = value;
         },
         updatePlayersGuessed(state, value) {
-            for (let i of state.players_guessed) {
-                if (i == value) {
-                    return;
-                }
-            }
-            state.players_guessed.push(value.toString());
+            state.players_guessed = value
         },
         clearPlayersGuessed(state) {
             state.players_guessed = [];
