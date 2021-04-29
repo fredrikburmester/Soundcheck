@@ -30,7 +30,7 @@
             </div>
         </div>
         <div v-if="started" :key="started">
-            <ProgressBar class="progressbar" v-bind:key="current_question"/>
+            <ProgressBar :time="progressbarTime" class="progressbar" v-bind:key="current_question"/>
             <h2 class="code">Guess!</h2>
             <p class="title">Who's song is this?</p>
             <div class="stats">
@@ -38,7 +38,7 @@
                     Players guessed: {{ getPlayersGuessed }} / {{ players.length }}
                 </p>
                 <p>
-                    Question: {{ current_question }} / {{ nr_of_questions }}
+                    Question: {{ current_question + 1 }} / {{ nr_of_questions }}
                 </p>
             </div>
             <div class="list" v-bind:key="my_guess">
@@ -61,20 +61,6 @@
                     color="#1DB954"
                 />
             </div>
-            <!-- <div class="leave-started-game">
-                <Button
-                    v-if="host"
-                    v-on:click="leaveRoom"
-                    buttonText="end game"
-                    color="#CD1A2B"
-                />
-                <Button
-                    v-else
-                    v-on:click="leaveRoom"
-                    buttonText="Leave Room"
-                    color="#CD1A2B"
-                />
-            </div> -->
             <div class="close-button" @click="toggleModal">
                 <div class="line" id="line1"></div>
                 <div class="line" id="line2"></div>
@@ -157,95 +143,109 @@ export default {
     },
     data: function () {
         return {
-            clipboardtext: `copy invite link`,
-            current_question: 0,
-            iframeurl: '',
-            started: false,
-            players: [],
-            colors: [],
-            showQR: false,
-            status: 'Waiting for host to start the game...',
-            found: false,
-            nr_of_questions: 0,
-            my_guess: '',
-            host: false,
             code: this.$route.params.code,
+            clipboardtext: `copy invite link`,
+            status: 'Waiting for host to start the game...',
+            iframeurl: '',
+            settings: '',
+            my_guess: '',
             qr: '',
+            current_question: 0,
+            nr_of_questions: 0,
+            started: false,
+            showQR: false,
+            found: false,
+            host: false,
             loading: false,
-            leaveRoomModal: false
+            leaveRoomModal: false,
+            players: [],
+            progressbarTime: 0,
+            players_guessed: []
         };
     },
     sockets: {
-        not_a_room() {
-            console.log('room does not exist');
-            this.$store.commit('updateError', 'Room does not exist!');
-            this.$router.push(`/${this.code}/notfound`);
-        },
-        no_access_to_room() {
-            this.$store.commit('updateError', 'Game already started!');
-            this.$router.push('/join');
-        },
-        join_room_first_time(data) {
-            console.log("[1]")
+        connectToRoom({status, access, question, settings, answers, questionTimeStarted, players_guessed}) {
+            console.log({status, access, question, settings, answers, questionTimeStarted})
+            if(status == 'lobby') {
+                // join lobby
+                this.generateQR();
+                this.settings = settings;
+                this.getTopTrack();
+                this.found = true;
+            } else if(status == 'playing') {
+                if(access == true) {
+                    // enter room
+                    this.settings = settings;
+                    // set current song 
+                    this.current_question = question;
+                    this.setIframeUrl(answers[question]['info']);
+                    this.nr_of_questions = answers.length
+                    this.players_guessed = players_guessed;
 
-            // Do things before page load
-            this.players = data.players;
-            this.$store.commit('update_time_range', data.settings[0][0])
-            this.$store.commit('update_no_songs', data.settings[0][1])
-            this.generateQR();
-            this.isHost();
-            this.getTopTrack();
+                    // Set progressbar progression
+                    var unixTime = Date.now().toString();
+                    unixTime = unixTime.substring(0, unixTime.length-3);
 
-            // Show page!
-            this.found = true;
-        },
-        reconnect_to_lobby(data) {
-            console.log("[2]")
-            // Do things before page load
-            this.players = data.players;
-            this.generateQR();
-            this.isHost();
+                    var diff = unixTime - questionTimeStarted + 1
+                    if(diff > 30) {
+                        this.progressbarTime = 1
+                    } else {
+                        this.progressbarTime = diff / 30; 
+                    }
 
-            // Show page!
-            this.found = true;
-        },
-        reconnect_to_game(data) {
-            console.log("[3]")
+                    this.started = true;
+                    this.found = true;
 
-            // Do things before page load
-            this.players = data.players;
-            this.isHost();
-
-            // Show page!
-            this.found = true;
-        },
-        update_players_list(data) {
-            this.players = data.players;
-        },
-        go_to_result() {
-            this.$router.push(`/${this.code}/results`);
-        },
-        players_guess(data) {
-            //mark player that guessed
-            this.$store.commit('updatePlayersGuessed', data['sid']);
-        },
-        next_question(data) {
-            if (this.current_question > 0) {
-                this.sendGuess();
+                } else {
+                    // set error
+                    this.$store.commit('updateError', 'Game has already started!');
+                    // go to join
+                    this.$router.push('/join')
+                }
+            } else if (status == 'ended') {
+                // game has ended
+                this.$router.push(`/${this.code}/results`)
+            } else if (status == 'NaR') {
+                // Room does not exist
+                // set error
+                this.$store.commit('updateError', 'That room does not exist!');
+                // go to join
+                this.$router.push('/join')
             }
-            if (data.current_question == '-1') {
-                this.my_guess = '';
-                this.loading = true;
-            } else {
-                this.current_question += 1;
-                this.setIframeUrl(data.trackid);
-                this.my_guess = '';
-            }
+        },
+        update_list_of_players({players}) {
+            console.log("Update list of players: ", players)
+            this.players = players;
+            this.isHost();
+        },
+        room_closed_by_host() {
+            this.started = false
+            this.status = "Host ended the game..."
+            this.players = []
             this.$store.commit('clearPlayersGuessed');
         },
+        nr_of_players_guessed(data) {
+            this.players_guessed = data.players; // set the array of players who have guessed
+        },
+        next_question(data) {
+            // Set the current question and reset the progressbar
+            this.current_question = data.current_question
+            this.progressbarTime = 0
+
+            // If the current question is -1 then the game is ending and we show a loading screen and await the "game_ended" socket
+            if (data.current_question == '-1') {
+                this.loading = true;
+            } else {
+                this.setIframeUrl(data.trackid); // Set the song in the iframe
+                this.my_guess = ''; // Reset the guess
+            }
+
+            // Reset number of players guessed
+            this.players_guessed = []
+        },
         game_ended() {
-            this.sendGuess();
-            this.$router.push(`/${this.code}/results`);
+            this.loading = true
+            // this.$router.push(`/${this.code}/results`);
         },
         start_game(data) {
             this.nr_of_questions = data.nr_of_questions;
@@ -275,14 +275,16 @@ export default {
             QRCode.toDataURL(
                 `https://musicwithfriends.fdrive.se/${this.code}`,
                 function (err, url) {
-                    console.log(url)
                     self.qr = url;
+
+
+
                 }
             );
         },
         isHost() {
             var self = this;
-            this.players.forEach((player) => {
+            this.players.forEach((player)   => {
                 if (player.sid == localStorage.getItem('sid')) {
                     if (player.host == true) {
                         self.host = true;
@@ -295,46 +297,24 @@ export default {
             this.sendNextQuestion();
         },
         sendNextQuestion() {
-            // var self = this;
-            if (this.current_question === 0 || this.current_question != this.nr_of_questions) {
-                this.$socket.client.emit('next_question', {
-                    current_question: this.current_question,
-                    code: this.code,
-                });
-            } else {
-                this.$socket.client.emit('next_question', {
-                    current_question: this.current_question,
-                    code: this.code,
-                });
-
-                setTimeout(() => {
-                    this.$socket.client.emit('game_ended', { code: this.code });
-                }, 1000);
-            }
-        },
-        guess(player) {
-            // this.resetGuessBackgroundColor();
-            this.my_guess = player.sid;
-            // document.getElementById(player.id).style.backgroundColor = 'green';
-            this.$socket.client.emit('player_guess', {
-                sid: localStorage.getItem('sid'),
+            // Send next question 
+            this.$socket.client.emit('next_question', {
                 code: this.code,
             });
         },
-
+        guess(player) {
+            this.my_guess = player.sid;
+            this.$socket.client.emit('player_guess', {
+                sid: localStorage.getItem('sid'),
+                code: this.code,
+                guess: this.my_guess
+            });
+        },
         selected(id) {
             if (id == this.my_guess) {
                 return true;
             }
             return false;
-        },
-        sendGuess() {
-            this.$socket.client.emit('guess', {
-                guess: this.my_guess,
-                sid: localStorage.getItem('sid'),
-                current_question: this.current_question - 1,
-                code: this.code,
-            });
         },
         setIframeUrl(id) {
             this.iframeurl = `https://open.spotify.com/embed?uri=spotify:track:${id}`;
@@ -349,8 +329,9 @@ export default {
         getTopTrack() {
             var self = this;
             var token = localStorage.getItem('access_token');
-            var time_range = self.$store.state.time_range;
-            var no_songs = self.$store.state.no_songs;
+
+            var time_range = this.settings[0]
+            var no_songs = this.settings[1]
 
             axios
                 .get(
@@ -405,14 +386,13 @@ export default {
                             sid: localStorage.getItem('sid'),
                             room: self.code,
                         });
-                        console.log(trackid)
                     }
                 });
         },
     },
     computed: {
         getPlayersGuessed() {
-            return this.$store.state.players_guessed.length;
+            return this.players_guessed.length;
         },
     },
     mounted: function () {
