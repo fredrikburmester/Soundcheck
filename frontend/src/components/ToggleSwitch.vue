@@ -19,6 +19,7 @@
 <script>
 export default {
     name: 'ToggleSwitch',
+    emits: ['clicked'],
     data: function () {
         return {
             is_checked: false,

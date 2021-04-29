@@ -14,9 +14,11 @@ export default {
     props: {
         buttonLink: {
             type: String,
+            default: ''
         },
         buttonText: {
             type: String,
+            default: ''
         },
         color: {
             type: String,

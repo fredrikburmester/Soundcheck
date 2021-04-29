@@ -14,6 +14,7 @@ export default {
     props: {
         buttonText: {
             type: String,
+            default: 'Button'
         },
         color: {
             type: String,
@@ -24,6 +25,7 @@ export default {
             default: false,
         },
     },
+emits: ['clicked'],
     data() {
         return {
             buttonText_: this.buttonText,
