@@ -1,7 +1,11 @@
 <template>
-    <div @click="select" class="settingbutton" :style="colorStyle">
-        {{ buttonText_ }}
-    </div>
+  <div
+    class="settingbutton"
+    :style="colorStyle"
+    @click="select"
+  >
+    {{ buttonText_ }}
+  </div>
 </template>
 
 <script>
@@ -26,11 +30,6 @@ export default {
             color_: this.color,
         };
     },
-    methods: {
-        select: function () {
-            this.$emit('clicked', this.buttonText_);
-        },
-    },
     computed: {
         colorStyle() {
             if (this.marked) {
@@ -42,6 +41,11 @@ export default {
                     'background-color': this.color,
                 };
             }
+        },
+    },
+    methods: {
+        select: function () {
+            this.$emit('clicked', this.buttonText_);
         },
     },
 };

@@ -1,13 +1,16 @@
 <template>
-    <div class="playerAvatar">
-        <div class="image">
-            <img :src="imgSrc" class="circle" />
-        </div>
-        <div class="name">
-            Guess: {{ guess }}<br />
-            Answer: {{ answer }}
-        </div>
+  <div class="playerAvatar">
+    <div class="image">
+      <img
+        :src="imgSrc"
+        class="circle"
+      >
     </div>
+    <div class="name">
+      Guess: {{ guess }}<br>
+      Answer: {{ answer }}
+    </div>
+  </div>
 </template>
 
 <script>
@@ -18,9 +21,11 @@ export default {
     props: {
         trackID: {
             type: String,
+            default: ''
         },
         guess: {
             type: String,
+            default: ''
         },
         answer: {
             type: String,
@@ -33,6 +38,9 @@ export default {
             imgSrc: '',
             loaded: false,
         };
+    },
+    mounted() {
+        this.getAlbumArt(this.trackID_);
     },
     methods: {
         async getAlbumArt(uri) {
@@ -52,9 +60,6 @@ export default {
                 });
         },
     },
-    mounted() {
-        this.getAlbumArt(this.trackID_);
-    },
 };
 </script>
 
@@ -62,9 +67,9 @@ export default {
 @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap');
 
 .playerAvatar {
-display: flex;
-flex-direction: row;
-margin-bottom: 10px;
+    display: flex;
+    flex-direction: row;
+    margin-bottom: 10px;
     display: flex;
     flex-direction: row;
 }

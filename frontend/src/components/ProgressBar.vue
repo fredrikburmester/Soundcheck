@@ -1,5 +1,5 @@
 <template>
-    <div id="container" />
+  <div id="container" />
 </template>
 
 <script>
@@ -10,21 +10,21 @@ export default {
     props: {
         time: {
             type: Number,
-            default: 0
-        }
+            default: 0,
+        },
     },
     data() {
         return {
-            time_: this.time
-        }
+            time_: this.time,
+        };
     },
     mounted: function () {
         var line = new ProgressBar.Line('#container', {
             strokeWidth: 10,
-            trailWidth: 10
+            trailWidth: 10,
         });
-        line.set(this.time_)
-        var duration = (30 - (30* this.time_)) * 1000
+        line.set(this.time_);
+        var duration = (30 - 30 * this.time_) * 1000;
         line.animate(1, {
             duration: duration,
             color: '#1DB954',
@@ -39,5 +39,4 @@ export default {
 };
 </script>
 
-<style scoped>
-</style>
+<style scoped></style>

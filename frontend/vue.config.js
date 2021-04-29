@@ -4,5 +4,5 @@ module.exports = {
         disableHostCheck: true,
         public: `${process.env.VUE_APP_PUBLIC_URL}`,
     },
-    lintOnSave: true
+    lintOnSave: true,
 };

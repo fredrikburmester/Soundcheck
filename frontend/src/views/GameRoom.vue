@@ -1,129 +1,191 @@
 <template>
-    <div v-if="found" :key="found" class="gameroom">
-        <div class="loading" v-if="loading">
-            <p>Loading...</p>
-        </div>
-        <div v-if="showQR" class="bigQR" @click="showQR = false">
-            <img :src="qr" @click="showQR = false" />
-        </div>
-        <div v-if="leaveRoomModal == true" v-bind:key="leaveRoomModal" class="leaveroom-modal">
-            <div>
-                <h2 v-if="host">Do you really want to end the game?</h2>
-                <h2 v-else>Do you really want to leave?</h2>
-                <Button
-                    v-if="host"
-                    v-on:click="leaveRoom"
-                    buttonText="Close room"
-                    color="#CD1A2B"
-                />
-                <Button
-                    v-else
-                    v-on:click="leaveRoom"
-                    buttonText="Leave room"
-                    color="#CD1A2B"
-                />
-                <Button
-                    v-on:click="toggleModal"
-                    buttonText="Go back"
-                    color="#1DB954"
-                />
-            </div>
-        </div>
-        <div v-if="started" :key="started">
-            <ProgressBar :time="progressbarTime" class="progressbar" v-bind:key="current_question"/>
-            <h2 class="code">Guess!</h2>
-            <p class="title">Who's song is this?</p>
-            <div class="stats">
-                <p>
-                    Players guessed: {{ getPlayersGuessed }} / {{ players.length }}
-                </p>
-                <p>
-                    Question: {{ current_question + 1 }} / {{ nr_of_questions }}
-                </p>
-            </div>
-            <div class="list" v-bind:key="my_guess">
-                <PlayerAvatar
-                    @click="guess(player)"
-                    v-for="player in players"
-                    class="player-guess"
-                    v-bind:key="player.id"
-                    :id="player.id"
-                    :playerName="player.name"
-                    :color="player.color"
-                    :host="player.host"
-                    :selected="selected(player.sid)"
-                />
-            </div>
-            <div v-if="host" class="next-song">
-                <Button
-                    v-on:click="sendNextQuestion"
-                    buttonText="next question"
-                    color="#1DB954"
-                />
-            </div>
-            <div class="close-button" @click="toggleModal">
-                <div class="line" id="line1"></div>
-                <div class="line" id="line2"></div>
-            </div>
-            
-            <iframe
-                class="webplayer"
-                :src="iframeurl"
-                allowtransparency="true"
-                allow="encrypted-media"
-            ></iframe>
-        </div>
-        <div v-else>
-            <h1 class="code">{{ code }}</h1>
-            <div class="hr"></div>
-            <h3 class="title">Players:</h3>
-            <p v-if="!host">{{ status }}</p>
-            <div class="list">
-                <PlayerAvatar
-                    v-for="player in players"
-                    v-bind:key="player.id"
-                    :playerName="player.name"
-                    :color="player.color"
-                    :host="player.host"
-                />
-            </div>
-
-            <div class="qr">
-                <img :src="qr" @click="showQR = true" />
-            </div>
-
-            <div class="buttons">
-                <div class="copycode">
-                    <Button
-                        @click="copyToClipboard"
-                        color="#FFF"
-                        :buttonText="clipboardtext"
-                        :key="clipboardtext"
-                    ></Button>
-                </div>
-                <div v-if="host" :key="host" class="startgame">
-                    <Button
-                        @click="startGame()"
-                        buttonText="Start Game"
-                    ></Button>
-                </div>
-                <div class="leave">
-                    <Button
-                        v-if="host"
-                        v-on:click="toggleModal"
-                        buttonText="end game"
-                        color="#CD1A2B"
-                    />
-                    <Button
-                        v-else
-                        v-on:click="toggleModal"
-                        buttonText="Leave Room"
-                        color="#CD1A2B"
-                    />
-                </div>
-            </div>
-        </div>
+  <div
+    v-if="found"
+    :key="found"
+    class="gameroom"
+  >
+    <div
+      v-if="loading"
+      class="loading"
+    >
+      <p>Loading...</p>
     </div>
+    <div
+      v-if="showQR"
+      class="bigQR"
+      @click="showQR = false"
+    >
+      <img
+        :src="qr"
+        @click="showQR = false"
+      >
+    </div>
+    <div
+      v-if="leaveRoomModal == true"
+      :key="leaveRoomModal"
+      class="leaveroom-modal"
+    >
+      <div>
+        <h2 v-if="host">
+          Do you really want to end the game?
+        </h2>
+        <h2 v-else>
+          Do you really want to leave?
+        </h2>
+        <Button
+          v-if="host"
+          button-text="Close room"
+          color="#CD1A2B"
+          @click="leaveRoom"
+        />
+        <Button
+          v-else
+          button-text="Leave room"
+          color="#CD1A2B"
+          @click="leaveRoom"
+        />
+        <Button
+          button-text="Go back"
+          color="#1DB954"
+          @click="toggleModal"
+        />
+      </div>
+    </div>
+    <div
+      v-if="started"
+      :key="started"
+    >
+      <ProgressBar
+        :key="current_question"
+        :time="progressbarTime"
+        class="progressbar"
+      />
+      <h2 class="code">
+        Guess!
+      </h2>
+      <p class="title">
+        Who's song is this?
+      </p>
+      <div class="stats">
+        <p>
+          Players guessed: {{ getPlayersGuessed }} /
+          {{ players.length }}
+        </p>
+        <p>
+          Question: {{ current_question + 1 }} / {{ nr_of_questions }}
+        </p>
+      </div>
+      <div
+        :key="my_guess"
+        class="list"
+      >
+        <PlayerAvatar
+          v-for="player in players"
+          :id="player.id"
+          :key="player.id"
+          class="player-guess"
+          :player-name="player.name"
+          :color="player.color"
+          :host="player.host"
+          :selected="selected(player.sid)"
+          @click="guess(player)"
+        />
+      </div>
+      <div
+        v-if="host"
+        class="next-song"
+      >
+        <Button
+          button-text="next question"
+          color="#1DB954"
+          @click="sendNextQuestion"
+        />
+      </div>
+      <div
+        class="close-button"
+        @click="toggleModal"
+      >
+        <div
+          id="line1"
+          class="line"
+        />
+        <div
+          id="line2"
+          class="line"
+        />
+      </div>
+
+      <iframe
+        class="webplayer"
+        :src="iframeurl"
+        allowtransparency="true"
+        allow="encrypted-media"
+      />
+    </div>
+    <div v-else>
+      <h1 class="code">
+        {{ code }}
+      </h1>
+      <div class="hr" />
+      <h3 class="title">
+        Players:
+      </h3>
+      <p v-if="!host">
+        {{ status }}
+      </p>
+      <div class="list">
+        <PlayerAvatar
+          v-for="player in players"
+          :key="player.id"
+          :player-name="player.name"
+          :color="player.color"
+          :host="player.host"
+        />
+      </div>
+
+      <div class="qr">
+        <img
+          :src="qr"
+          @click="showQR = true"
+        >
+      </div>
+
+      <div class="buttons">
+        <div class="copycode">
+          <Button
+            :key="clipboardtext"
+            color="#FFF"
+            :button-text="clipboardtext"
+            @click="copyToClipboard"
+          />
+        </div>
+        <div
+          v-if="host"
+          :key="host"
+          class="startgame"
+        >
+          <Button
+            button-text="Start Game"
+            @click="startGame()"
+          />
+        </div>
+        <div class="leave">
+          <Button
+            v-if="host"
+            button-text="end game"
+            color="#CD1A2B"
+            @click="toggleModal"
+          />
+          <Button
+            v-else
+            button-text="Leave Room"
+            color="#CD1A2B"
+            @click="toggleModal"
+          />
+        </div>
+      </div>
+    </div>
+  </div>
 </template>
 
 <script>
@@ -160,68 +222,85 @@ export default {
             leaveRoomModal: false,
             players: [],
             progressbarTime: 0,
-            players_guessed: []
+            players_guessed: [],
         };
     },
     sockets: {
-        connectToRoom({status, access, question, settings, answers, questionTimeStarted, players_guessed}) {
-            console.log({status, access, question, settings, answers, questionTimeStarted})
-            if(status == 'lobby') {
+        connectToRoom({
+            status,
+            access,
+            question,
+            settings,
+            answers,
+            questionTimeStarted,
+            players_guessed,
+        }) {
+            console.log({
+                status,
+                access,
+                question,
+                settings,
+                answers,
+                questionTimeStarted,
+            });
+            if (status == 'lobby') {
                 // join lobby
                 this.generateQR();
                 this.settings = settings;
                 this.getTopTrack();
                 this.found = true;
-            } else if(status == 'playing') {
-                if(access == true) {
+            } else if (status == 'playing') {
+                if (access == true) {
                     // enter room
                     this.settings = settings;
-                    // set current song 
+                    // set current song
                     this.current_question = question;
                     this.setIframeUrl(answers[question]['info']);
-                    this.nr_of_questions = answers.length
+                    this.nr_of_questions = answers.length;
                     this.players_guessed = players_guessed;
 
                     // Set progressbar progression
                     var unixTime = Date.now().toString();
-                    unixTime = unixTime.substring(0, unixTime.length-3);
+                    unixTime = unixTime.substring(0, unixTime.length - 3);
 
-                    var diff = unixTime - questionTimeStarted + 1
-                    if(diff > 30) {
-                        this.progressbarTime = 1
+                    var diff = unixTime - questionTimeStarted + 1;
+                    if (diff > 30) {
+                        this.progressbarTime = 1;
                     } else {
-                        this.progressbarTime = diff / 30; 
+                        this.progressbarTime = diff / 30;
                     }
 
                     this.started = true;
                     this.found = true;
-
                 } else {
                     // set error
-                    this.$store.commit('updateError', 'Game has already started!');
+                    this.$store.commit(
+                        'updateError',
+                        'Game has already started!'
+                    );
                     // go to join
-                    this.$router.push('/join')
+                    this.$router.push('/join');
                 }
             } else if (status == 'ended') {
                 // game has ended
-                this.$router.push(`/${this.code}/results`)
+                this.$router.push(`/${this.code}/results`);
             } else if (status == 'NaR') {
                 // Room does not exist
                 // set error
                 this.$store.commit('updateError', 'That room does not exist!');
                 // go to join
-                this.$router.push('/join')
+                this.$router.push('/join');
             }
         },
-        update_list_of_players({players}) {
-            console.log("Update list of players: ", players)
+        update_list_of_players({ players }) {
+            console.log('Update list of players: ', players);
             this.players = players;
             this.isHost();
         },
         room_closed_by_host() {
-            this.started = false
-            this.status = "Host ended the game..."
-            this.players = []
+            this.started = false;
+            this.status = 'Host ended the game...';
+            this.players = [];
             this.$store.commit('clearPlayersGuessed');
         },
         nr_of_players_guessed(data) {
@@ -229,8 +308,8 @@ export default {
         },
         next_question(data) {
             // Set the current question and reset the progressbar
-            this.current_question = data.current_question
-            this.progressbarTime = 0
+            this.current_question = data.current_question;
+            this.progressbarTime = 0;
 
             // If the current question is -1 then the game is ending and we show a loading screen and await the "game_ended" socket
             if (data.current_question == '-1') {
@@ -241,10 +320,10 @@ export default {
             }
 
             // Reset number of players guessed
-            this.players_guessed = []
+            this.players_guessed = [];
         },
         game_ended() {
-            this.loading = true
+            this.loading = true;
             // this.$router.push(`/${this.code}/results`);
         },
         start_game(data) {
@@ -252,9 +331,17 @@ export default {
             this.started = true;
         },
     },
+    computed: {
+        getPlayersGuessed() {
+            return this.players_guessed.length;
+        },
+    },
+    mounted: function () {
+        this.connectToRoom();
+    },
     methods: {
         toggleModal() {
-            this.leaveRoomModal = !this.leaveRoomModal
+            this.leaveRoomModal = !this.leaveRoomModal;
         },
         async copyToClipboard() {
             await navigator.clipboard.writeText(window.location.href);
@@ -276,15 +363,12 @@ export default {
                 `https://musicwithfriends.fdrive.se/${this.code}`,
                 function (err, url) {
                     self.qr = url;
-
-
-
                 }
             );
         },
         isHost() {
             var self = this;
-            this.players.forEach((player)   => {
+            this.players.forEach((player) => {
                 if (player.sid == localStorage.getItem('sid')) {
                     if (player.host == true) {
                         self.host = true;
@@ -297,7 +381,7 @@ export default {
             this.sendNextQuestion();
         },
         sendNextQuestion() {
-            // Send next question 
+            // Send next question
             this.$socket.client.emit('next_question', {
                 code: this.code,
             });
@@ -307,7 +391,7 @@ export default {
             this.$socket.client.emit('player_guess', {
                 sid: localStorage.getItem('sid'),
                 code: this.code,
-                guess: this.my_guess
+                guess: this.my_guess,
             });
         },
         selected(id) {
@@ -330,8 +414,8 @@ export default {
             var self = this;
             var token = localStorage.getItem('access_token');
 
-            var time_range = this.settings[0]
-            var no_songs = this.settings[1]
+            var time_range = this.settings[0];
+            var no_songs = this.settings[1];
 
             axios
                 .get(
@@ -362,9 +446,11 @@ export default {
                                     self.leaveRoom();
                                 } else {
                                     var trackid = [];
-                                    for(var i = 0; i < no_songs; i++){
+                                    for (var i = 0; i < no_songs; i++) {
                                         trackid.push(
-                                            response.data.items[0].uri.split(':')[2]
+                                            response.data.items[0].uri.split(
+                                                ':'
+                                            )[2]
                                         );
                                     }
                                     self.$socket.client.emit('toptrack', {
@@ -389,14 +475,6 @@ export default {
                     }
                 });
         },
-    },
-    computed: {
-        getPlayersGuessed() {
-            return this.players_guessed.length;
-        },
-    },
-    mounted: function () {
-        this.connectToRoom();
     },
 };
 </script>

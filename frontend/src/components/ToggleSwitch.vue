@@ -1,12 +1,19 @@
 <template>
-    <div class="genre">
-        <p class="p-off">Off</p>
-        <label class="switch">
-            <input @click="check" type="checkbox" />
-            <span class="slider"></span>
-        </label>
-        <p class="p-on">On</p>
-    </div>
+  <div class="genre">
+    <p class="p-off">
+      Off
+    </p>
+    <label class="switch">
+      <input
+        type="checkbox"
+        @click="check"
+      >
+      <span class="slider" />
+    </label>
+    <p class="p-on">
+      On
+    </p>
+  </div>
 </template>
 
 <script>

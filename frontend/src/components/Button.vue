@@ -1,7 +1,11 @@
 <template>
-    <div @click="go" :style="colorStyles" class="button">
-        {{ buttonText_ }}
-    </div>
+  <div
+    :style="colorStyles"
+    class="button"
+    @click="go"
+  >
+    {{ buttonText_ }}
+  </div>
 </template>
 
 <script>
@@ -26,13 +30,6 @@ export default {
             color_: this.color,
         };
     },
-    methods: {
-        go: function () {
-            if (!this.external) {
-                this.$router.push(this.buttonLink_);
-            }
-        },
-    },
     computed: {
         external() {
             if (this.buttonLink_ === undefined) {
@@ -56,6 +53,13 @@ export default {
                     'background-color': this.color_,
                     color: 'white',
                 };
+            }
+        },
+    },
+    methods: {
+        go: function () {
+            if (!this.external) {
+                this.$router.push(this.buttonLink_);
             }
         },
     },

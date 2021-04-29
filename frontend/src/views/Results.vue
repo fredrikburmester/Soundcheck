@@ -1,10 +1,10 @@
 <template>
-    <div v-bind:key="state">
-        <div v-if="state == 'loading'">
-            <p>Loading...</p>
-        </div>
-        <div v-if="state == 'found'">
-            <!-- <div class="personalResultsModal" v-if="selected == player.sid">
+  <div :key="state">
+    <div v-if="state == 'loading'">
+      <p>Loading...</p>
+    </div>
+    <div v-if="state == 'found'">
+      <!-- <div class="personalResultsModal" v-if="selected == player.sid">
                 <div v-for="guess in player.guesses" v-bind:key="guess">
                     <GuessIcon
                         :trackID="guess.info"
@@ -13,37 +13,50 @@
                     />
                 </div>
             </div> -->
-            <h1 class="code">{{ code }}</h1>
-            <p class="date">{{ date }}</p>
-            <div class="hr"></div>
-            <h3 class="title">Results</h3>
-            <div class="list">
-                <div
-                    :class="
-                        selected == player.sid
-                            ? 'expand player-block'
-                            : 'player-block'
-                    "
-                    v-for="player in players"
-                    v-bind:key="player.sid"
-                >
-                    <PlayerAvatar
-                        class="player-guess"
-                        :id="player.sid"
-                        :playerName="getPoints(player)"
-                        :color="player.color"
-                        @click="selectPlayer(player)"
-                    />
-                    
-                </div>
-            </div>
-            <Button class="goHome" buttonLink="/" buttonText="Play again" />
+      <h1 class="code">
+        {{ code }}
+      </h1>
+      <p class="date">
+        {{ date }}
+      </p>
+      <div class="hr" />
+      <h3 class="title">
+        Results
+      </h3>
+      <div class="list">
+        <div
+          v-for="player in players"
+          :key="player.sid"
+          :class="
+            selected == player.sid
+              ? 'expand player-block'
+              : 'player-block'
+          "
+        >
+          <PlayerAvatar
+            :id="player.sid"
+            class="player-guess"
+            :player-name="getPoints(player)"
+            :color="player.color"
+            @click="selectPlayer(player)"
+          />
         </div>
-        <div v-if="state == 'not-found'">
-            <NotFound />
-        </div>
-        <Button class="goHome" buttonLink="/" buttonText="Play again" />
+      </div>
+      <Button
+        class="goHome"
+        button-link="/"
+        button-text="Play again"
+      />
     </div>
+    <div v-if="state == 'not-found'">
+      <NotFound />
+    </div>
+    <Button
+      class="goHome"
+      button-link="/"
+      button-text="Play again"
+    />
+  </div>
 </template>
 
 <script>
@@ -85,7 +98,7 @@ export default {
         axios
             .get(url)
             .then(function (response) {
-                console.log("Answers: ",response);
+                console.log('Answers: ', response);
                 var data = response.data;
                 self.players = data.players;
                 var date = new Date(data.date * 1000);
@@ -112,8 +125,8 @@ export default {
                         }
                     }
                 }
-                
-                console.log(self.players)
+
+                console.log(self.players);
                 self.state = 'found';
             })
             .catch(function (error) {
@@ -127,8 +140,8 @@ export default {
         },
         selectPlayer(player) {
             console.log('select player');
-            if(this.selected == player.sid) {
-                this.selected = ''
+            if (this.selected == player.sid) {
+                this.selected = '';
             } else {
                 this.selected = player.sid;
             }

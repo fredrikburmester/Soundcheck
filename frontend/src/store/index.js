@@ -17,7 +17,7 @@ export default createStore({
             state.error = value;
         },
         updatePlayersGuessed(state, value) {
-            state.players_guessed = value
+            state.players_guessed = value;
         },
         clearPlayersGuessed(state) {
             state.players_guessed = [];

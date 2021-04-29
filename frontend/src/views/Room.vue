@@ -1,103 +1,136 @@
 <template>
-    <div v-if="found" :key="found" class="gameroom">
-        <div v-if="showQR" class="bigQR" @click="showQR = false">
-            <img :src="qr" @click="showQR = false" />
-        </div>
-        <div v-if="started" :key="started">
-            <ProgressBar class="progressbar" />
-            <h2>Guess who this song belongs to!</h2>
-            <div class="list" v-bind:key="my_guess">
-                <PlayerAvatar
-                    @click="guess(player)"
-                    v-for="player in players"
-                    class="player-guess"
-                    v-bind:key="player.id"
-                    :id="player.id"
-                    :playerName="player.name"
-                    :color="player.color"
-                    :host="player.host"
-                    :selected="selected(player.sid)"
-                />
-            </div>
-            <div v-if="host" class="next-song">
-                <Button
-                    v-on:click="sendNextQuestion"
-                    buttonText="next question"
-                    color="#1DB954"
-                />
-            </div>
-            <div class="leave-started-game">
-                <Button
-                    v-if="host"
-                    v-on:click="closeRoom"
-                    buttonText="end game"
-                    color="#CD1A2B"
-                />
-                <Button
-                    v-else
-                    v-on:click="leaveRoom"
-                    buttonText="Leave Room"
-                    color="#CD1A2B"
-                />
-            </div>
-            <iframe
-                class="webplayer"
-                :src="iframeurl"
-                allowtransparency="true"
-                allow="encrypted-media"
-            ></iframe>
-        </div>
-        <div v-else>
-            <h1 class="code">{{ code }}</h1>
-            <div class="hr"></div>
-            <h3 class="title">Players:</h3>
-            <p v-if="!host">{{ status }}</p>
-            <div class="list">
-                <PlayerAvatar
-                    v-for="player in players"
-                    v-bind:key="player.id"
-                    :playerName="player.name"
-                    :color="player.color"
-                    :host="player.host"
-                />
-            </div>
-
-            <div class="qr">
-                <img :src="qr" @click="showQR = true" />
-            </div>
-
-            <div class="buttons">
-                <div class="copycode">
-                    <Button
-                        @click="copyToClipboard"
-                        color="#FFF"
-                        :buttonText="clipboardtext"
-                        :key="clipboardtext"
-                    ></Button>
-                </div>
-                <div v-if="host" :key="host" class="startgame">
-                    <Button
-                        @click="startGame()"
-                        buttonText="Start Game"
-                    ></Button>
-                </div>
-                <div class="leave">
-                    <Button
-                        v-if="host"
-                        v-on:click="closeRoom"
-                        buttonText="end game"
-                        color="#CD1A2B"
-                    />
-                    <Button
-                        v-else
-                        v-on:click="leaveRoom"
-                        buttonText="Leave Room"
-                        color="#CD1A2B"
-                    />
-                </div>
-            </div>
-        </div>
+  <div
+    v-if="found"
+    :key="found"
+    class="gameroom"
+  >
+    <div
+      v-if="showQR"
+      class="bigQR"
+      @click="showQR = false"
+    >
+      <img
+        :src="qr"
+        @click="showQR = false"
+      >
     </div>
+    <div
+      v-if="started"
+      :key="started"
+    >
+      <ProgressBar class="progressbar" />
+      <h2>Guess who this song belongs to!</h2>
+      <div
+        :key="my_guess"
+        class="list"
+      >
+        <PlayerAvatar
+          v-for="player in players"
+          :id="player.id"
+          :key="player.id"
+          class="player-guess"
+          :player-name="player.name"
+          :color="player.color"
+          :host="player.host"
+          :selected="selected(player.sid)"
+          @click="guess(player)"
+        />
+      </div>
+      <div
+        v-if="host"
+        class="next-song"
+      >
+        <Button
+          button-text="next question"
+          color="#1DB954"
+          @click="sendNextQuestion"
+        />
+      </div>
+      <div class="leave-started-game">
+        <Button
+          v-if="host"
+          button-text="end game"
+          color="#CD1A2B"
+          @click="closeRoom"
+        />
+        <Button
+          v-else
+          button-text="Leave Room"
+          color="#CD1A2B"
+          @click="leaveRoom"
+        />
+      </div>
+      <iframe
+        class="webplayer"
+        :src="iframeurl"
+        allowtransparency="true"
+        allow="encrypted-media"
+      />
+    </div>
+    <div v-else>
+      <h1 class="code">
+        {{ code }}
+      </h1>
+      <div class="hr" />
+      <h3 class="title">
+        Players:
+      </h3>
+      <p v-if="!host">
+        {{ status }}
+      </p>
+      <div class="list">
+        <PlayerAvatar
+          v-for="player in players"
+          :key="player.id"
+          :player-name="player.name"
+          :color="player.color"
+          :host="player.host"
+        />
+      </div>
+
+      <div class="qr">
+        <img
+          :src="qr"
+          @click="showQR = true"
+        >
+      </div>
+
+      <div class="buttons">
+        <div class="copycode">
+          <Button
+            :key="clipboardtext"
+            color="#FFF"
+            :button-text="clipboardtext"
+            @click="copyToClipboard"
+          />
+        </div>
+        <div
+          v-if="host"
+          :key="host"
+          class="startgame"
+        >
+          <Button
+            button-text="Start Game"
+            @click="startGame()"
+          />
+        </div>
+        <div class="leave">
+          <Button
+            v-if="host"
+            button-text="end game"
+            color="#CD1A2B"
+            @click="closeRoom"
+          />
+          <Button
+            v-else
+            button-text="Leave Room"
+            color="#CD1A2B"
+            @click="leaveRoom"
+          />
+        </div>
+      </div>
+    </div>
+  </div>
 </template>
 
 <script>
@@ -191,6 +224,9 @@ export default {
             });
             self.found = true;
         },
+    },
+    mounted: function () {
+        this.connectToRoom();
     },
     methods: {
         async copyToClipboard() {
@@ -331,9 +367,6 @@ export default {
                 sid: localStorage.getItem('sid'),
             });
         },
-    },
-    mounted: function () {
-        this.connectToRoom();
     },
 };
 </script>
