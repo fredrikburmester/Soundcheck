@@ -41,6 +41,11 @@
         <div v-if="state == 'not-found'">
             <NotFound />
         </div>
+        <Button
+            @click="createPlaylist(date)"
+            class="createPlaylist"
+            buttonText="Create playlist"
+        />
         <Button class="goHome" buttonLink="/" buttonText="Play again" />
     </div>
 </template>
@@ -68,11 +73,13 @@ export default {
             state: 'loading',
             date: null,
             selected: '',
+            tracksForPlaylist: [],
         };
     },
     mounted() {
         var self = this;
         var url;
+
         if (
             process.env.NODE_ENV == 'development' ||
             process.env.NODE_ENV == 'dev'
@@ -101,7 +108,10 @@ export default {
 
                 // Convert answer ids to names
                 for (let player of data.players) {
+                    console.log(player);
                     for (let guess of player.guesses) {
+                        //TODO change guess array so that info can contain trackID or genre etc.
+                        self.tracksForPlaylist.push(guess['info']);
                         for (let player2 of data.players) {
                             if (player2.sid == guess.guess) {
                                 guess.guess = player.name;
@@ -126,6 +136,37 @@ export default {
             console.log('select player');
             this.selected = player.id;
         },
+        createPlaylist(date) {
+            this.$socket.client.emit('createPlaylist', {
+                sid: localStorage.getItem('sid'),
+                token: localStorage.getItem('access_token'),
+                name: `MWF ${code}`,
+                code: this.code,
+            });
+        },
+
+        // createPlaylist() {
+        //     var token = localStorage.getItem('access_token');
+        //     console.log(token);
+        //     let config = {
+        //         headers: {
+        //             Authorization: 'Bearer ${token}',
+        //             Accept: 'application/json',
+        //             'Content-Type': 'application/json',
+        //         },
+        //         data: {
+        //             name: "aaa"
+        //         }
+        //     };
+        //     axios
+        //         .post(
+        //             `https://api.spotify.com/v1/users/croseone/playlists`,
+        //             config
+        //         )
+        //         .catch(function (error) {
+        //             console.log(error);
+        //         });
+        // },
     },
 };
 </script>
