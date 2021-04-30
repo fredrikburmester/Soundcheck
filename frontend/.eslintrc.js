@@ -9,9 +9,6 @@ module.exports = {
         // '@vue/prettier',
         'plugin:vue/vue3-recommended',
     ],
-    rules: {
-        // indent: ['error', 4],
-    },
     parserOptions: {
         parser: 'babel-eslint',
     },
