@@ -323,6 +323,7 @@ export default {
             this.players_guessed = [];
         },
         game_ended() {
+            console.log("game has ended waiting for server")
             this.loading = true;
             // this.$router.push(`/${this.code}/results`);
         },
