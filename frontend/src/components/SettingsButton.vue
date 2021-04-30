@@ -1,11 +1,11 @@
 <template>
-  <div
-    class="settingbutton"
-    :style="colorStyle"
-    @click="select"
-  >
-    {{ buttonText_ }}
-  </div>
+    <div
+        class="settingbutton"
+        :style="colorStyle"
+        @click="select"
+    >
+        {{ buttonText_ }}
+    </div>
 </template>
 
 <script>
@@ -25,7 +25,7 @@ export default {
             default: false,
         },
     },
-emits: ['clicked'],
+    emits: ['clicked'],
     data() {
         return {
             buttonText_: this.buttonText,

@@ -1,191 +1,193 @@
 <template>
-  <div
-    v-if="found"
-    :key="found"
-    class="gameroom"
-  >
     <div
-      v-if="loading"
-      class="loading"
+        v-if="found"
+        :key="found"
+        class="gameroom"
     >
-      <p>Loading...</p>
-    </div>
-    <div
-      v-if="showQR"
-      class="bigQR"
-      @click="showQR = false"
-    >
-      <img
-        :src="qr"
-        @click="showQR = false"
-      >
-    </div>
-    <div
-      v-if="leaveRoomModal == true"
-      :key="leaveRoomModal"
-      class="leaveroom-modal"
-    >
-      <div>
-        <h2 v-if="host">
-          Do you really want to end the game?
-        </h2>
-        <h2 v-else>
-          Do you really want to leave?
-        </h2>
-        <Button
-          v-if="host"
-          button-text="Close room"
-          color="#CD1A2B"
-          @click="leaveRoom"
-        />
-        <Button
-          v-else
-          button-text="Leave room"
-          color="#CD1A2B"
-          @click="leaveRoom"
-        />
-        <Button
-          button-text="Go back"
-          color="#1DB954"
-          @click="toggleModal"
-        />
-      </div>
-    </div>
-    <div
-      v-if="started"
-      :key="started"
-    >
-      <ProgressBar
-        :key="current_question"
-        :time="progressbarTime"
-        class="progressbar"
-      />
-      <h2 class="code">
-        Guess!
-      </h2>
-      <p class="title">
-        Who's song is this?
-      </p>
-      <div class="stats">
-        <p>
-          Players guessed: {{ getPlayersGuessed }} /
-          {{ players.length }}
-        </p>
-        <p>
-          Question: {{ current_question + 1 }} / {{ nr_of_questions }}
-        </p>
-      </div>
-      <div
-        :key="my_guess"
-        class="list"
-      >
-        <PlayerAvatar
-          v-for="player in players"
-          :id="player.id"
-          :key="player.id"
-          class="player-guess"
-          :player-name="player.name"
-          :color="player.color"
-          :host="player.host"
-          :selected="selected(player.sid)"
-          @click="guess(player)"
-        />
-      </div>
-      <div
-        v-if="host"
-        class="next-song"
-      >
-        <Button
-          button-text="next question"
-          color="#1DB954"
-          @click="sendNextQuestion"
-        />
-      </div>
-      <div
-        class="close-button"
-        @click="toggleModal"
-      >
         <div
-          id="line1"
-          class="line"
-        />
-        <div
-          id="line2"
-          class="line"
-        />
-      </div>
-
-      <iframe
-        class="webplayer"
-        :src="iframeurl"
-        allowtransparency="true"
-        allow="encrypted-media"
-      />
-    </div>
-    <div v-else>
-      <h1 class="code">
-        {{ code }}
-      </h1>
-      <div class="hr" />
-      <h3 class="title">
-        Players:
-      </h3>
-      <p v-if="!host">
-        {{ status }}
-      </p>
-      <div class="list">
-        <PlayerAvatar
-          v-for="player in players"
-          :key="player.id"
-          :player-name="player.name"
-          :color="player.color"
-          :host="player.host"
-        />
-      </div>
-
-      <div class="qr">
-        <img
-          :src="qr"
-          @click="showQR = true"
+            v-if="loading"
+            class="loading"
         >
-      </div>
-
-      <div class="buttons">
-        <div class="copycode">
-          <Button
-            :key="clipboardtext"
-            color="#FFF"
-            :button-text="clipboardtext"
-            @click="copyToClipboard"
-          />
+            <p>Loading...</p>
         </div>
         <div
-          v-if="host"
-          :key="host"
-          class="startgame"
+            v-if="showQR"
+            class="bigQR"
+            @click="showQR = false"
         >
-          <Button
-            button-text="Start Game"
-            @click="startGame()"
-          />
+            <img
+                :src="qr"
+                @click="showQR = false"
+            >
         </div>
-        <div class="leave">
-          <Button
-            v-if="host"
-            button-text="end game"
-            color="#CD1A2B"
-            @click="toggleModal"
-          />
-          <Button
-            v-else
-            button-text="Leave Room"
-            color="#CD1A2B"
-            @click="toggleModal"
-          />
+        <div
+            v-if="leaveRoomModal == true"
+            :key="leaveRoomModal"
+            class="leaveroom-modal"
+        >
+            <div>
+                <h2 v-if="host" style="padding: 0 2rem 0 2rem">
+                    Do you really want to end the game?
+                </h2>
+                <h2 v-else>
+                    Do you really want to leave?
+                </h2>
+                <p>All progress will be lost...</p>
+                <Button
+                    v-if="host"
+                    button-text="end game"
+                    color="#CD1A2B"
+                    @click="leaveRoom"
+                />
+                <Button
+                    v-else
+                    button-text="Leave room"
+                    color="#CD1A2B"
+                    @click="leaveRoom"
+                />
+                <Button
+                    button-text="Go back"
+                    color="#1DB954"
+                    @click="toggleModal"
+                />
+            </div>
         </div>
-      </div>
+        <div
+            v-if="started"
+            :key="started"
+        >
+            <ProgressBar
+                :key="current_question"
+                :time="progressbarTime"
+                class="progressbar"
+            />
+            <h2 class="code">
+                Guess!
+            </h2>
+            <p class="title">
+                Who's song is this?
+            </p>
+            <div class="stats">
+                <p>
+                    Players guessed: {{ getPlayersGuessed }} /
+                    {{ players.length }}
+                </p>
+                <p>
+                    Question: {{ current_question + 1 }} / {{ nr_of_questions }}
+                </p>
+            </div>
+            <div
+                :key="my_guess"
+                class="list"
+            >
+                <PlayerAvatar
+                    v-for="player in players"
+                    :id="player.id"
+                    :key="player.id"
+                    class="player-guess"
+                    :player-name="player.name"
+                    :color="player.color"
+                    :host="player.host"
+                    :selected="selected(player.sid)"
+                    @click="guess(player)"
+                />
+            </div>
+            <div
+                v-if="host"
+                class="next-song"
+            >
+                <Button
+                    :key="current_question"
+                    :button-text="(current_question + 1) == nr_of_questions ? 'Go to results' : 'next question'"
+                    color="#1DB954"
+                    @click="sendNextQuestion"
+                />
+            </div>
+            <div
+                class="close-button"
+                @click="toggleModal"
+            >
+                <div
+                    id="line1"
+                    class="line"
+                />
+                <div
+                    id="line2"
+                    class="line"
+                />
+            </div>
+
+            <iframe
+                class="webplayer"
+                :src="iframeurl"
+                allowtransparency="true"
+                allow="encrypted-media"
+            />
+        </div>
+        <div v-else>
+            <h1 class="code">
+                {{ code }}
+            </h1>
+            <div class="hr" />
+            <h3 class="title">
+                Players:
+            </h3>
+            <p v-if="!host">
+                {{ status }}
+            </p>
+            <div class="list">
+                <PlayerAvatar
+                    v-for="player in players"
+                    :key="player.id"
+                    :player-name="player.name"
+                    :color="player.color"
+                    :host="player.host"
+                />
+            </div>
+
+            <div class="qr">
+                <img
+                    :src="qr"
+                    @click="showQR = true"
+                >
+            </div>
+
+            <div class="buttons">
+                <div class="copycode">
+                    <Button
+                        :key="clipboardtext"
+                        color="#FFF"
+                        :button-text="clipboardtext"
+                        @click="copyToClipboard"
+                    />
+                </div>
+                <div
+                    v-if="host"
+                    :key="host"
+                    class="startgame"
+                >
+                    <Button
+                        button-text="Start Game"
+                        @click="startGame()"
+                    />
+                </div>
+                <div class="leave">
+                    <Button
+                        v-if="host"
+                        button-text="end game"
+                        color="#CD1A2B"
+                        @click="toggleModal"
+                    />
+                    <Button
+                        v-else
+                        button-text="Leave Room"
+                        color="#CD1A2B"
+                        @click="toggleModal"
+                    />
+                </div>
+            </div>
+        </div>
     </div>
-  </div>
 </template>
 
 <script>

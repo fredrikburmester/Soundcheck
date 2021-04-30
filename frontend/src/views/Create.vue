@@ -1,65 +1,65 @@
 <template>
-  <div class="create">
-    <h1 class="head">
-      Settings
-    </h1>
-    <div class="hr" />
-    <div class="settingsbox">
-      <h3>Select Time Range</h3>
-      <Button
-        button-text="last 4 weeks"
-        @click="onTimeChange(`4 weeks`)"
-      />
-      <Button
-        button-text="last 6 months"
-        @click="onTimeChange(`6 months`)"
-      />
-      <Button
-        button-text="more than a year"
-        @click="onTimeChange(`More than a year`)"
-      />
-      <p>Time range: {{ time_range }}</p>
+    <div class="create">
+        <h1 class="head">
+            Settings
+        </h1>
+        <div class="hr" />
+        <div class="settingsbox">
+            <h3>Select Time Range</h3>
+            <Button
+                button-text="last 4 weeks"
+                @click="onTimeChange(`4 weeks`)"
+            />
+            <Button
+                button-text="last 6 months"
+                @click="onTimeChange(`6 months`)"
+            />
+            <Button
+                button-text="more than a year"
+                @click="onTimeChange(`More than a year`)"
+            />
+            <p>Time range: {{ time_range }}</p>
 
-      <h3>Number of songs per player</h3>
-      <SettingsButton
-        :key="no_songs"
-        :marked="1 == no_songs"
-        button-text="1"
-        @clicked="onClickChild"
-      />
-      <SettingsButton
-        :key="no_songs"
-        :marked="2 == no_songs"
-        button-text="2"
-        @clicked="onClickChild"
-      />
-      <SettingsButton
-        :key="no_songs"
-        :marked="3 == no_songs"
-        button-text="3"
-        @clicked="onClickChild"
-      />
-      <SettingsButton
-        :key="no_songs"
-        :marked="4 == no_songs"
-        button-text="4"
-        @clicked="onClickChild"
-      />
+            <h3>Number of songs per player</h3>
+            <SettingsButton
+                :key="no_songs"
+                :marked="1 == no_songs"
+                button-text="1"
+                @clicked="onClickChild"
+            />
+            <SettingsButton
+                :key="no_songs"
+                :marked="2 == no_songs"
+                button-text="2"
+                @clicked="onClickChild"
+            />
+            <SettingsButton
+                :key="no_songs"
+                :marked="3 == no_songs"
+                button-text="3"
+                @clicked="onClickChild"
+            />
+            <SettingsButton
+                :key="no_songs"
+                :marked="4 == no_songs"
+                button-text="4"
+                @clicked="onClickChild"
+            />
 
-      <h3>Include Top Genre</h3>
-      <ToggleSwitch @clicked="onToggleChild" />
-      <br>
-      <Button
-        button-text="Create Room"
-        @click="createRoom"
-      />
-      <Button
-        button-link="/"
-        button-text="Back"
-        color="#CD1A2B"
-      />
+            <h3>Include Top Genre</h3>
+            <ToggleSwitch @clicked="onToggleChild" />
+            <br>
+            <Button
+                button-text="Create Room"
+                @click="createRoom"
+            />
+            <Button
+                button-link="/"
+                button-text="Back"
+                color="#CD1A2B"
+            />
+        </div>
     </div>
-  </div>
 </template>
 
 <script>

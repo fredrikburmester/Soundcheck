@@ -1,37 +1,29 @@
 <template>
-  <div>
-    <div class="song">
-      <div class="image">
-        <img
-          :src="imgSrc"
-          class="circle"
-        >
-      </div>
-      <div class="info">
-        <p
-          id="song"
-          style="color: gray"
-        >
-          Song
-        </p>
-        <p id="track-name">
-          {{ track_name }}
-        </p>
-        <p id="artist">
-          {{ artist }}
-        </p>
-        <br>
-        <p id="answer">
-          Answer: <span>{{ answer }}</span> 
-        </p>
-        <p
-          id="guess"
-        >
-          Guess: <span :style="guess == answer ? 'color: green' : 'color: red'">{{ guess }}</span>
-        </p>
-      </div>
+    <div>
+        <div class="song">
+            <div class="image">
+                <img :src="imgSrc" class="circle">
+            </div>
+            <div class="info">
+                <p id="song" style="color: gray">
+                    Song
+                </p>
+                <p id="track-name">
+                    {{ track_name }}
+                </p>
+                <p id="artist">
+                    {{ artist }}
+                </p>
+                <br>
+                <p id="answer">
+                    Answer: <span>{{ answer }}</span> 
+                </p>
+                <p id="guess">
+                    Guess: <span :style="guess == answer ? 'color: green' : 'color: red'">{{ guess }}</span>
+                </p>
+            </div>
+        </div>
     </div>
-  </div>
 </template>
 
 <script>
@@ -95,27 +87,27 @@ export default {
 
 .song {
 
-    display: flex;
-    flex-direction: row;
-    margin: 5vh 2rem 5vh 2rem;
+	display: flex;
+	flex-direction: row;
+	margin: 5vh 2rem 5vh 2rem;
 }
 .image {
-    width: 60px;
-    height: 60px;
+	width: 60px;
+	height: 60px;
 }
 .image img {
-    width: 60px;
-    height: 60px;
-    border-radius: 50%;
-    background-color: white;
+	width: 60px;
+	height: 60px;
+	border-radius: 50%;
+	background-color: white;
 }
 .info {
-    margin-left: 20px;
-    text-align: left;
-    line-height: 20px;
+	margin-left: 20px;
+	text-align: left;
+	line-height: 20px;
 }
 p {
-    margin: 0;
+	margin: 0;
 }
 
 </style>
