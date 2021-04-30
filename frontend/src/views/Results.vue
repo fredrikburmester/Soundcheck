@@ -36,6 +36,12 @@
           />
           <p class="points">{{player.points}} Points</p>
         </div>
+        <Button
+            @click="createPlaylist(date)"
+            class="createPlaylist"
+            buttonText="Create playlist"
+        />
+        <Button class="goHome" buttonLink="/" buttonText="Play again" />
       </div>
       <Button
         class="goHome"
@@ -81,6 +87,7 @@ export default {
     mounted() {
         var self = this;
         var url;
+
         if (
             process.env.NODE_ENV == 'development' ||
             process.env.NODE_ENV == 'dev'
@@ -108,7 +115,10 @@ export default {
 
                 // Convert answer ids to names
                 for (let player of data.players) {
+                    console.log(player);
                     for (let guess of player.guesses) {
+                        //TODO change guess array so that info can contain trackID or genre etc.
+                        self.tracksForPlaylist.push(guess['info']);
                         for (let player2 of data.players) {
                             if (player2.sid == guess.guess) {
                                 guess.guess = player2.name;
@@ -146,6 +156,37 @@ export default {
             this.selected = true
             this.selected_player = player
         },
+        createPlaylist(date) {
+            this.$socket.client.emit('createPlaylist', {
+                sid: localStorage.getItem('sid'),
+                token: localStorage.getItem('access_token'),
+                name: `MWF ${code}`,
+                code: this.code,
+            });
+        },
+
+        // createPlaylist() {
+        //     var token = localStorage.getItem('access_token');
+        //     console.log(token);
+        //     let config = {
+        //         headers: {
+        //             Authorization: 'Bearer ${token}',
+        //             Accept: 'application/json',
+        //             'Content-Type': 'application/json',
+        //         },
+        //         data: {
+        //             name: "aaa"
+        //         }
+        //     };
+        //     axios
+        //         .post(
+        //             `https://api.spotify.com/v1/users/croseone/playlists`,
+        //             config
+        //         )
+        //         .catch(function (error) {
+        //             console.log(error);
+        //         });
+        // },
         deselectPlayer() {
             this.selected = false
         }

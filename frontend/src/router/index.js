@@ -27,13 +27,18 @@ function checkAccessToken(to, from, next) {
                 'Content-Type': 'application/json',
             },
         })
-        .then(function () {
+        .then(function (response) {
+            if(!localStorage.getItem('user_id', response.data.id){
+                localStorage.setItem('user_id', response.data.id);
+        }
+            
             next();
             return;
         })
         .catch(function () {
             localStorage.removeItem('access_token');
             localStorage.removeItem('refresh_token');
+            localStorage.removeItem('user_id');
             next({ name: 'Login' });
             return;
         });
