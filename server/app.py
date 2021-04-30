@@ -331,11 +331,8 @@ def next_question(data):
             Room.players_guessed = []
             # answer is track id in this case
             if current_question == len(Room.answers) and len(Room.answers) != 0:
-                print(f"[{code}] Game ended")
-                socketio.emit('game_ended', room=code)
-
                 print(f"[{code}] Compiling results")
-                compile_results(code)
+                compile_results(code) 
 
                 print(f"[{code}] Sending: Go to results")
                 socketio.emit("connectToRoom", {
