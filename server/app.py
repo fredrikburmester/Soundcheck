@@ -200,7 +200,7 @@ def compile_results(code):
                 "players": players,
                 "date": str(time.time()),
             })
-            socketio.emit('game_ended', room=code)
+            
             return
 
 @socketio.on('connect_to_room')
@@ -331,6 +331,10 @@ def next_question(data):
             Room.players_guessed = []
             # answer is track id in this case
             if current_question == len(Room.answers) and len(Room.answers) != 0:
+                
+                print(f"[{code}] Sending: Game is over, loading...")
+                socketio.emit('game_ended', room=code)
+                
                 print(f"[{code}] Compiling results")
                 compile_results(code) 
 
