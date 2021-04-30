@@ -517,7 +517,6 @@ def joinRoom(data):
 
             # extracting data in json format
             data = r.json()
-
             # Have the player join the room
             join_room(code)
 
@@ -568,6 +567,22 @@ def joinRoom(data):
             return
     print("not a room")
     socketio.emit("not_a_room", to=request.sid)
+
+@socketio.on('createPlaylist')
+def createPlaylist(data):
+    
+    req = requests.post(
+        url="https://api.spotify.com/v1/users/croseone/playlists",
+        headers={
+            'Authorization': 'Bearer ' + data['token'],
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        },
+        json={'name': data[name]}
+    )
+    print(req.json())
+    print("Response code: ", req.status_code)
+
 
 
 def generate_access_token(code):
