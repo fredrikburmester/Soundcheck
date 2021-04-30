@@ -1,49 +1,96 @@
 <template>
-    <div v-bind:key="state">
-        <div v-if="state == 'loading'">
-            <p>Loading...</p>
-        </div>
-        <div v-if="state == 'found'">
-            <div class="personalResultsModal" v-if="selected == player.id">
-                <div v-for="guess in player.guesses" v-bind:key="guess">
-                    <GuessIcon
-                        :trackID="guess.info"
-                        :guess="guess.guess"
-                        :answer="guess.correct_answer"
-                    />
-                </div>
-            </div>
-            <h1 class="code">{{ code }}</h1>
-            <p class="date">{{ date }}</p>
-            <div class="hr"></div>
-            <h3 class="title">Results</h3>
-            <div class="list">
-                <div
-                    :class="
-                        selected == player.id
-                            ? 'expand player-block'
-                            : 'player-block'
-                    "
-                    v-for="player in players"
-                    v-bind:key="player.id"
-                >
-                    <PlayerAvatar
-                        class="player-guess"
-                        :id="player.id"
-                        :playerName="getPoints(player)"
-                        :color="player.color"
-                        @click="selectPlayer(player)"
-                    />
-                    
-                </div>
-            </div>
-            <Button class="goHome" buttonLink="/" buttonText="Play again" />
-        </div>
-        <div v-if="state == 'not-found'">
-            <NotFound />
-        </div>
-        <Button class="goHome" buttonLink="/" buttonText="Play again" />
+  <div :key="state">
+    <div v-if="state == 'loading'">
+      <p>Loading...</p>
     </div>
+    <div v-if="state == 'found'">
+        <div
+          v-if="selected"
+          class="personalResultsModal"
+        >
+          <h1 class="code">
+            {{ selected_player.name }}
+          </h1>
+          <p class="date">
+            {{ date }}
+          </p>
+          <div class="hr" />
+          <h3 class="title">
+            Individual results
+          </h3>
+          <div
+            class="close-button"
+            @click="deselectPlayer()"
+          >
+            <div
+              id="line1"
+              class="line"
+            />
+            <div
+              id="line2"
+              class="line"
+            />
+          </div>
+          <div
+            class="personal-list"
+          >
+            <div
+              v-for="guess in selected_player.guesses"
+              :key="guess"
+            >
+              <GuessIcon
+                :trackid="guess.info"
+                :guess="guess.guess"
+                :answer="guess.correct_answer"
+              />
+            </div>
+          </div>
+        </div>
+      
+      <h1 class="code">
+        {{ code }}
+      </h1>
+      <p class="date">
+        {{ date }}
+      </p>
+      <div class="hr" />
+      <h3 class="title">
+        Results
+      </h3>
+      <div class="list">
+        <div
+          v-for="player in players"
+          :key="player.sid"
+          :class="
+            selected == player.sid
+              ? 'expand player-block'
+              : 'player-block'
+          "
+        >
+          <PlayerAvatar
+            :id="player.sid"
+            class="player-guess"
+            :player-name="getPoints(player)"
+            :color="player.color"
+            @click="selectPlayer(player)"
+          />
+        </div>
+      </div>
+      <Button
+        class="goHome"
+        button-link="/"
+        button-text="Play again"
+      />
+    </div>
+    <div v-if="state == 'not-found'">
+      <NotFound />
+    </div>
+    <Button
+      class="goHome"
+      button-link="/"
+      button-text="Play again"
+    />
+  </div>
 </template>
 
 <script>
@@ -65,10 +112,11 @@ export default {
     data: function () {
         return {
             code: this.$route.params.code,
-            players: null,
+            players: [],
             state: 'loading',
-            date: null,
-            selected: '',
+            date: '',
+            selected: false,
+            selected_player: null
         };
     },
     mounted() {
@@ -85,9 +133,8 @@ export default {
         axios
             .get(url)
             .then(function (response) {
-                console.log(response);
+                console.log('Answers: ', response);
                 var data = response.data;
-                self.state = 'found';
                 self.players = data.players;
                 var date = new Date(data.date * 1000);
                 var date_string = date.toLocaleDateString('se');
@@ -105,14 +152,17 @@ export default {
                     for (let guess of player.guesses) {
                         for (let player2 of data.players) {
                             if (player2.sid == guess.guess) {
-                                guess.guess = player.name;
+                                guess.guess = player2.name;
                             }
                             if (player2.sid == guess.correct_answer) {
-                                guess.correct_answer = player.name;
+                                guess.correct_answer = player2.name;
                             }
                         }
                     }
                 }
+
+                console.log(self.players);
+                self.state = 'found';
             })
             .catch(function (error) {
                 console.log(error);
@@ -125,12 +175,12 @@ export default {
         },
         selectPlayer(player) {
             console.log('select player');
-            if(this.selected == player.id) {
-                this.selected = ''
-            } else {
-                this.selected = player.id;
-            }
+            this.selected = true
+            this.selected_player = player
         },
+        deselectPlayer() {
+            this.selected = false
+        }
     },
 };
 </script>
@@ -167,6 +217,11 @@ export default {
     margin-right: 2rem;
     overflow-x: hidden;
 }
+.personal-list {
+    height: calc(100vh - 220px);
+    overflow-y: scroll;
+    overflow-x: hidden;
+}
 .goHome {
     position: fixed;
     left: 50%;
@@ -182,5 +237,23 @@ export default {
     left: 0;
     height: 100vh;
     width: 100vw;
+    z-index: 2;
+}
+.close-button {
+    position: fixed;
+    top: 35px;
+    right: 2rem;
+}
+.line {
+    background-color: red;
+    height: 3px;
+    width: 25px;
+    cursor: pointer;
+}
+#line1 {
+    transform: translateY(3px) rotate(45deg);
+}
+#line2 {
+    transform: rotate(-45deg);
 }
 </style>
