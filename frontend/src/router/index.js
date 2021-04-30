@@ -28,9 +28,10 @@ function checkAccessToken(to, from, next) {
             },
         })
         .then(function (response) {
-            if(!localStorage.getItem('user_id', response.data.id){
+            if(!localStorage.getItem('user_id', response.data.id))
+            {
                 localStorage.setItem('user_id', response.data.id);
-        }
+            }
             
             next();
             return;
