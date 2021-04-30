@@ -11,11 +11,39 @@
                 {{ date }}
             </p>
             <div class="hr" />
+            <div v-if="selected" class="personalResultsModal">
+                <h1 class="code">
+                    {{ selected_player.name }}
+                </h1>
+                <p class="date">
+                    {{ date }}
+                </p>
+                <div class="hr" />
+                <h3 class="title">
+                    Individual results
+                </h3>
+                <div class="close-button" @click="deselectPlayer()">
+                    <div
+                        id="line1"
+                        class="line"
+                    />
+                    <div
+                        id="line2"
+                        class="line"
+                    />
+                </div>
+                <div class="personal-list">
+                    <div v-for="guess in selected_player.guesses" :key="guess">
+                        <GuessIcon
+                            :trackid="guess.info"
+                            :guess="guess.guess"
+                            :answer="guess.correct_answer"
+                        />
+                    </div>
+                </div>
+            </div>
             <div class="list">
-                <div
-                    v-for="player, index in players"
-                    :key="player.sid"
-                >
+                <div v-for="player, index in players" :key="player.sid">
                     <h3 v-if="index == 0" class="title" style="padding-left: 0; margin-left: 0; color: gold">
                         Winner
                     </h3>
@@ -48,7 +76,6 @@
                 button-link="/"
                 button-text="Play again"
             />
-            <keep-alive max="10" />
         </div>
         <div v-if="state == 'not-found'">
             <NotFound />
@@ -70,6 +97,7 @@ export default {
         PlayerAvatar,
         Button,
         NotFound,
+        GuessIcon
     },
     data: function () {
         return {
