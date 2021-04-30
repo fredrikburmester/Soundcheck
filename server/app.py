@@ -68,7 +68,8 @@ class Room:
         self.questions = ["Who's top song is this?"]
         self.code = code  # Room code
         self.players = []  # player object
-        self.answers = []  # every persons top track for example {player: sid, answer: trackid}
+        # every persons top track for example {player: sid, answer: trackid}
+        self.answers = []
         self.results = []  # points for each person
         self.players_guessed = []
         self.started = False
@@ -95,6 +96,7 @@ COLORS = [
 
 ##################
 
+
 @app.route('/api/<code>/results', methods=['GET'])
 def results(code):
     global ROOMS
@@ -118,11 +120,13 @@ def results(code):
         "Access-Control-Allow-Origin": "*"
     })
 
+
 @socketio.on('generate_access_token')
 def check_token(data):
     access_token, refresh_token = generate_access_token(data['code'])
     socketio.emit("access_token", {'access_token': access_token, 'refresh_token': refresh_token, 'sid': request.sid},
                   to=request.sid)
+
 
 @socketio.on('isRoom')
 def isRoom(data):
@@ -136,6 +140,8 @@ def isRoom(data):
     return
 
 # Used to calculate show how many players have guessed
+
+
 @socketio.on('player_guess')
 def player_guess(data):
     sid = data['sid']
@@ -147,13 +153,13 @@ def player_guess(data):
         if Room.code == code:
             current_question = Room.current_question
             for player in Room.players:
-                if player.sid == sid: 
-                    for guess in player.guesses: 
+                if player.sid == sid:
+                    for guess in player.guesses:
                         # if guess exist -> update
                         if guess['question'] == current_question:
                             guess['guess'] = player_guess
                             return
-                    # if no quess exist -> add 
+                    # if no quess exist -> add
                     player.guesses.append({
                         'question': current_question,
                         'guess': player_guess,
@@ -165,8 +171,9 @@ def player_guess(data):
                     # send to room total guesses amount
                     socketio.emit('nr_of_players_guessed', {
                         'players': Room.players_guessed
-                    }, room=code) 
+                    }, room=code)
                     return
+
 
 def compile_results(code):
     global ROOMS
@@ -200,8 +207,9 @@ def compile_results(code):
                 "players": players,
                 "date": str(time.time()),
             })
-            
+
             return
+
 
 @socketio.on('connect_to_room')
 def connect_to_room(data):
@@ -224,20 +232,20 @@ def connect_to_room(data):
             current_question = 0
 
             # Checking access and status of room
-            if Room.started == False: 
+            if Room.started == False:
                 status = 'lobby'
                 access = True
 
-                for player in Room.players: 
-                    if player.sid == sid: # player is reconnecting to lobby
+                for player in Room.players:
+                    if player.sid == sid:  # player is reconnecting to lobby
                         reconnecting = True
                         print(f"[{code}]{player.name} reconnecting")
 
                 if not reconnecting:
                     # sending get request and saving the response as response object
                     r2 = requests.get(url="https://api.spotify.com/v1/me",
-                    headers={"Authorization": "Bearer " + access_token})
-                    
+                                      headers={"Authorization": "Bearer " + access_token})
+
                     # extracting data in json format
                     data = r2.json()
 
@@ -268,7 +276,7 @@ def connect_to_room(data):
                     if player.sid == sid:
                         access = True
                 join_room(code)
-            else: 
+            else:
                 status = 'ended'
                 access = True
 
@@ -278,14 +286,14 @@ def connect_to_room(data):
                 'access': access,
                 'question': current_question,
                 'settings': settings,
-                'answers': Room.answers, # also defines total number of questions
+                'answers': Room.answers,  # also defines total number of questions
                 'questionTimeStarted': Room.questionTimeStarted,
                 'players_guessed': Room.players_guessed
             }, to=request.sid)
 
             # Send a updated list of the current players in the room
             send_list_of_players(code)
-            return 
+            return
     status = 'NaR'
     socketio.emit("connectToRoom", {
         'status': status,
@@ -295,6 +303,7 @@ def connect_to_room(data):
         'answers': None
     }, to=request.sid)
     return
+
 
 def send_list_of_players(code):
     global ROOMS
@@ -318,6 +327,7 @@ def send_list_of_players(code):
         'players': list_of_players,
     }, room=code)
 
+
 @socketio.on('next_question')
 def next_question(data):
     code = data['code']
@@ -331,12 +341,12 @@ def next_question(data):
             Room.players_guessed = []
             # answer is track id in this case
             if current_question == len(Room.answers) and len(Room.answers) != 0:
-                
+
                 print(f"[{code}] Sending: Game is over, loading...")
                 socketio.emit('game_ended', room=code)
-                
+
                 print(f"[{code}] Compiling results")
-                compile_results(code) 
+                compile_results(code)
 
                 print(f"[{code}] Sending: Go to results")
                 socketio.emit("connectToRoom", {
@@ -350,12 +360,13 @@ def next_question(data):
             else:
                 Room.questionTimeStarted = str(int(time.time()))
                 socketio.emit('next_question', {
-                    'answer': Room.answers[current_question]['player'], 
+                    'answer': Room.answers[current_question]['player'],
                     'current_question': current_question,
                     'trackid': Room.answers[current_question]['info'],
                     'questionTimeStarted':  Room.questionTimeStarted
                 }, room=code)
                 return
+
 
 @socketio.on('start_game')
 def start_game(data):
@@ -370,11 +381,13 @@ def start_game(data):
             nr_of_questions = len(Room.answers)
             Room.started = True
             random.shuffle(Room.answers)
-            socketio.emit('start_game', {'nr_of_questions': nr_of_questions}, room=code)
+            socketio.emit(
+                'start_game', {'nr_of_questions': nr_of_questions}, room=code)
             Room.questionTimeStarted = time.time()
             print(f"[{code}] Game has started!")
             print(f"[{code}] Number of players: {num_of_players}")
             return
+
 
 @socketio.on('toptrack')
 def get_top_track(data):
@@ -400,6 +413,7 @@ def get_top_track(data):
                         'player': sid,
                         'info': trackid[0][x],
                     })
+
 
 def close_socket_room(code):
     for Room in ROOMS:
@@ -446,7 +460,8 @@ def remove_player_from_room(data):
                             'sid': player.sid,
                         })
 
-                    socketio.emit("update_players_list", {'players': list_of_players}, room=code)
+                    socketio.emit("update_players_list", {
+                                  'players': list_of_players}, room=code)
                     return
 
 
@@ -467,7 +482,8 @@ def createRoom(data):
             if player.sid == sid and player.host == True and _Room.ended == False:
                 code = _Room.code
                 reconnecting = True
-                print(f"[Server] User {player.name} already has an active room: {code}. Rejoining.")
+                print(
+                    f"[Server] User {player.name} already has an active room: {code}. Rejoining.")
 
     if not reconnecting:
         ROOMS.append(Room(code))
@@ -478,6 +494,37 @@ def createRoom(data):
             _Room.settings.append([time_range, no_songs])
 
     socketio.emit('roomCode', {'code': code}, to=request.sid)
+
+
+@socketio.on('createPlaylist')
+def createPlaylist(data):
+    req = requests.post(
+        url=f"https://api.spotify.com/v1/users/{data['user_id']}/playlists",
+        headers={
+            "Accept": "application/json",
+            "Content-Type": "application/json",
+            "Authorization": f"Bearer {data['access_token']}"
+        },
+        json={
+            "name": f"{data['name']}"
+        })
+    playlist_id = req.json()['id']
+    trackList = ""
+    for i in data['tracksForPlaylist']:
+        print(i)
+        trackList = trackList + "spotify:track:" + i + ","
+
+    trackList = trackList[:-1]
+
+    req2 = requests.post(
+        url=f"https://api.spotify.com/v1/playlists/{playlist_id}/tracks?uris={trackList}",
+        headers={
+            "Accept": "application/json",
+            "Content-Type": "application/json",
+            "Authorization": f"Bearer {data['access_token']}"
+        })
+    print(req2.json())
+
 
 def generate_access_token(code):
     global CLIENT_ID

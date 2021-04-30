@@ -1,102 +1,77 @@
 <template>
-  <div :key="state">
-    <div v-if="state == 'loading'">
-      <p>Loading...</p>
-    </div>
-    <div v-if="state == 'found'">
-        <div
-          v-if="selected"
-          class="personalResultsModal"
-        >
-          <h1 class="code">
-            {{ selected_player.name }}
-          </h1>
-          <p class="date">
-            {{ date }}
-          </p>
-          <div class="hr" />
-          <h3 class="title">
-            Individual results
-          </h3>
-          <div
-            class="close-button"
-            @click="deselectPlayer()"
-          >
-            <div
-              id="line1"
-              class="line"
-            />
-            <div
-              id="line2"
-              class="line"
-            />
-          </div>
-          <div
-            class="personal-list"
-          >
-            <div
-              v-for="guess in selected_player.guesses"
-              :key="guess"
-            >
-              <GuessIcon
-                :trackid="guess.info"
-                :guess="guess.guess"
-                :answer="guess.correct_answer"
-              />
+    <div :key="state">
+        <div v-if="state == 'loading'">
+            <p>Loading...</p>
+        </div>
+        <div v-if="state == 'found'">
+            <div v-if="selected" class="personalResultsModal">
+                <h1 class="code">
+                    {{ selected_player.name }}
+                </h1>
+                <p class="date">
+                    {{ date }}
+                </p>
+                <div class="hr" />
+                <h3 class="title">Individual results</h3>
+                <div class="close-button" @click="deselectPlayer()">
+                    <div id="line1" class="line" />
+                    <div id="line2" class="line" />
+                </div>
+                <div class="personal-list">
+                    <div v-for="guess in selected_player.guesses" :key="guess">
+                        <GuessIcon
+                            :trackid="guess.info"
+                            :guess="guess.guess"
+                            :answer="guess.correct_answer"
+                        />
+                    </div>
+                </div>
             </div>
-          </div>
+
+            <h1 class="code">
+                {{ code }}
+            </h1>
+            <p class="date">
+                {{ date }}
+            </p>
+            <div class="hr" />
+            <h3 class="title">Results</h3>
+            <div class="list">
+                <div
+                    v-for="player in players"
+                    :key="player.sid"
+                    :class="
+                        selected == player.sid
+                            ? 'expand player-block'
+                            : 'player-block'
+                    "
+                >
+                    <PlayerAvatar
+                        :id="player.sid"
+                        class="player-guess"
+                        :player-name="getPoints(player)"
+                        :color="player.color"
+                        @click="selectPlayer(player)"
+                    />
+                </div>
+                <Button
+                    class="createPlaylist"
+                    button-text="Create playlist"
+                    @click="createPlaylist()"
+                />
+                <Button
+                    class="goHome"
+                    button-link="/"
+                    button-text="Play again"
+                />
+            </div>
+            <Button class="goHome" button-link="/" button-text="Play again" />
         </div>
-      
-      <h1 class="code">
-        {{ code }}
-      </h1>
-      <p class="date">
-        {{ date }}
-      </p>
-      <div class="hr" />
-      <h3 class="title">
-        Results
-      </h3>
-      <div class="list">
-        <div
-          v-for="player in players"
-          :key="player.sid"
-          :class="
-            selected == player.sid
-              ? 'expand player-block'
-              : 'player-block'
-          "
-        >
-          <PlayerAvatar
-            :id="player.sid"
-            class="player-guess"
-            :player-name="getPoints(player)"
-            :color="player.color"
-            @click="selectPlayer(player)"
-          />
+        <div v-if="state == 'not-found'">
+            <NotFound />
         </div>
-        <Button
-            @click="createPlaylist(date)"
-            class="createPlaylist"
-            buttonText="Create playlist"
-        />
-        <Button class="goHome" buttonLink="/" buttonText="Play again" />
-      </div>
-      <Button
-        class="goHome"
-        button-link="/"
-        button-text="Play again"
-      />
+        <Button class="goHome" button-link="/" button-text="Play again" />
     </div>
-    <div v-if="state == 'not-found'">
-      <NotFound />
-    </div>
-    <Button
-      class="goHome"
-      button-link="/"
-      button-text="Play again"
-    />
-  </div>
 </template>
 
 <script>
@@ -122,7 +97,8 @@ export default {
             state: 'loading',
             date: '',
             selected: false,
-            selected_player: null
+            selected_player: null,
+            tracksForPlaylist: [],
         };
     },
     mounted() {
@@ -185,43 +161,21 @@ export default {
         },
         selectPlayer(player) {
             console.log('select player');
-            this.selected = true
-            this.selected_player = player
+            this.selected = true;
+            this.selected_player = player;
         },
-        createPlaylist(date) {
+        createPlaylist() {
             this.$socket.client.emit('createPlaylist', {
                 sid: localStorage.getItem('sid'),
-                token: localStorage.getItem('access_token'),
-                name: `MWF ${code}`,
-                code: this.code,
+                access_token: localStorage.getItem('access_token'),
+                user_id: localStorage.getItem('user_id'),
+                name: this.code,
+                tracksForPlaylist: this.tracksForPlaylist,
             });
         },
-
-        // createPlaylist() {
-        //     var token = localStorage.getItem('access_token');
-        //     console.log(token);
-        //     let config = {
-        //         headers: {
-        //             Authorization: 'Bearer ${token}',
-        //             Accept: 'application/json',
-        //             'Content-Type': 'application/json',
-        //         },
-        //         data: {
-        //             name: "aaa"
-        //         }
-        //     };
-        //     axios
-        //         .post(
-        //             `https://api.spotify.com/v1/users/croseone/playlists`,
-        //             config
-        //         )
-        //         .catch(function (error) {
-        //             console.log(error);
-        //         });
-        // },
         deselectPlayer() {
-            this.selected = false
-        }
+            this.selected = false;
+        },
     },
 };
 </script>
