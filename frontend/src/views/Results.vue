@@ -125,7 +125,6 @@ export default {
         axios
             .get(url)
             .then(function (response) {
-                console.log('Answers: ', response);
                 var data = response.data;
                 self.players = data.players;
                 var date = new Date(data.date * 1000);
@@ -141,7 +140,6 @@ export default {
 
                 // Convert answer ids to names
                 for (let player of data.players) {
-                    console.log(player);
                     for (let guess of player.guesses) {
                         //TODO change guess array so that info can contain trackID or genre etc.
                         self.tracksForPlaylist.push(guess['info']);
@@ -165,11 +163,9 @@ export default {
                     return 0;
                 });
 
-                console.log(self.players);
                 self.state = 'found';
             })
             .catch(function (error) {
-                console.log(error);
                 self.state = 'not-found';
             });
     },
@@ -178,7 +174,6 @@ export default {
             return `${player.name}: ${player.points} points`;
         },
         selectPlayer(player) {
-            console.log('select player');
             this.selected = true;
             this.selected_player = player;
         },

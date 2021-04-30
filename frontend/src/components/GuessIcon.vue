@@ -59,8 +59,6 @@ export default {
     },
     methods: {
         async getAlbumArt(uri) {
-            console.log("uri: ", uri)
-            console.log('getting art');
             var token = localStorage.getItem('access_token');
             var self = this;
             axios
@@ -72,7 +70,6 @@ export default {
                     },
                 })
                 .then(function (response) {
-                    console.log(response)
                     self.imgSrc = response.data.album.images[0].url;
                     self.track_name = response.data.name
                     self.artist = response.data.artists[0].name

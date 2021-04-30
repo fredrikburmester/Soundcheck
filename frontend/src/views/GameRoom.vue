@@ -295,7 +295,6 @@ export default {
             }
         },
         update_list_of_players({ players }) {
-            console.log('Update list of players: ', players);
             this.players = players;
             this.isHost();
         },
@@ -325,7 +324,6 @@ export default {
             this.players_guessed = [];
         },
         game_ended() {
-            console.log("game has ended waiting for server")
             this.loading = true;
             // this.$router.push(`/${this.code}/results`);
         },
