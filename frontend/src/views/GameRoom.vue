@@ -26,15 +26,16 @@
       class="leaveroom-modal"
     >
       <div>
-        <h2 v-if="host">
+        <h2 v-if="host" style="padding: 0 2rem 0 2rem">
           Do you really want to end the game?
         </h2>
         <h2 v-else>
           Do you really want to leave?
         </h2>
+        <p>All progress will be lost...</p>
         <Button
           v-if="host"
-          button-text="Close room"
+          button-text="end game"
           color="#CD1A2B"
           @click="leaveRoom"
         />
@@ -96,9 +97,10 @@
         class="next-song"
       >
         <Button
-          button-text="next question"
+          :button-text="(current_question + 1) == nr_of_questions ? 'Go to results' : 'next question'"
           color="#1DB954"
           @click="sendNextQuestion"
+          v-bind:key="current_question"
         />
       </div>
       <div

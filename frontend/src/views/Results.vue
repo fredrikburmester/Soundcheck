@@ -4,48 +4,7 @@
       <p>Loading...</p>
     </div>
     <div v-if="state == 'found'">
-        <div
-          v-if="selected"
-          class="personalResultsModal"
-        >
-          <h1 class="code">
-            {{ selected_player.name }}
-          </h1>
-          <p class="date">
-            {{ date }}
-          </p>
-          <div class="hr" />
-          <h3 class="title">
-            Individual results
-          </h3>
-          <div
-            class="close-button"
-            @click="deselectPlayer()"
-          >
-            <div
-              id="line1"
-              class="line"
-            />
-            <div
-              id="line2"
-              class="line"
-            />
-          </div>
-          <div
-            class="personal-list"
-          >
-            <div
-              v-for="guess in selected_player.guesses"
-              :key="guess"
-            >
-              <GuessIcon
-                :trackid="guess.info"
-                :guess="guess.guess"
-                :answer="guess.correct_answer"
-              />
-            </div>
-          </div>
-        </div>
+        
       
       <h1 class="code">
         {{ code }}
@@ -54,26 +13,28 @@
         {{ date }}
       </p>
       <div class="hr" />
-      <h3 class="title">
-        Results
-      </h3>
       <div class="list">
         <div
-          v-for="player in players"
+          v-for="player, index in players"
           :key="player.sid"
-          :class="
-            selected == player.sid
-              ? 'expand player-block'
-              : 'player-block'
-          "
         >
+        <h3 class="title" style="padding-left: 0; margin-left: 0; color: gold" v-if="index == 0">
+        Winner
+        </h3>
+        <h3 class="title" style="padding-left: 0; margin-left: 0; color: silver" v-if="index == 1">
+        Second place
+        </h3>
+        <h3 class="title" style="padding-left: 0; margin-left: 0; color: #26c28" v-if="index == 2">
+        Third place
+        </h3>
           <PlayerAvatar
             :id="player.sid"
             class="player-guess"
-            :player-name="getPoints(player)"
+            :player-name="player.name"
             :color="player.color"
             @click="selectPlayer(player)"
           />
+          <p class="points">{{player.points}} Points</p>
         </div>
       </div>
       <Button
@@ -81,15 +42,13 @@
         button-link="/"
         button-text="Play again"
       />
+      <keep-alive max="10">
+      
+        </keep-alive>
     </div>
     <div v-if="state == 'not-found'">
       <NotFound />
     </div>
-    <Button
-      class="goHome"
-      button-link="/"
-      button-text="Play again"
-    />
   </div>
 </template>
 
@@ -161,6 +120,15 @@ export default {
                     }
                 }
 
+                self.players.sort(function(a, b) {
+                  var keyA = a.points,
+                    keyB = b.points;
+                  // Compare the 2 dates
+                  if (keyA < keyB) return 1;
+                  if (keyA > keyB) return -1;
+                  return 0;
+                });
+
                 console.log(self.players);
                 self.state = 'found';
             })
@@ -208,7 +176,7 @@ export default {
     text-align: left;
     margin-left: 2rem;
     margin-top: 0;
-    margin-bottom: 20px;
+    margin-bottom: 5px;
 }
 .list {
     height: calc(100vh - 420px);
@@ -255,5 +223,13 @@ export default {
 }
 #line2 {
     transform: rotate(-45deg);
+}
+.points {
+  position: relative;
+  top: -40px;
+  left: 80px;
+  text-align: left;
+  color: rgb(170, 170, 170);
+  font-style: italic;
 }
 </style>
