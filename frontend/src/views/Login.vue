@@ -1,9 +1,12 @@
 <template>
-    <div class="login">
-        <h1>Music With Friends</h1>
-        <Button v-on:click="loginWithSpotify" buttonText="Authenticate" />
-        <p>Click to log in with Spotify</p>
-    </div>
+  <div class="login">
+    <h1>Music With Friends</h1>
+    <Button
+      button-text="Authenticate"
+      @click="loginWithSpotify"
+    />
+    <p>Click to log in with Spotify</p>
+  </div>
 </template>
 
 <script>
@@ -12,6 +15,9 @@ export default {
     name: 'Login',
     components: {
         Button,
+    },
+    beforeMount() {
+        this.checkToken();
     },
     methods: {
         loginWithSpotify: function () {
@@ -22,9 +28,6 @@ export default {
                 this.$router.push('/');
             }
         },
-    },
-    beforeMount() {
-        this.checkToken();
     },
 };
 </script>

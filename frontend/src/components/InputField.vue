@@ -1,11 +1,11 @@
 <template>
-    <input
-        type="text"
-        v-model="text_"
-        @input="sendValue()"
-        id="input"
-        :placeholder="placeholder_"
-    />
+  <input
+    id="input"
+    v-model="text_"
+    type="text"
+    :placeholder="placeholder_"
+    @input="sendValue()"
+  >
 </template>
 
 <script>
@@ -14,9 +14,11 @@ export default {
     props: {
         placeholder: {
             type: String,
+            default: ''
         },
         text: {
             type: String,
+            default: ''
         },
     },
     data() {

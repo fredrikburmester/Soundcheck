@@ -1,18 +1,24 @@
 <template>
-    <div class="home">
-        <h1>Start a game...</h1>
-        <Button buttonLink="/create" buttonText="Create Room" />
-        <Button buttonLink="/join" buttonText="Join Room" />
-        <p>{{ name }}</p>
-        <div class="logout">
-            <Button
-                @click="logout"
-                color="#CD1A2B"
-                buttonLink="/logout"
-                buttonText="Log out"
-            />
-        </div>
+  <div class="home">
+    <h1>Start a game...</h1>
+    <Button
+      button-link="/create"
+      button-text="Create Room"
+    />
+    <Button
+      button-link="/join"
+      button-text="Join Room"
+    />
+    <p>{{ name }}</p>
+    <div class="logout">
+      <Button
+        color="#CD1A2B"
+        button-link="/logout"
+        button-text="Log out"
+        @click="logout"
+      />
     </div>
+  </div>
 </template>
 
 <script>
