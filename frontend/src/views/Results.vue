@@ -4,8 +4,8 @@
       <p>Loading...</p>
     </div>
     <div v-if="state == 'found'">
-      <keep-alive>
         <div
+          v-if="selected"
           class="personalResultsModal"
         >
           <h1 class="code">
@@ -46,7 +46,6 @@
             </div>
           </div>
         </div>
-      </keep-alive>
       
       <h1 class="code">
         {{ code }}
