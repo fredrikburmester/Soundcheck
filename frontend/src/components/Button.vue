@@ -1,11 +1,11 @@
 <template>
-  <div
-    :style="colorStyles"
-    class="button"
-    @click="go"
-  >
-    {{ buttonText_ }}
-  </div>
+    <div
+        :style="colorStyles"
+        class="button"
+        @click="go"
+    >
+        {{ buttonText_ }}
+    </div>
 </template>
 
 <script>

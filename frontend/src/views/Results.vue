@@ -1,61 +1,59 @@
 <template>
-  <div :key="state">
-    <div v-if="state == 'loading'">
-      <p>Loading...</p>
-    </div>
-    <div v-if="state == 'found'">
-        
-      
-      <h1 class="code">
-        {{ code }}
-      </h1>
-      <p class="date">
-        {{ date }}
-      </p>
-      <div class="hr" />
-      <div class="list">
-        <div
-          v-for="player, index in players"
-          :key="player.sid"
-        >
-        <h3 class="title" style="padding-left: 0; margin-left: 0; color: gold" v-if="index == 0">
-        Winner
-        </h3>
-        <h3 class="title" style="padding-left: 0; margin-left: 0; color: silver" v-if="index == 1">
-        Second place
-        </h3>
-        <h3 class="title" style="padding-left: 0; margin-left: 0; color: #26c28" v-if="index == 2">
-        Third place
-        </h3>
-          <PlayerAvatar
-            :id="player.sid"
-            class="player-guess"
-            :player-name="player.name"
-            :color="player.color"
-            @click="selectPlayer(player)"
-          />
-          <p class="points">{{player.points}} Points</p>
+    <div :key="state">
+        <div v-if="state == 'loading'">
+            <p>Loading...</p>
         </div>
-        <Button
-            @click="createPlaylist(date)"
-            class="createPlaylist"
-            buttonText="Create playlist"
-        />
-        <Button class="goHome" buttonLink="/" buttonText="Play again" />
-      </div>
-      <Button
-        class="goHome"
-        button-link="/"
-        button-text="Play again"
-      />
-      <keep-alive max="10">
-      
-        </keep-alive>
+        <div v-if="state == 'found'">
+            <h1 class="code">
+                {{ code }}
+            </h1>
+            <p class="date">
+                {{ date }}
+            </p>
+            <div class="hr" />
+            <div class="list">
+                <div
+                    v-for="player, index in players"
+                    :key="player.sid"
+                >
+                    <h3 v-if="index == 0" class="title" style="padding-left: 0; margin-left: 0; color: gold">
+                        Winner
+                    </h3>
+                    <h3 v-if="index == 1" class="title" style="padding-left: 0; margin-left: 0; color: silver">
+                        Second place
+                    </h3>
+                    <h3 v-if="index == 2" class="title" style="padding-left: 0; margin-left: 0; color: #26c28">
+                        Third place
+                    </h3>
+                    <PlayerAvatar
+                        :id="player.sid"
+                        class="player-guess"
+                        :player-name="player.name"
+                        :color="player.color"
+                        @click="selectPlayer(player)"
+                    />
+                    <p class="points">
+                        {{ player.points }} Points
+                    </p>
+                </div>
+                <Button
+                    class="createPlaylist"
+                    button-text="Create playlist"
+                    @click="createPlaylist(date)"
+                />
+                <Button class="goHome" button-link="/" button-text="Play again" />
+            </div>
+            <Button
+                class="goHome"
+                button-link="/"
+                button-text="Play again"
+            />
+            <keep-alive max="10" />
+        </div>
+        <div v-if="state == 'not-found'">
+            <NotFound />
+        </div>
     </div>
-    <div v-if="state == 'not-found'">
-      <NotFound />
-    </div>
-  </div>
 </template>
 
 <script>
@@ -72,7 +70,6 @@ export default {
         PlayerAvatar,
         Button,
         NotFound,
-        GuessIcon,
     },
     data: function () {
         return {
@@ -131,12 +128,12 @@ export default {
                 }
 
                 self.players.sort(function(a, b) {
-                  var keyA = a.points,
-                    keyB = b.points;
-                  // Compare the 2 dates
-                  if (keyA < keyB) return 1;
-                  if (keyA > keyB) return -1;
-                  return 0;
+                    var keyA = a.points,
+                        keyB = b.points;
+                    // Compare the 2 dates
+                    if (keyA < keyB) return 1;
+                    if (keyA > keyB) return -1;
+                    return 0;
                 });
 
                 console.log(self.players);

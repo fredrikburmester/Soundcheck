@@ -1,11 +1,11 @@
 <template>
-  <input
-    id="input"
-    v-model="text_"
-    type="text"
-    :placeholder="placeholder_"
-    @input="sendValue()"
-  >
+    <input
+        id="input"
+        v-model="text_"
+        type="text"
+        :placeholder="placeholder_"
+        @input="sendValue()"
+    >
 </template>
 
 <script>

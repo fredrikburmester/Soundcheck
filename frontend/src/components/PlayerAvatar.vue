@@ -1,28 +1,28 @@
 <template>
-  <div class="playerAvatar">
-    <div>
-      <div
-        :class="selected_ ? 'selected' : ''"
-        :style="playerIconStyles"
-        class="circle"
-      >
-        <p class="initials">
-          {{ initials }}
-        </p>
-      </div>
+    <div class="playerAvatar">
+        <div>
+            <div
+                :class="selected_ ? 'selected' : ''"
+                :style="playerIconStyles"
+                class="circle"
+            >
+                <p class="initials">
+                    {{ initials }}
+                </p>
+            </div>
+        </div>
+        <div class="name">
+            <p :class="selected_ ? 'selected-text' : ''">
+                {{ playerName_ }}
+            </p>
+        </div>
+        <div
+            v-if="host"
+            class="star"
+        >
+            ⭐️
+        </div>
     </div>
-    <div class="name">
-      <p :class="selected_ ? 'selected-text' : ''">
-        {{ playerName_ }}
-      </p>
-    </div>
-    <div
-      v-if="host"
-      class="star"
-    >
-      ⭐️
-    </div>
-  </div>
 </template>
 
 <script>

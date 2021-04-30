@@ -1,15 +1,15 @@
 <template>
-  <div class="page">
-    <div class="text">
-      <h1>404</h1>
-      <p>This is not the room you're looking for...</p>
+    <div class="page">
+        <div class="text">
+            <h1>404</h1>
+            <p>This is not the room you're looking for...</p>
+        </div>
+        <Button
+            class="button"
+            button-text="Go Home"
+            button-link="/"
+        />
     </div>
-    <Button
-      class="button"
-      button-text="Go Home"
-      button-link="/"
-    />
-  </div>
 </template>
 <script>
 import Button from '../components/Button';

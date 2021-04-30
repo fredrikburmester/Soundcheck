@@ -1,12 +1,12 @@
 <template>
-  <div class="login">
-    <h1>Music With Friends</h1>
-    <Button
-      button-text="Authenticate"
-      @click="loginWithSpotify"
-    />
-    <p>Click to log in with Spotify</p>
-  </div>
+    <div class="login">
+        <h1>Music With Friends</h1>
+        <Button
+            button-text="Authenticate"
+            @click="loginWithSpotify"
+        />
+        <p>Click to log in with Spotify</p>
+    </div>
 </template>
 
 <script>
