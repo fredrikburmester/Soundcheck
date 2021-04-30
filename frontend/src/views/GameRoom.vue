@@ -156,8 +156,8 @@ export default {
         join_room_first_time(data) {
             // Do things before page load
             this.players = data.players;
-            this.$store.commit('update_time_range', data.settings[0][0])
-            this.$store.commit('update_no_songs', data.settings[0][1])
+            this.$store.commit('update_time_range', data.settings[0][0]);
+            this.$store.commit('update_no_songs', data.settings[0][1]);
             this.generateQR();
             this.isHost();
             this.getTopTrack();
@@ -255,7 +255,10 @@ export default {
         },
         sendNextQuestion() {
             // var self = this;
-            if (this.current_question === 0 || this.current_question != this.nr_of_questions) {
+            if (
+                this.current_question === 0 ||
+                this.current_question != this.nr_of_questions
+            ) {
                 this.$socket.client.emit('next_question', {
                     current_question: this.current_question,
                     code: this.code,
@@ -326,7 +329,7 @@ export default {
                     if (response.data.items.length == 0) {
                         axios
                             .get(
-                                `https://api.spotify.com/v1/me/top/tracks?time_range=medium_term&limit=${no_songs}`,
+                                `https://api.spotify.com/v1/me/top/tracks?time_range=long_term&limit=${no_songs}`,
                                 {
                                     headers: {
                                         Authorization: `Bearer ${token}`,
@@ -361,7 +364,7 @@ export default {
                             sid: localStorage.getItem('sid'),
                             room: self.code,
                         });
-                        console.log(trackid)
+                        console.log(trackid);
                     }
                 });
         },
