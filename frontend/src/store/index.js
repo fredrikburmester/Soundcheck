@@ -4,7 +4,6 @@ export default createStore({
     state: {
         roomCode: '',
         error: '',
-        players_guessed: [],
         genre: false,
         no_songs: '1',
         time_range: 'short_term',
@@ -15,12 +14,6 @@ export default createStore({
         },
         updateError(state, value) {
             state.error = value;
-        },
-        updatePlayersGuessed(state, value) {
-            state.players_guessed = value;
-        },
-        clearPlayersGuessed(state) {
-            state.players_guessed = [];
         },
         update_genre(state, value) {
             state.genre = value;

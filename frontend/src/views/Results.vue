@@ -4,15 +4,50 @@
       <p>Loading...</p>
     </div>
     <div v-if="state == 'found'">
-      <!-- <div class="personalResultsModal" v-if="selected == player.sid">
-                <div v-for="guess in player.guesses" v-bind:key="guess">
-                    <GuessIcon
-                        :trackID="guess.info"
-                        :guess="guess.guess"
-                        :answer="guess.correct_answer"
-                    />
-                </div>
-            </div> -->
+      <keep-alive>
+        <div
+          class="personalResultsModal"
+        >
+          <h1 class="code">
+            {{ selected_player.name }}
+          </h1>
+          <p class="date">
+            {{ date }}
+          </p>
+          <div class="hr" />
+          <h3 class="title">
+            Individual results
+          </h3>
+          <div
+            class="close-button"
+            @click="deselectPlayer()"
+          >
+            <div
+              id="line1"
+              class="line"
+            />
+            <div
+              id="line2"
+              class="line"
+            />
+          </div>
+          <div
+            class="personal-list"
+          >
+            <div
+              v-for="guess in selected_player.guesses"
+              :key="guess"
+            >
+              <GuessIcon
+                :trackid="guess.info"
+                :guess="guess.guess"
+                :answer="guess.correct_answer"
+              />
+            </div>
+          </div>
+        </div>
+      </keep-alive>
+      
       <h1 class="code">
         {{ code }}
       </h1>
@@ -63,7 +98,7 @@
 import PlayerAvatar from '../components/PlayerAvatar';
 import Button from '../components/Button';
 import NotFound from '../components/NotFound';
-// import GuessIcon from '../components/GuessIcon';
+import GuessIcon from '../components/GuessIcon';
 
 const axios = require('axios');
 
@@ -73,7 +108,7 @@ export default {
         PlayerAvatar,
         Button,
         NotFound,
-        // GuessIcon,
+        GuessIcon,
     },
     data: function () {
         return {
@@ -81,7 +116,8 @@ export default {
             players: [],
             state: 'loading',
             date: '',
-            selected: '',
+            selected: false,
+            selected_player: null
         };
     },
     mounted() {
@@ -117,10 +153,10 @@ export default {
                     for (let guess of player.guesses) {
                         for (let player2 of data.players) {
                             if (player2.sid == guess.guess) {
-                                guess.guess = player.name;
+                                guess.guess = player2.name;
                             }
                             if (player2.sid == guess.correct_answer) {
-                                guess.correct_answer = player.name;
+                                guess.correct_answer = player2.name;
                             }
                         }
                     }
@@ -140,12 +176,12 @@ export default {
         },
         selectPlayer(player) {
             console.log('select player');
-            if (this.selected == player.sid) {
-                this.selected = '';
-            } else {
-                this.selected = player.sid;
-            }
+            this.selected = true
+            this.selected_player = player
         },
+        deselectPlayer() {
+            this.selected = false
+        }
     },
 };
 </script>
@@ -182,6 +218,11 @@ export default {
     margin-right: 2rem;
     overflow-x: hidden;
 }
+.personal-list {
+    height: calc(100vh - 220px);
+    overflow-y: scroll;
+    overflow-x: hidden;
+}
 .goHome {
     position: fixed;
     left: 50%;
@@ -197,5 +238,23 @@ export default {
     left: 0;
     height: 100vh;
     width: 100vw;
+    z-index: 2;
+}
+.close-button {
+    position: fixed;
+    top: 35px;
+    right: 2rem;
+}
+.line {
+    background-color: red;
+    height: 3px;
+    width: 25px;
+    cursor: pointer;
+}
+#line1 {
+    transform: translateY(3px) rotate(45deg);
+}
+#line2 {
+    transform: rotate(-45deg);
 }
 </style>
