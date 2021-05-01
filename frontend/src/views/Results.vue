@@ -165,7 +165,7 @@ export default {
 
                 self.state = 'found';
             })
-            .catch(function (error) {
+            .catch(function () {
                 self.state = 'not-found';
             });
     },
@@ -182,7 +182,7 @@ export default {
                 sid: localStorage.getItem('sid'),
                 access_token: localStorage.getItem('access_token'),
                 user_id: localStorage.getItem('user_id'),
-                name: this.code,
+                name: `Music With Friends - ${this.code}`,
                 tracksForPlaylist: this.tracksForPlaylist,
             });
         },
