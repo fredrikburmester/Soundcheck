@@ -68,6 +68,7 @@ export default {
 @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap');
 .playerAvatar {
     display: flex;
+    position: relative;
     margin-bottom: 10px;
     overflow-x: hidden;
     flex-wrap: nowrap;

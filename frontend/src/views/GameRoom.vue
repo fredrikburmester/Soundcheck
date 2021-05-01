@@ -79,6 +79,8 @@
             <div
                 :key="my_guess"
                 class="list"
+
+                style="height: calc(100vh - 350px)"
             >
                 <PlayerAvatar
                     v-for="player in players"
@@ -135,7 +137,7 @@
             <p v-if="!host">
                 {{ status }}
             </p>
-            <div class="list">
+            <div class="list" style="height: calc(100vh - 420px)">
                 <PlayerAvatar
                     v-for="player in players"
                     :key="player.id"
@@ -530,7 +532,6 @@ export default {
     width: 50px;
 }
 .list {
-    height: calc(100vh - 420px);
     overflow-y: scroll;
     margin-left: 2rem;
     margin-right: 2rem;
