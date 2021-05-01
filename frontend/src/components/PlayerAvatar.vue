@@ -6,7 +6,9 @@
                 :style="playerIconStyles"
                 class="circle"
             >
-                <p class="initials">{{ initials }}</p>
+                <p class="initials">
+                    {{ initials }}
+                </p>
             </div>
         </div>
         <div class="name">
@@ -14,7 +16,10 @@
                 {{ playerName_ }}
             </p>
         </div>
-        <div class="star" v-if="host">
+        <div
+            v-if="host"
+            class="star"
+        >
             ⭐️
         </div>
     </div>
@@ -26,6 +31,7 @@ export default {
     props: {
         playerName: {
             type: String,
+            default: ''
         },
         color: {
             type: String,
@@ -62,10 +68,11 @@ export default {
 @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap');
 .playerAvatar {
     display: flex;
+    position: relative;
     margin-bottom: 10px;
     overflow-x: hidden;
     flex-wrap: nowrap;
-    justify-content: start;
+    justify-content: flex-start;
     align-items: center;
 }
 .circle {

@@ -1,5 +1,9 @@
 <template>
-    <div @click="select" class="settingbutton" :style="colorStyle">
+    <div
+        class="settingbutton"
+        :style="colorStyle"
+        @click="select"
+    >
         {{ buttonText_ }}
     </div>
 </template>
@@ -10,6 +14,7 @@ export default {
     props: {
         buttonText: {
             type: String,
+            default: 'Button'
         },
         color: {
             type: String,
@@ -20,16 +25,12 @@ export default {
             default: false,
         },
     },
+    emits: ['clicked'],
     data() {
         return {
             buttonText_: this.buttonText,
             color_: this.color,
         };
-    },
-    methods: {
-        select: function () {
-            this.$emit('clicked', this.buttonText_);
-        },
     },
     computed: {
         colorStyle() {
@@ -42,6 +43,11 @@ export default {
                     'background-color': this.color,
                 };
             }
+        },
+    },
+    methods: {
+        select: function () {
+            this.$emit('clicked', this.buttonText_);
         },
     },
 };

@@ -1,5 +1,9 @@
 <template>
-    <div @click="go" :style="colorStyles" class="button">
+    <div
+        :style="colorStyles"
+        class="button"
+        @click="go"
+    >
         {{ buttonText_ }}
     </div>
 </template>
@@ -10,9 +14,11 @@ export default {
     props: {
         buttonLink: {
             type: String,
+            default: ''
         },
         buttonText: {
             type: String,
+            default: ''
         },
         color: {
             type: String,
@@ -25,13 +31,6 @@ export default {
             buttonText_: this.buttonText,
             color_: this.color,
         };
-    },
-    methods: {
-        go: function () {
-            if (!this.external) {
-                this.$router.push(this.buttonLink_);
-            }
-        },
     },
     computed: {
         external() {
@@ -56,6 +55,13 @@ export default {
                     'background-color': this.color_,
                     color: 'white',
                 };
+            }
+        },
+    },
+    methods: {
+        go: function () {
+            if (!this.external) {
+                this.$router.push(this.buttonLink_);
             }
         },
     },

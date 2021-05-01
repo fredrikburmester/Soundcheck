@@ -1,54 +1,63 @@
 <template>
     <div class="create">
-        <h1 class="head">Settings</h1>
-        <div class="hr"></div>
+        <h1 class="head">
+            Settings
+        </h1>
+        <div class="hr" />
         <div class="settingsbox">
             <h3>Select Time Range</h3>
             <Button
+                button-text="last 4 weeks"
                 @click="onTimeChange(`4 weeks`)"
-                buttonText="last 4 weeks"
-            ></Button>
+            />
             <Button
+                button-text="last 6 months"
                 @click="onTimeChange(`6 months`)"
-                buttonText="last 6 months"
-            ></Button>
+            />
             <Button
+                button-text="more than a year"
                 @click="onTimeChange(`More than a year`)"
-                buttonText="more than a year"
-            ></Button>
+            />
             <p>Time range: {{ time_range }}</p>
 
             <h3>Number of songs per player</h3>
             <SettingsButton
-                @clicked="onClickChild"
+                :key="no_songs"
                 :marked="1 == no_songs"
-                v-bind:key="no_songs"
-                buttonText="1"
+                button-text="1"
+                @clicked="onClickChild"
             />
             <SettingsButton
-                @clicked="onClickChild"
+                :key="no_songs"
                 :marked="2 == no_songs"
-                v-bind:key="no_songs"
-                buttonText="2"
+                button-text="2"
+                @clicked="onClickChild"
             />
             <SettingsButton
-                @clicked="onClickChild"
+                :key="no_songs"
                 :marked="3 == no_songs"
-                v-bind:key="no_songs"
-                buttonText="3"
+                button-text="3"
+                @clicked="onClickChild"
             />
             <SettingsButton
-                @clicked="onClickChild"
+                :key="no_songs"
                 :marked="4 == no_songs"
-                v-bind:key="no_songs"
-                buttonText="4"
+                button-text="4"
+                @clicked="onClickChild"
             />
 
             <h3>Include Top Genre</h3>
             <ToggleSwitch @clicked="onToggleChild" />
-            <br />
-            <Button v-on:click="createRoom" buttonText="Create Room"></Button>
-            <Button buttonLink="/" buttonText="Back" color="#CD1A2B"></Button>
+            <br>
+            <Button
+                button-text="Create Room"
+                @click="createRoom"
+            />
+            <Button
+                button-link="/"
+                button-text="Back"
+                color="#CD1A2B"
+            />
         </div>
     </div>
 </template>

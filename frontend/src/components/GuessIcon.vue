@@ -1,11 +1,27 @@
 <template>
-    <div class="playerAvatar">
-        <div class="image">
-            <img :src="imgSrc" class="circle" />
-        </div>
-        <div class="name">
-            Guess: {{ guess }}<br />
-            Answer: {{ answer }}
+    <div>
+        <div class="song">
+            <div class="image">
+                <img :src="imgSrc" class="circle">
+            </div>
+            <div class="info">
+                <p id="song" style="color: gray">
+                    Song
+                </p>
+                <p id="track-name">
+                    {{ track_name }}
+                </p>
+                <p id="artist">
+                    {{ artist }}
+                </p>
+                <br>
+                <p id="answer">
+                    Answer: <span>{{ answer }}</span> 
+                </p>
+                <p id="guess">
+                    Guess: <span :style="guess == answer ? 'color: green' : 'color: red'">{{ guess }}</span>
+                </p>
+            </div>
         </div>
     </div>
 </template>
@@ -16,11 +32,13 @@ const axios = require('axios');
 export default {
     name: 'PlayerAvatar',
     props: {
-        trackID: {
+        trackid: {
             type: String,
+            default: ''
         },
         guess: {
             type: String,
+            default: ''
         },
         answer: {
             type: String,
@@ -29,14 +47,18 @@ export default {
     },
     data() {
         return {
-            trackID_: this.trackID,
+            trackid_: this.trackid,
             imgSrc: '',
             loaded: false,
+            track_name: '',
+            artist: ''
         };
+    },
+    mounted() {
+        this.getAlbumArt(this.trackid_);
     },
     methods: {
         async getAlbumArt(uri) {
-            console.log('getting art');
             var token = localStorage.getItem('access_token');
             var self = this;
             axios
@@ -49,11 +71,10 @@ export default {
                 })
                 .then(function (response) {
                     self.imgSrc = response.data.album.images[0].url;
+                    self.track_name = response.data.name
+                    self.artist = response.data.artists[0].name
                 });
         },
-    },
-    mounted() {
-        this.getAlbumArt(this.trackID_);
     },
 };
 </script>
@@ -61,24 +82,29 @@ export default {
 <style scoped>
 @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap');
 
-.playerAvatar {
-display: flex;
-flex-direction: row;
-margin-bottom: 10px;
-    display: flex;
-    flex-direction: row;
+.song {
+
+	display: flex;
+	flex-direction: row;
+	margin: 5vh 2rem 5vh 2rem;
 }
 .image {
-    width: 60px;
-    height: 60px;
+	width: 60px;
+	height: 60px;
 }
 .image img {
-    width: 60px;
-    height: 60px;
-    border-radius: 50%;
+	width: 60px;
+	height: 60px;
+	border-radius: 50%;
+	background-color: white;
 }
-.name {
-    margin-left: 20px;
-    text-align: left;
+.info {
+	margin-left: 20px;
+	text-align: left;
+	line-height: 20px;
 }
+p {
+	margin: 0;
+}
+
 </style>

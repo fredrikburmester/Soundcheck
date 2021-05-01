@@ -4,7 +4,11 @@
             <h1>404</h1>
             <p>This is not the room you're looking for...</p>
         </div>
-        <Button class="button" buttonText="Go Home" buttonLink="/"></Button>
+        <Button
+            class="button"
+            button-text="Go Home"
+            button-link="/"
+        />
     </div>
 </template>
 <script>

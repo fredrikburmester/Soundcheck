@@ -33,8 +33,8 @@ ENV = sys.argv[1]
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'secret!'
 cors = CORS(app, resources={r"/api/*": {"origins": "*"}})
-# log = logging.getLogger('werkzeug')
-# log.disabled = True
+log = logging.getLogger('werkzeug')
+log.disabled = True
 
 # Allow cross origin to be able to do websockets from different servers
 # socketio = SocketIO(app)
@@ -68,13 +68,16 @@ class Room:
         self.questions = ["Who's top song is this?"]
         self.code = code  # Room code
         self.players = []  # player object
-        self.answers = []  # every persons top track for example {player: sid, answer: trackid}
+        # every persons top track for example {player: sid, answer: trackid}
+        self.answers = []
         self.results = []  # points for each person
         self.players_guessed = []
         self.started = False
         self.ended = False
-        self.current_question = 0
+        self.current_question = -1
         self.settings = []
+        self.guesses = 0
+        self.questionTimeStarted = 0
 
 
 ROOMS = []
@@ -88,12 +91,11 @@ COLORS = [
     '#3CDBD3',
     '#B9C0DA',
     '#998DA0',
-    '#63585E',
     '#B5838D'
 ]
 
-
 ##################
+
 
 @app.route('/api/<code>/results', methods=['GET'])
 def results(code):
@@ -121,7 +123,6 @@ def results(code):
 
 @socketio.on('generate_access_token')
 def check_token(data):
-    print("[1] - YES")
     access_token, refresh_token = generate_access_token(data['code'])
     socketio.emit("access_token", {'access_token': access_token, 'refresh_token': refresh_token, 'sid': request.sid},
                   to=request.sid)
@@ -138,46 +139,49 @@ def isRoom(data):
     socketio.emit('isRoom', {'isRoom': 'false'}, to=request.sid)
     return
 
-
-@socketio.on('guess')
-def guess(data):
-    player_sid = data['sid']
-    player_guess_sid = data['guess']
-    current_question = data['current_question']
-    code = data['code']
-
-    global ROOMS
-    for Room in ROOMS:
-        if Room.code == code:
-            for player in Room.players:
-                if player.sid == player_sid:  # looking for self
-                    if len(player.guesses) == current_question:
-                        player.guesses.append({
-                            'question': current_question,
-                            'guess': player_guess_sid,
-                            'correct_answer': Room.answers[current_question]['player'],
-                            'info': Room.answers[current_question]['info']
-                        })
-                        return
-
-
 # Used to calculate show how many players have guessed
+
+
 @socketio.on('player_guess')
 def player_guess(data):
     sid = data['sid']
-    socketio.emit('players_guess', {'sid': sid}, room=data['code'])
-
-
-@socketio.on('game_ended')
-def game_ended(data):
+    player_guess = data['guess']
     code = data['code']
+
     global ROOMS
     for Room in ROOMS:
         if Room.code == code:
+            current_question = Room.current_question
+            for player in Room.players:
+                if player.sid == sid:
+                    for guess in player.guesses:
+                        # if guess exist -> update
+                        if guess['question'] == current_question:
+                            guess['guess'] = player_guess
+                            return
+                    # if no quess exist -> add
+                    player.guesses.append({
+                        'question': current_question,
+                        'guess': player_guess,
+                        'correct_answer': Room.answers[current_question]['player'],
+                        'info': Room.answers[current_question]['info']
+                    })
+                    Room.players_guessed.append(sid)
 
+                    # send to room total guesses amount
+                    socketio.emit('nr_of_players_guessed', {
+                        'players': Room.players_guessed
+                    }, room=code)
+                    return
+
+
+def compile_results(code):
+    global ROOMS
+    for Room in ROOMS:
+        if Room.code == code:
+            Room.ended = True
             for player in Room.players:
                 for guess in player.guesses:
-                    print(guess)
                     if guess['guess'] == guess['correct_answer']:
                         player.points += 10
 
@@ -203,8 +207,7 @@ def game_ended(data):
                 "players": players,
                 "date": str(time.time()),
             })
-            Room.ended = True
-            socketio.emit('game_ended', room=code)
+
             return
 
 
@@ -214,142 +217,163 @@ def connect_to_room(data):
     sid = data['sid']
     access_token = data['access_token']
     refresh_token = data['refresh_token']
-
-    player_in_room = False
-    started = False
+    reconnecting = False
 
     global ROOMS
     for Room in ROOMS:
-        print(Room.code)
+        if Room.code == code:
+
+            # Initializing variables
+            settings = Room.settings[0]
+            player_in_room = False
+            started = False
+            access = False
+            status = ''
+            current_question = 0
+
+            # Checking access and status of room
+            if Room.started == False:
+                status = 'lobby'
+                access = True
+
+                for player in Room.players:
+                    if player.sid == sid:  # player is reconnecting to lobby
+                        reconnecting = True
+                        print(f"[{code}]{player.name} reconnecting")
+
+                if not reconnecting:
+                    # sending get request and saving the response as response object
+                    r2 = requests.get(url="https://api.spotify.com/v1/me",
+                                      headers={"Authorization": "Bearer " + access_token})
+
+                    # extracting data in json format
+                    data = r2.json()
+
+                    # Create player object
+                    new_player = Player()
+                    new_player.name = str(data['display_name'])
+                    new_player.id = str(data['id'])
+                    new_player.points = 0
+                    new_player.access_token = access_token
+                    new_player.refresh_token = refresh_token
+                    new_player.sid = sid
+                    new_player.color = getColor()
+
+                    # If the room is empty, make the user host
+                    if len(Room.players) == 0:
+                        new_player.host = True
+                        print(f"[{code}] Making {new_player.name} host")
+
+                    # Add the player to the Room
+                    Room.players.append(new_player)
+
+                # always add the new sid of the player to the websocket room
+                join_room(code)
+            elif Room.started == True and Room.ended == False:
+                status = 'playing'
+                current_question = Room.current_question
+                for player in Room.players:
+                    if player.sid == sid:
+                        access = True
+                join_room(code)
+            else:
+                status = 'ended'
+                access = True
+
+            # Send the connection variables to the person
+            socketio.emit("connectToRoom", {
+                'status': status,
+                'access': access,
+                'question': current_question,
+                'settings': settings,
+                'answers': Room.answers,  # also defines total number of questions
+                'questionTimeStarted': Room.questionTimeStarted,
+                'players_guessed': Room.players_guessed
+            }, to=request.sid)
+
+            # Send a updated list of the current players in the room
+            send_list_of_players(code)
+            return
+    status = 'NaR'
+    socketio.emit("connectToRoom", {
+        'status': status,
+        'access': None,
+        'question': None,
+        'settings': None,
+        'answers': None
+    }, to=request.sid)
+    return
+
+
+def send_list_of_players(code):
+    global ROOMS
+    list_of_players = []
+    for Room in ROOMS:
         if Room.code == code:
             for player in Room.players:
-                if player.sid == sid:
-                    player_in_room = True
+                list_of_players.append({
+                    'name': player.name,
+                    'id': player.id,
+                    'points': player.points,
+                    'access_token': player.access_token,
+                    'refresh_token': player.refresh_token,
+                    'color': player.color,
+                    'sid': player.sid,
+                    'host': player.host
+                })
+            break
 
-            if Room.started == False and Room.ended == False and not player_in_room:
-                # join first time
-
-                # sending get request and saving the response as response object
-                r = requests.get(url="https://api.spotify.com/v1/me",
-                                 headers={"Authorization": "Bearer " + access_token})
-
-                # extracting data in json format
-                data = r.json()
-
-                # Have the player join the room
-                join_room(code)
-
-                # Create player object
-                new_player = Player()
-
-                new_player.name = str(data['display_name'])
-                new_player.id = str(data['id'])
-                new_player.points = 0
-                new_player.access_token = access_token
-                new_player.refresh_token = refresh_token
-                new_player.sid = sid
-                new_player.color = getColor()
-
-                print(f"[{code}] {new_player.name} joined")
-
-                # If the room is empty, make the user host
-                if len(Room.players) == 0:
-                    new_player.host = True
-                    print(f"[{code}] Making {new_player.name} host")
-
-                Room.players.append(new_player)
-
-                # create list of players array
-                list_of_players = []
-                for player in Room.players:
-                    list_of_players.append({
-                        'name': player.name,
-                        'id': player.id,
-                        'points': player.points,
-                        'access_token': player.access_token,
-                        'refresh_token': player.refresh_token,
-                        'color': player.color,
-                        'sid': player.sid,
-                        'host': player.host
-                    })
-
-                socketio.emit("join_room_first_time", {'players': list_of_players, 'settings': Room.settings}, to=request.sid)
-                socketio.emit("update_players_list", {'players': list_of_players}, room=code)
-                return
-            elif Room.started == False and Room.ended == False and player_in_room:
-                # reconnect to lobby, game not started
-                list_of_players = []
-                for player in Room.players:
-                    list_of_players.append({
-                        'name': player.name,
-                        'id': player.id,
-                        'points': player.points,
-                        'access_token': player.access_token,
-                        'refresh_token': player.refresh_token,
-                        'color': player.color,
-                        'sid': player.sid,
-                        'host': player.host
-                    })
-
-                socketio.emit("reconnect_to_lobby", {'players': list_of_players}, to=request.sid)
-                return
-            elif Room.started == True and Room.ended == False and player_in_room:
-                # reconnect to ongoing game
-
-                # create list of players array
-                list_of_players = []
-                for player in Room.players:
-                    list_of_players.append({
-                        'name': player.name,
-                        'id': player.id,
-                        'points': player.points,
-                        'access_token': player.access_token,
-                        'refresh_token': player.refresh_token,
-                        'color': player.color,
-                        'sid': player.sid,
-                        'host': player.host
-                    })
-
-                current_question = Room.current_question
-                socketio.emit("reconnect_to_game", {'players': list_of_players}, to=request.sid)
-                print(Room.answers[current_question][0]['info'])
-                socketio.emit('next_question',
-                              {'answer': Room.answers[current_question]['player'], 'current_question': current_question,
-                               'trackid': Room.answers[current_question][0]['info']}, to=request.sid)
-                return
-            elif Room.started == True and Room.ended == False and not player_in_room:
-                # no access
-                socketio.emit('no_access_to_room', to=request.sid)
-                return
-            elif Room.ended == True:
-                # go to result
-                socketio.emit('go_to_result', to=request.sid)
-                return
-    socketio.emit('not_a_room', to=request.sid)
+    socketio.emit("update_list_of_players", {
+        'players': list_of_players,
+    }, room=code)
 
 
 @socketio.on('next_question')
 def next_question(data):
     code = data['code']
-    current_question = data['current_question']
 
     global ROOMS
     for Room in ROOMS:
         if code == Room.code:
-            Room.current_question = current_question
+            Room.guesses = 0
+            Room.current_question += 1
+            current_question = Room.current_question
+            Room.players_guessed = []
             # answer is track id in this case
-            if current_question == len(Room.answers) and len(Room.answers) is not 0:
-                socketio.emit('next_question', {'current_question': "-1"}, room=code)
+            if current_question == len(Room.answers) and len(Room.answers) != 0:
+
+                print(f"[{code}] Sending: Game is over, loading...")
+                socketio.emit('game_ended', room=code)
+
+                print(f"[{code}] Compiling results")
+                compile_results(code)
+
+                print(f"[{code}] Sending: Go to results")
+                socketio.emit("connectToRoom", {
+                    'status': 'ended',
+                    'access': None,
+                    'question': None,
+                    'settings': None,
+                    'answers': None
+                }, room=code)
+                return
             else:
-                socketio.emit('next_question',
-                              {'answer': Room.answers[current_question]['player'], 'current_question': current_question,
-                               'trackid': Room.answers[current_question]['info']}, room=code)
+                Room.questionTimeStarted = str(int(time.time()))
+                socketio.emit('next_question', {
+                    'answer': Room.answers[current_question]['player'],
+                    'current_question': current_question,
+                    'trackid': Room.answers[current_question]['info'],
+                    'questionTimeStarted':  Room.questionTimeStarted
+                }, room=code)
+                return
 
 
 @socketio.on('start_game')
 def start_game(data):
     code = data['code']
     num_of_players = 0
+
+    # Get the room
     global ROOMS
     for Room in ROOMS:
         if Room.code == code:
@@ -357,17 +381,18 @@ def start_game(data):
             nr_of_questions = len(Room.answers)
             Room.started = True
             random.shuffle(Room.answers)
-            socketio.emit('start_game', {'nr_of_questions': nr_of_questions}, room=code)
-
-    print(f"[{code}] Game has started!")
-    print(f"[{code}] Number of players: {num_of_players}")
+            socketio.emit(
+                'start_game', {'nr_of_questions': nr_of_questions}, room=code)
+            Room.questionTimeStarted = time.time()
+            print(f"[{code}] Game has started!")
+            print(f"[{code}] Number of players: {num_of_players}")
+            return
 
 
 @socketio.on('toptrack')
 def get_top_track(data):
     trackid = []
     trackid.append(data['trackid'])
-    print(trackid)
     code = data['room']
     sid = data['sid']
 
@@ -375,56 +400,33 @@ def get_top_track(data):
     # Go thorugh each room and find the one sending the 'toptrack' emit
     for Room in ROOMS:
         if code == Room.code:
-            # # When we find the room, double check if the player isn't just reconnecting
-            # for pair in Room.answers:
-            #     if sid == pair['player']:
-            #         socketio.emit("top_tracks_list", {'top_tracks_list': Room.answers}, room=code)
-            #         return
-            # Send out top tracks to all players in the room
-            for x in range(len(trackid[0])):
-                Room.answers.append({
-                    'player': sid,
-                    'info': trackid[0][x],
-                })
-            # socketio.emit("top_tracks_list", {'top_tracks_list': Room.answers}, room=code)
+            # Make sure to not add songs again on reconnect
+            reconnecting = False
+            for answer in Room.answers:
+                if answer['player'] == sid:
+                    reconnecting = True
 
-
-@socketio.on('disconnect')
-def disconnected():
-    global ROOMS
-    for Room in ROOMS:
-        for player in Room.players:
-            if player.sid == request.sid:
-                print(f"{player.name} disconnected!")
-                Room.players.remove(player)
-
-                list_of_players = []
-                for player in Room.players:
-                    list_of_players.append({
-                        'name': player.name,
-                        'id': player.id,
-                        'points': player.points,
-                        'access_token': player.access_token,
-                        'refresh_token': player.refresh_token,
-                        'color': player.color,
-                        'sid': player.sid,
+            if not reconnecting:
+                print(f"[{code}] Adding top song(s) for {sid}")
+                for x in range(len(trackid[0])):
+                    Room.answers.append({
+                        'player': sid,
+                        'info': trackid[0][x],
                     })
-
-                socketio.emit("list_of_players", {'players': list_of_players}, room=Room.code)
-                return
 
 
 def close_socket_room(code):
     for Room in ROOMS:
         if Room.code == code:
             ROOMS.remove(Room)
+            socketio.emit("room_closed_by_host", room=Room.code)
+
             close_room(code)
             print(f"[Server] Deleting room {code}")
 
 
 @socketio.on('leave_room')
 def remove_player_from_room(data):
-    print("leaving room")
     code = data['code']
     sid = data['sid']
 
@@ -433,13 +435,13 @@ def remove_player_from_room(data):
         if Room.code == code:
             for player in Room.players:
                 if player.sid == sid:
-                    print(f"{player.name} disconnected!")
+                    print(f"[{code}] {player.name} disconnected!")
 
                     # Remove the player from the list of players for that room
                     Room.players.remove(player)
 
                     # Remove the player from the websocket room
-                    if len(Room.players) == 0:
+                    if player.host == True or len(Room.players) == 0:
                         close_socket_room(code)
                         return
                     else:
@@ -458,7 +460,8 @@ def remove_player_from_room(data):
                             'sid': player.sid,
                         })
 
-                    socketio.emit("update_players_list", {'players': list_of_players}, room=code)
+                    socketio.emit("update_players_list", {
+                                  'players': list_of_players}, room=code)
                     return
 
 
@@ -479,9 +482,9 @@ def createRoom(data):
             if player.sid == sid and player.host == True and _Room.ended == False:
                 code = _Room.code
                 reconnecting = True
-                print(f"[Server] User {player.name} already has an active room: {code}. Rejoining.")
+                print(
+                    f"[Server] User {player.name} already has an active room: {code}. Rejoining.")
 
-    print(reconnecting)
     if not reconnecting:
         ROOMS.append(Room(code))
         print(f"[Server] Creating room: {code}")
@@ -493,81 +496,34 @@ def createRoom(data):
     socketio.emit('roomCode', {'code': code}, to=request.sid)
 
 
-@socketio.on('joinRoom')
-def joinRoom(data):
-    access_token = data['access_token']
-    refresh_token = data['refresh_token']
-    code = data['code']
-    sid = data['sid']
+@socketio.on('createPlaylist')
+def createPlaylist(data):
+    req = requests.post(
+        url=f"https://api.spotify.com/v1/users/{data['user_id']}/playlists",
+        headers={
+            "Accept": "application/json",
+            "Content-Type": "application/json",
+            "Authorization": f"Bearer {data['access_token']}"
+        },
+        json={
+            "name": f"{data['name']}"
+        })
+    playlist_id = req.json()['id']
+    trackList = ""
+    for i in data['tracksForPlaylist']:
+        print(i)
+        trackList = trackList + "spotify:track:" + i + ","
 
-    global ROOMS
-    global PLAYERS
+    trackList = trackList[:-1]
 
-    global CLIENT_ID
-    global CLIENT_SECRET
-
-    for Room in ROOMS:
-        if Room.code == code:
-            if Room.started == True:
-                socketio.emit("game_in_progress", to=request.sid)
-                return
-
-            # sending get request and saving the response as response object
-            r = requests.get(url="https://api.spotify.com/v1/me", headers={"Authorization": "Bearer " + access_token})
-
-            # extracting data in json format
-            data = r.json()
-
-            # Have the player join the room
-            join_room(code)
-
-            # Create player object
-            new_player = Player()
-
-            new_player.name = str(data['display_name'])
-            new_player.id = str(data['id'])
-            new_player.points = 0
-            new_player.access_token = access_token
-            new_player.refresh_token = refresh_token
-            new_player.sid = sid
-            new_player.color = getColor()
-
-            # print("[0]", new_player.id)
-
-            # Check if the player already exists, i.e. reconnected
-            reconnected = False
-            for player in Room.players:
-                if new_player.id == player.id:
-                    reconnected = True
-                    print(f"[{code}] {new_player.name} reconnected")
-
-            list_of_players = []
-
-            if reconnected == False:
-                print(f"[{code}] {new_player.name} joined")
-                # If the room is empty, make the user host
-                if len(Room.players) == 0:
-                    new_player.host = True
-                    print(f"[{code}] Making {new_player.name} host")
-
-                Room.players.append(new_player)
-
-            for player in Room.players:
-                list_of_players.append({
-                    'name': player.name,
-                    'id': player.id,
-                    'points': player.points,
-                    'access_token': player.access_token,
-                    'refresh_token': player.refresh_token,
-                    'color': player.color,
-                    'sid': player.sid,
-                    'host': player.host
-                })
-
-            socketio.emit("list_of_players", {'players': list_of_players}, room=code)
-            return
-    print("not a room")
-    socketio.emit("not_a_room", to=request.sid)
+    req2 = requests.post(
+        url=f"https://api.spotify.com/v1/playlists/{playlist_id}/tracks?uris={trackList}",
+        headers={
+            "Accept": "application/json",
+            "Content-Type": "application/json",
+            "Authorization": f"Bearer {data['access_token']}"
+        })
+    print(req2.json())
 
 
 def generate_access_token(code):
@@ -599,8 +555,6 @@ def generate_access_token(code):
         },
         data=data
     )
-    print(req.json())
-    print("Response code: ", req.status_code)
 
     if req.status_code == 400:
         print("Error")

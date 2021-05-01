@@ -2,13 +2,25 @@
     <div class="join">
         <h1>Enter room code...</h1>
         <p>{{ error }}</p>
-        <InputField :text="code" placeholder="ABCD" />
-        <Button @click="isRoom" buttonText="Join Room" />
-        <br />
-        <h2 style="color: rgba(255, 255, 255, 0.5)">Or...</h2>
+        <InputField
+            :text="code"
+            placeholder="ABCD"
+        />
+        <Button
+            button-text="Join Room"
+            @click="isRoom"
+        />
+        <br>
+        <h2 style="color: rgba(255, 255, 255, 0.5)">
+            Or...
+        </h2>
         <h3>Scan QR-code in your camera app</h3>
         <div class="back">
-            <Button buttonLink="/" buttonText="Back" color="#CD1A2B" />
+            <Button
+                button-link="/"
+                button-text="Back"
+                color="#CD1A2B"
+            />
         </div>
     </div>
 </template>
@@ -38,14 +50,14 @@ export default {
             }
         },
     },
-    methods: {
-        isRoom: function () {
-            this.$socket.client.emit('isRoom', { code: this.code });
-        },
-    },
     computed: {
         code() {
             return this.$store.state.roomCode;
+        },
+    },
+    methods: {
+        isRoom: function () {
+            this.$socket.client.emit('isRoom', { code: this.code });
         },
     },
 };
