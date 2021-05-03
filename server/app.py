@@ -534,7 +534,7 @@ def generate_access_token(code):
         data = {
             "grant_type": "authorization_code",
             "code": code,
-            "redirect_uri": "https://musicwithfriends.fdrive.se/logincallback",
+            "redirect_uri": "https://soundcheck.fdrive.se/logincallback",
             'client_id': CLIENT_ID,
             'client_secret': CLIENT_SECRET
         }
