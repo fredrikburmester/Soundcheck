@@ -41,6 +41,7 @@
                         />
                     </div>
                 </div>
+                <div class="hr" />
             </div>
             <div class="list">
                 <div v-for="player, index in players" :key="player.sid">
@@ -232,6 +233,7 @@ export default {
     text-align: left;
     margin-left: 2rem;
     margin-bottom: 0;
+    width: 75vw;
 }
 .date {
     text-align: left;
@@ -260,6 +262,7 @@ export default {
     overflow-x: hidden;
 }
 .personal-list {
+    height: 50vh;
     overflow-y: scroll;
     overflow-x: hidden;
 }
