@@ -196,7 +196,7 @@ export default {
             })
             .catch(function (err) {
                 console.log(err)
-                // self.state = 'not-found';
+                self.state = 'not-found';
             });
     },
     methods: {
