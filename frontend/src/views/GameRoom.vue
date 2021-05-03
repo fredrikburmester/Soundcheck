@@ -7,6 +7,7 @@
         <div
             v-if="loading"
             class="loading"
+            style="display:grid; height: 100vh;"
         >
             <p>Loading...</p>
         </div>
@@ -127,6 +128,7 @@
         </div>
         <div
             v-else 
+            style="display: grid; height: 100vh;"
         >
             <div class="qr">
                 <img :src="qr" @click="showQR = true">
@@ -483,11 +485,12 @@ export default {
 <style scoped>
 .gameroom {
     display: grid;
+    height: 100vh;
 }
 .lobby-grid {
     display: grid;
     grid-template-rows: minmax(160px,170px) auto minmax(0px, 220px);
-    height: 100vh;
+    height: 100%;
 }
 .started-grid {
     display: grid;
