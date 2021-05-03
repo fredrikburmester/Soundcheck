@@ -1,6 +1,8 @@
 <template>
     <div class="login">
-        <h1>Music With Friends</h1>
+        <div id="brand">
+            <img :src="logo" alt="soundcheck">
+        </div>
         <Button
             button-text="Authenticate"
             @click="loginWithSpotify"
@@ -11,10 +13,16 @@
 
 <script>
 import Button from '../components/Button';
+import logo from '../assets/soundcheck.png';
 export default {
     name: 'Login',
     components: {
         Button,
+    },
+    data: function () {
+        return {
+            logo: logo
+        };
     },
     beforeMount() {
         this.checkToken();
@@ -35,6 +43,10 @@ export default {
 <style scoped>
 .login {
     margin-top: 30vh;
+}
+#brand > img{
+	width: 18em;
+    margin-bottom: 60px;
 }
 p {
     color: rgba(255, 255, 255, 0.68);
