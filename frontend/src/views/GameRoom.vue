@@ -671,7 +671,6 @@ export default {
         height: 620px;
     }
 }
-@media screen and (orientation:portrait) {
 .startgame {
     position: fixed;
     left: 50%;
@@ -695,28 +694,5 @@ export default {
     transform: translate(-50%, -50%);
     margin: 0 auto;
     z-index: 1;
-}
-}
-@media screen and (orientation:landscape) {
-    .buttons {
-        position: fixed;
-        bottom: 20px;
-        margin: 0;
-        padding: 0;
-        height: 40px;
-        width: 100vw;
-        display: flex;
-        flex-direction: row;
-        justify-content: space-evenly;
-    }
-
-    .copycode, .startgame, .leave {
-        margin: 0 1px 0 1px;
-    }
-    .copycode > .button, .startgame > .button, .leave > .button {
-        font-size: 10px;
-        width: 116px !important;
-        margin: 0;
-    }
 }
 </style>

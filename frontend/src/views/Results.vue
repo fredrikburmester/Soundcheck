@@ -253,14 +253,13 @@ export default {
     margin-bottom: 5px;
 }
 .list {
-    height: calc(100vh - 250px);
+    height: 50vh;
     overflow-y: scroll;
     margin-left: 2rem;
     margin-right: 2rem;
     overflow-x: hidden;
 }
 .personal-list {
-    height: calc(100vh - 220px);
     overflow-y: scroll;
     overflow-x: hidden;
 }
