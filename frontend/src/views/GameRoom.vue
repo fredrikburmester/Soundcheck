@@ -130,14 +130,15 @@
             <h1 class="code">
                 {{ code }}
             </h1>
-            <div class="hr" />
+            <div class="hr" style="margin-top: 1rem; margin-bottom: 1rem" />
             <h3 class="title">
                 Players:
             </h3>
             <p v-if="!host">
                 {{ status }}
             </p>
-            <div class="list" style="height: calc(100vh - 420px)">
+
+            <div class="list" style="height: calc(100vh - 390px)">
                 <PlayerAvatar
                     v-for="player in players"
                     :key="player.id"
@@ -146,14 +147,13 @@
                     :host="player.host"
                 />
             </div>
-
             <div class="qr">
                 <img
                     :src="qr"
                     @click="showQR = true"
                 >
             </div>
-
+            <div class="hr" />
             <div class="buttons">
                 <div class="copycode">
                     <Button
@@ -516,7 +516,7 @@ export default {
 .hr {
     height: 2px;
     background-color: rgb(63, 63, 63);
-    margin: 1rem 2rem 1rem 2rem;
+    margin: 0 2rem 0 2rem;
 }
 .QR {
     transform: scale(0.5);
@@ -540,7 +540,7 @@ export default {
 .startgame {
     position: fixed;
     left: 50%;
-    bottom: 160px;
+    bottom: 120px;
     transform: translate(-50%, -50%);
     margin: 0 auto;
     z-index: 1;
@@ -548,7 +548,7 @@ export default {
 .copycode {
     position: fixed;
     left: 50%;
-    bottom: 90px;
+    bottom: 60px;
     transform: translate(-50%, -50%);
     margin: 0 auto;
     z-index: 1;
@@ -556,7 +556,7 @@ export default {
 .leave {
     position: fixed;
     left: 50%;
-    bottom: 20px;
+    bottom: 0px;
     transform: translate(-50%, -50%);
     margin: 0 auto;
     z-index: 1;

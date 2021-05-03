@@ -20,7 +20,7 @@
             v-if="host"
             class="star"
         >
-            ⭐️
+            👑
         </div>
     </div>
 </template>
