@@ -1,83 +1,90 @@
 <template>
-    <div :key="state">
+    <div :key="state" style="display: grid;">
         <div v-if="state == 'loading'">
             <p>Loading...</p>
         </div>
-        <div v-if="state == 'found'">
-            <h1 class="code">
-                {{ code }}
-            </h1>
-            <p class="date">
-                {{ date }}
-            </p>
-            <div class="hr" />
+        
+        <div 
+            v-if="state == 'found'" 
+            style="display: grid;"
+        >
             <div v-if="selected" class="personalResultsModal">
-                <h1 class="code">
-                    {{ selected_player.name }}
-                </h1>
-                <p class="date">
-                    {{ date }}
-                </p>
-                <div class="hr" />
-                <h3 class="title">
-                    Individual results
-                </h3>
-                <div class="close-button" @click="deselectPlayer()">
-                    <div
-                        id="line1"
-                        class="line"
-                    />
-                    <div
-                        id="line2"
-                        class="line"
-                    />
-                </div>
-                <div class="personal-list">
-                    <div v-for="guess in selected_player.guesses" :key="guess">
-                        <GuessIcon
-                            :trackid="guess.info"
-                            :guess="guess.guess"
-                            :answer="guess.correct_answer"
-                        />
+                <div class="individual-grid">
+                    <div>
+                        <h1 class="code">
+                            {{ selected_player.name }}
+                        </h1>
+                        <p class="date">
+                            {{ date }}
+                        </p>
+                        <div class="hr" />
+                        <h3 class="title">
+                            Individual results
+                        </h3>
+                        <div class="close-button" @click="deselectPlayer()">
+                            <div
+                                id="line1"
+                                class="line"
+                            />
+                            <div
+                                id="line2"
+                                class="line"
+                            />
+                        </div>
+                    </div>
+                    <div class="personal-list">
+                        <div v-for="guess in selected_player.guesses" :key="guess">
+                            <GuessIcon
+                                :trackid="guess.info"
+                                :guess="guess.guess"
+                                :answer="guess.correct_answer"
+                            />
+                        </div>
                     </div>
                 </div>
-                <div class="hr" />
             </div>
-            <div class="list">
-                <div v-for="player, index in players" :key="player.sid">
-                    <h3 v-if="index == 0" class="title" style="padding-left: 0; margin-left: 0; color: gold">
-                        Winner
-                    </h3>
-                    <h3 v-if="index == 1" class="title" style="padding-left: 0; margin-left: 0; color: silver">
-                        Second place
-                    </h3>
-                    <h3 v-if="index == 2" class="title" style="padding-left: 0; margin-left: 0; color: #26c28">
-                        Third place
-                    </h3>
-                    <PlayerAvatar
-                        :id="player.sid"
-                        class="player-guess"
-                        :player-name="player.name"
-                        :color="player.color"
-                        @click="selectPlayer(player)"
-                    />
-                    <p class="points">
-                        {{ player.points }} Points
+            <div class="grid">
+                <div>
+                    <h1 class="code">
+                        {{ code }}
+                    </h1>
+                    <p class="date">
+                        {{ date }}
                     </p>
                 </div>
-                <Button
-                    class="createPlaylist"
-                    button-text="Create playlist"
-                    @click="createPlaylist(date)"
-                />
-                <Button class="goHome" button-link="/" button-text="Play again" />
+                <div class="list">
+                    <div v-for="player, index in players" :key="player.sid">
+                        <h3 v-if="index == 0" class="title" style="padding-left: 0; margin-left: 0; color: gold">
+                            Winner
+                        </h3>
+                        <h3 v-if="index == 1" class="title" style="padding-left: 0; margin-left: 0; color: silver">
+                            Second place
+                        </h3>
+                        <h3 v-if="index == 2" class="title" style="padding-left: 0; margin-left: 0; color: #26c28">
+                            Third place
+                        </h3>
+                        <PlayerAvatar
+                            :id="player.sid"
+                            class="player-guess"
+                            :player-name="player.name"
+                            :color="player.color"
+                            @click="selectPlayer(player)"
+                        />
+                        <p class="points">
+                            {{ player.points }} Points
+                        </p>
+                    </div>
+                    <Button
+                        class="createPlaylist"
+                        button-text="Create playlist"
+                        @click="createPlaylist(date)"
+                    />
+                </div>
+                <div>
+                    <div class="hr" />
+                    <Button style="margin-top: 20px" class="goHome" button-link="/" button-text="Play again" />
+                </div>
             </div>
-            <div class="hr" />
-            <Button
-                class="goHome"
-                button-link="/"
-                button-text="Play again"
-            />
         </div>
         <div v-if="state == 'not-found'">
             <NotFound />
@@ -229,6 +236,18 @@ export default {
 </script>
 
 <style scoped>
+.grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: 120px auto 100px; 
+    height: 100vh;
+}
+.individual-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: 180px auto; 
+    height: 100vh;
+}
 .code {
     text-align: left;
     margin-left: 2rem;
@@ -250,29 +269,20 @@ export default {
     font-style: italic;
     color: darkgrey;
     text-align: left;
+    margin-top: 10px;
     margin-left: 2rem;
-    margin-top: 20px;
-    margin-bottom: 5px;
+    margin-bottom:0;
+    padding: 0;
 }
 .list {
-    height: 50vh;
-    overflow-y: scroll;
     margin-left: 2rem;
     margin-right: 2rem;
+    overflow-y: scroll;
     overflow-x: hidden;
 }
 .personal-list {
-    height: 50vh;
     overflow-y: scroll;
     overflow-x: hidden;
-}
-.goHome {
-    position: fixed;
-    left: 50%;
-    bottom: 20px;
-    transform: translate(-50%, -50%);
-    margin: 0 auto;
-    z-index: 1;
 }
 .personalResultsModal {
     background-color: black;
