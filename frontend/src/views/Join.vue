@@ -66,7 +66,7 @@ export default {
 
 <style scoped>
 .join {
-    margin-top: 30vh;
+    margin-top: 10vh;
 }
 .back {
     position: fixed;
@@ -77,5 +77,15 @@ export default {
 }
 .input{
     text-transform: uppercase;
+}
+@media only screen and (min-height: 550px) {
+    .join {
+        margin-top: 20vh;
+    }
+}
+@media only screen and (min-height: 680px) {
+    .join {
+        margin-top: 30vh;
+    }
 }
 </style>
