@@ -21,5 +21,6 @@ body {
     -moz-osx-font-smoothing: grayscale;
     text-align: center;
     background-color: #191414;
+    overflow-y: scroll;
 }
 </style>
