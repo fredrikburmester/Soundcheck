@@ -20,35 +20,37 @@
             />
             <p>Time range: {{ time_range }}</p>
 
-            <h3>Number of songs per player</h3>
-            <SettingsButton
-                :key="no_songs"
-                :marked="1 == no_songs"
-                button-text="1"
-                @clicked="onClickChild"
-            />
-            <SettingsButton
-                :key="no_songs"
-                :marked="2 == no_songs"
-                button-text="2"
-                @clicked="onClickChild"
-            />
-            <SettingsButton
-                :key="no_songs"
-                :marked="3 == no_songs"
-                button-text="3"
-                @clicked="onClickChild"
-            />
-            <SettingsButton
-                :key="no_songs"
-                :marked="4 == no_songs"
-                button-text="4"
-                @clicked="onClickChild"
-            />
+            <div style="padding-bottom: 20px">
+                <h3>Number of songs per player</h3>
+                <SettingsButton
+                    :key="no_songs"
+                    :marked="1 == no_songs"
+                    button-text="1"
+                    @clicked="onClickChild"
+                />
+                <SettingsButton
+                    :key="no_songs"
+                    :marked="2 == no_songs"
+                    button-text="2"
+                    @clicked="onClickChild"
+                />
+                <SettingsButton
+                    :key="no_songs"
+                    :marked="3 == no_songs"
+                    button-text="3"
+                    @clicked="onClickChild"
+                />
+                <SettingsButton
+                    :key="no_songs"
+                    :marked="4 == no_songs"
+                    button-text="4"
+                    @clicked="onClickChild"
+                />
+            </div>
 
-            <h3>Include Top Genre</h3>
-            <ToggleSwitch @clicked="onToggleChild" />
-            <br>
+            <!-- <h3>Include Top Genre</h3>
+            <ToggleSwitch @clicked="onToggleChild" />-->
+
             <Button
                 button-text="Create Room"
                 @click="createRoom"
@@ -72,7 +74,7 @@ export default {
     components: {
         Button,
         SettingsButton,
-        ToggleSwitch,
+        // ToggleSwitch,
     },
     sockets: {
         roomCode(data) {
@@ -118,18 +120,21 @@ export default {
     display: inline-block;
 }
 .create {
-    margin-top: 3vh;
+    margin-top: 0;
 }
 
 .settingsbox {
-    height: calc(100vh - 190px);
+    height: calc(100vh - 160px);
     overflow-y: scroll;
     overflow-x: hidden;
+    padding-bottom: 100px;
 }
 .hr {
+    margin-left: auto;
+    margin-right: auto;
+    width: 80vw;
     height: 2px;
     background-color: rgb(63, 63, 63);
-    margin: 0.5rem 2rem 0.5rem 2rem;
 }
 @media only screen and (min-width: 900px) {
     /* .settingsbox{

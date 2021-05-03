@@ -1,6 +1,9 @@
 <template>
     <div class="home">
-        <h1>Start a game...</h1>
+        <div id="brand">
+            <img :src="logo" alt="soundcheck">
+        </div>
+        <!-- <h1>Start a game...</h1> -->
         <Button
             button-link="/create"
             button-text="Create Room"
@@ -24,6 +27,7 @@
 <script>
 const axios = require('axios');
 import Button from '../components/Button';
+import logo from '../assets/soundcheck.png'
 
 export default {
     name: 'Home',
@@ -33,6 +37,7 @@ export default {
     data: function () {
         return {
             name: '',
+            logo: logo
         };
     },
     methods: {
@@ -62,6 +67,10 @@ export default {
 </script>
 
 <style scoped>
+#brand > img{
+	width: 18em;
+    margin-bottom: 60px;
+}
 .home {
     margin-top: 30vh;
 }
@@ -71,5 +80,10 @@ export default {
     bottom: 20px;
     transform: translate(-50%, -50%);
     margin: 0 auto;
+}
+.hr {
+    height: 2px;
+    background-color: rgb(63, 63, 63);
+    margin: 0 2rem 2rem 2rem;
 }
 </style>
