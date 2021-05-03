@@ -1,13 +1,13 @@
 <template>
     <div
         v-if="found"
+        id="gameroom"
         :key="found"
         class="gameroom"
     >
         <div
             v-if="loading"
             class="loading"
-            style="display:grid"
         >
             <p>Loading...</p>
         </div>
@@ -57,6 +57,7 @@
             v-if="started"
             :key="started"
             class="started-grid"
+            :style="startedGridStyle"
         >
             <div>
                 <ProgressBar
@@ -128,12 +129,13 @@
         </div>
         <div
             v-else 
-            style="display: block; height: 100vh;"
+            class="lobby-grid-outer"
         >
             <div class="qr">
                 <img :src="qr" @click="showQR = true">
             </div>
             <div 
+                :style="lobbyGridStyle"
                 class="lobby-grid"
             >
                 <div>
@@ -144,9 +146,6 @@
                     <h3 class="title">
                         Players:
                     </h3>
-                    <p v-if="!host">
-                        {{ status }}
-                    </p>
                 </div>
                 <div class="list">
                     <PlayerAvatar
@@ -158,6 +157,9 @@
                     />
                 </div>
                 <div class="buttons">
+                    <p v-if="!host">
+                        {{ status }}
+                    </p>
                     <div class="copycode">
                         <Button
                             :key="clipboardtext"
@@ -338,6 +340,34 @@ export default {
         getPlayersGuessed() {
             return this.players_guessed.length;
         },
+        lobbyGridStyle() {
+            if(this.host) {
+                return {
+                    'height': `${window.innerHeight}px`,
+                    'grid-template-rows': '125px auto 210px'
+                }
+            } else {
+                return {
+                    'height': `${window.innerHeight}px`,
+                    'grid-template-rows': '125px auto 190px'
+                    
+                };
+            }
+        },
+        startedGridStyle() {
+            if(this.host) {
+                return {
+                    'height': `${window.innerHeight}px`,
+                    'grid-template-rows': '125px auto 70px 80px'
+                }
+            } else {
+                return {
+                    'height': `${window.innerHeight}px`,
+                    'grid-template-rows': '125px auto 0px 80px'
+                    
+                };
+            }
+        },
     },
     mounted: function () {
         this.connectToRoom();
@@ -486,10 +516,12 @@ export default {
 .gameroom {
     display: grid;
 }
+.lobby-grid-outer {
+    display: grid;
+}
 .lobby-grid {
     display: grid;
     grid-template-rows: minmax(160px,170px) auto minmax(0px, 220px);
-    height: 100%;
 }
 .started-grid {
     display: grid;
@@ -499,6 +531,9 @@ export default {
 .buttons {
     margin-top: 20px;
     margin-bottom: 20px;
+}
+.buttons p {
+    margin-top: 0;
 }
 .code {
     text-align: left;

@@ -1,12 +1,11 @@
 <template>
-    <div :key="state" style="display: grid;">
+    <div :key="state">
         <div v-if="state == 'loading'">
             <p>Loading...</p>
         </div>
         
         <div 
             v-if="state == 'found'" 
-            style="display: grid;"
         >
             <div v-if="selected" class="personalResultsModal">
                 <div class="individual-grid">
@@ -43,7 +42,7 @@
                     </div>
                 </div>
             </div>
-            <div class="grid">
+            <div class="grid" :style="resultGridStyle">
                 <div>
                     <h1 class="code">
                         {{ code }}
@@ -119,6 +118,14 @@ export default {
             answers: null,
             tracksForPlaylist: [],
         };
+    },
+    computed: {
+        resultGridStyle() {
+            return {
+                'height': `${window.innerHeight}px`,
+                'grid-template-rows': '125px auto 100px'
+            }
+        },
     },
     mounted() {
         var self = this;
@@ -231,7 +238,7 @@ export default {
         deselectPlayer() {
             this.selected = false;
         },
-    },
+    }
 };
 </script>
 
@@ -239,8 +246,6 @@ export default {
 .grid {
     display: grid;
     grid-template-columns: 1fr;
-    grid-template-rows: 120px auto 100px; 
-    height: 100vh;
 }
 .individual-grid {
     display: grid;
