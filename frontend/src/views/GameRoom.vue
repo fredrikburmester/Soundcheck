@@ -486,7 +486,7 @@ export default {
 }
 .lobby-grid {
     display: grid;
-    grid-template-rows: 130px auto minmax(0px, 220px);
+    grid-template-rows: minmax(160px,170px) auto minmax(0px, 220px);
     height: 100vh;
 }
 .started-grid {
