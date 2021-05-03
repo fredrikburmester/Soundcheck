@@ -6,38 +6,17 @@
         <div class="hr" />
         <div class="settingsbox">
             <h3>Select Time Range</h3>
-            <!-- <Button
-                button-text="last 4 weeks"
-                @click="onTimeChange(`4 weeks`)"
-            />
-            <Button
-                button-text="last 6 months"
-                @click="onTimeChange(`6 months`)"
-            />
-            <Button
-                button-text="more than a year"
-                @click="onTimeChange(`More than a year`)"
-            /> -->
-            <div class="v-model-select">
-                <select v-model="time_range" class="drop-down">
-                    <option v-for="option in options" :key="option.value" :value="option.value">
-                        {{ option.text }}
-                    </option>
-                </select>
-            </div>
-
-            <div style="padding-bottom: 20px">
-                <h3>Number of songs per player</h3>
-                <div class="v-model-select">
-                <select v-model="no_songs" class="drop-down"> 
-                    <option v-for="n in 8" :key="n">{{ n }}</option>
-                </select>
-                <br>
-                <br>
-                <span> {{ no_songs }} songs </span>
-            </div>
-            </div>
-
+            <select v-model="time_range" class="drop-down">
+                <option v-for="option in options" :key="option.value" :value="option.value">
+                    {{ option.text }}
+                </option>
+            </select>
+           
+            <h3>Number of songs per player</h3>
+            <select v-model="no_songs" class="drop-down"> 
+                <option v-for="n in 8" :key="n">{{ n }}</option>
+            </select>
+            
             <Button
                 button-text="Create Room"
                 @click="createRoom"
@@ -113,28 +92,22 @@ export default {
     height: 2px;
     background-color: rgb(63, 63, 63);
 }
-.v-model-select{
-    font-family: 'Roboto', sans-serif;
-    width: 80vw;
-    display: inline-block;
-    padding: 15px 30px;
-    margin-top: 1em;
-    margin-bottom: 20px;
-    overflow-x: auto;
-}
+
 .drop-down{
     background-color: #fff;
-    width: 55vw;
+    font-weight: 400;
+    width: 50vw;
     height: 47px;
     text-align-last: center;
-    display: inline;
     font-family: 'Roboto', sans-serif;
     font-size: 1rem;
-    border: 2px solid #eee;
+    border: 1px solid #000;
     border-radius: 100px;
     cursor: pointer;
+    margin-bottom: 20px;
 }
 option{
-    align-items: center;
+    font-size: 16px;
+    font-family: 'Roboto', sans-serif;
 }
 </style>
