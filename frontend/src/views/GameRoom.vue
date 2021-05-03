@@ -76,12 +76,8 @@
                     Question: {{ current_question + 1 }} / {{ nr_of_questions }}
                 </p>
             </div>
-            <div
-                :key="my_guess"
-                class="list"
-
-                style="height: calc(100vh - 350px)"
-            >
+            <div class="hr" />
+            <div :key="my_guess" class="list">
                 <PlayerAvatar
                     v-for="player in players"
                     :id="player.id"
@@ -94,6 +90,7 @@
                     @click="guess(player)"
                 />
             </div>
+            <div class="hr" />
             <div
                 v-if="host"
                 class="next-song"
@@ -138,7 +135,7 @@
                 {{ status }}
             </p>
 
-            <div class="list" style="height: calc(100vh - 390px)">
+            <div class="list">
                 <PlayerAvatar
                     v-for="player in players"
                     :key="player.id"
@@ -148,10 +145,7 @@
                 />
             </div>
             <div class="qr">
-                <img
-                    :src="qr"
-                    @click="showQR = true"
-                >
+                <img :src="qr" @click="showQR = true">
             </div>
             <div class="hr" />
             <div class="buttons">
@@ -163,11 +157,7 @@
                         @click="copyToClipboard"
                     />
                 </div>
-                <div
-                    v-if="host"
-                    :key="host"
-                    class="startgame"
-                >
+                <div v-if="host" :key="host" class="startgame">
                     <Button
                         button-text="Start Game"
                         @click="startGame()"
@@ -536,31 +526,9 @@ export default {
     margin-left: 2rem;
     margin-right: 2rem;
     overflow-x: hidden;
+    height: 100px;
 }
-.startgame {
-    position: fixed;
-    left: 50%;
-    bottom: 120px;
-    transform: translate(-50%, -50%);
-    margin: 0 auto;
-    z-index: 1;
-}
-.copycode {
-    position: fixed;
-    left: 50%;
-    bottom: 60px;
-    transform: translate(-50%, -50%);
-    margin: 0 auto;
-    z-index: 1;
-}
-.leave {
-    position: fixed;
-    left: 50%;
-    bottom: 0px;
-    transform: translate(-50%, -50%);
-    margin: 0 auto;
-    z-index: 1;
-}
+
 .webplayer {
     position: fixed;
     height: 80px;
@@ -647,10 +615,108 @@ export default {
 #line2 {
     transform: rotate(-45deg);
 }
+@media only screen and (max-width: 265px) {
+    .button {
+        font-size: 10px;
+    }
+}
 @media only screen and (min-width: 600px) {
     .bigQR > img {
         height: 30vh;
         width: auto;
+    }
+}
+@media only screen and (min-height: 500px) {
+    .list {
+        height: 120px;
+    }
+}
+@media only screen and (min-height: 550px) {
+    .list {
+        height: 170px;
+    }
+}
+@media only screen and (min-height: 600px) {
+    .list {
+        height: 220px;
+    }
+}
+@media only screen and (min-height: 650px) {
+    .list {
+        height: 270px;
+    }
+}
+@media only screen and (min-height: 700px) {
+    .list {
+        height: 320px;
+    }
+}
+@media only screen and (min-height: 750px) {
+    .list {
+        height: 370px;
+    }
+}
+@media only screen and (min-height: 800px) {
+    .list {
+        height: 420px;
+    }
+}
+@media only screen and (min-height: 900px) {
+    .list {
+        height: 520px;
+    }
+}
+@media only screen and (min-height: 1000px) {
+    .list {
+        height: 620px;
+    }
+}
+@media screen and (orientation:portrait) {
+.startgame {
+    position: fixed;
+    left: 50%;
+    bottom: 120px;
+    transform: translate(-50%, -50%);
+    margin: 0 auto;
+    z-index: 1;
+}
+.copycode {
+    position: fixed;
+    left: 50%;
+    bottom: 60px;
+    transform: translate(-50%, -50%);
+    margin: 0 auto;
+    z-index: 1;
+}
+.leave {
+    position: fixed;
+    left: 50%;
+    bottom: 0px;
+    transform: translate(-50%, -50%);
+    margin: 0 auto;
+    z-index: 1;
+}
+}
+@media screen and (orientation:landscape) {
+    .buttons {
+        position: fixed;
+        bottom: 20px;
+        margin: 0;
+        padding: 0;
+        height: 40px;
+        width: 100vw;
+        display: flex;
+        flex-direction: row;
+        justify-content: space-evenly;
+    }
+
+    .copycode, .startgame, .leave {
+        margin: 0 1px 0 1px;
+    }
+    .copycode > .button, .startgame > .button, .leave > .button {
+        font-size: 10px;
+        width: 116px !important;
+        margin: 0;
     }
 }
 </style>

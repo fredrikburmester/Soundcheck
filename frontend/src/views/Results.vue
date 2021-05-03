@@ -71,6 +71,7 @@
                 />
                 <Button class="goHome" button-link="/" button-text="Play again" />
             </div>
+            <div class="hr" />
             <Button
                 class="goHome"
                 button-link="/"
@@ -235,20 +236,20 @@ export default {
 .date {
     text-align: left;
     margin-left: 2rem;
-    margin-bottom: 0;
+    margin-bottom: 20px;
     color: gray;
 }
 .hr {
     height: 2px;
     background-color: rgb(63, 63, 63);
-    margin: 1rem 2rem 1rem 2rem;
+    margin: 0 2rem 0 2rem;
 }
 .title {
     font-style: italic;
     color: darkgrey;
     text-align: left;
     margin-left: 2rem;
-    margin-top: 0;
+    margin-top: 20px;
     margin-bottom: 5px;
 }
 .list {
