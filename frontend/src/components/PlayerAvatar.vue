@@ -70,6 +70,7 @@ export default {
     display: flex;
     position: relative;
     margin-bottom: 10px;
+    height: 70px;
     overflow-x: hidden;
     flex-wrap: nowrap;
     justify-content: flex-start;
@@ -118,8 +119,8 @@ export default {
 }
 .star {
     position: absolute;
-    margin-top: 35px;
-    margin-left: 45px;
+    top: 40px;
+    left: 45px;
     font-size: 20px;
 }
 </style>
