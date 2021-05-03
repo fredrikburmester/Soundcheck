@@ -143,8 +143,6 @@ export default {
                 // Convert answer ids to names
                 for (let player of data.players) {
                     for (let guess of player.guesses) {
-                        //TODO change guess array so that info can contain trackID or genre etc.
-                        self.tracksForPlaylist.push(guess['info']);
                         for (let player2 of data.players) {
                             if (player2.sid == guess.guess) {
                                 guess.guess = player2.name;
@@ -210,6 +208,9 @@ export default {
             this.selected_player = player;
         },
         createPlaylist() {
+            this.answers.forEach((answer) => {
+                this.tracksForPlaylist.push((answer['info']))
+            })
             this.$socket.client.emit('createPlaylist', {
                 sid: localStorage.getItem('sid'),
                 access_token: localStorage.getItem('access_token'),
