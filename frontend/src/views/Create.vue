@@ -4,19 +4,24 @@
             Settings
         </h1>
         <div class="hr" />
-        <div class="settingsbox">
+        
+        <div class="container">
             <h3>Select Time Range</h3>
             <select v-model="time_range" class="drop-down">
                 <option v-for="option in options" :key="option.value" :value="option.value">
                     {{ option.text }}
                 </option>
             </select>
-           
+            
             <h3>Number of songs per player</h3>
             <select v-model="no_songs" class="drop-down"> 
-                <option v-for="n in 8" :key="n">{{ n }}</option>
+                <option v-for="n in 8" :key="n" :value="n"> {{ n }}
+                    <span v-if="n == 1">song</span>
+                    <span v-else> songs </span>
+                    
+                </option>
             </select>
-            
+        
             <Button
                 button-text="Create Room"
                 @click="createRoom"
@@ -54,7 +59,7 @@ export default {
             options: [
                {text: '4 weeks', value: 'short_term'},
                {text: '6 months', value: 'medium_term'},
-               {text: 'Over a year', value: 'long_term'} 
+               {text: '1 year', value: 'long_term'} 
             ]
         };
     },
@@ -79,12 +84,6 @@ export default {
     margin-top: 0;
 }
 
-.settingsbox {
-    height: calc(100vh - 160px);
-    overflow-y: scroll;
-    overflow-x: hidden;
-    padding-bottom: 100px;
-}
 .hr {
     margin-left: auto;
     margin-right: auto;
@@ -93,21 +92,29 @@ export default {
     background-color: rgb(63, 63, 63);
 }
 
-.drop-down{
-    background-color: #fff;
-    font-weight: 400;
-    width: 50vw;
-    height: 47px;
-    text-align-last: center;
-    font-family: 'Roboto', sans-serif;
-    font-size: 1rem;
-    border: 1px solid #000;
-    border-radius: 100px;
-    cursor: pointer;
-    margin-bottom: 20px;
+.container{
+    height: 80vh;
+    padding-bottom: 80px;
+    overflow-y: scroll;
+    overflow-x: hidden;
 }
-option{
-    font-size: 16px;
+
+.drop-down{
+    display: inline-block;
+    font-size: 15px;
     font-family: 'Roboto', sans-serif;
+    font-weight: 500;
+    letter-spacing: 1px;
+    border-radius: 100px;
+    width: 50vw;
+    padding: 15px 20px 15px 20px;
+    text-align-last: center;
+    cursor: pointer;
+    margin-bottom: 10px;
+    font-variant: small-caps;
+    background-color: white;
+}
+.drop-down:focus{
+    outline: none;
 }
 </style>
