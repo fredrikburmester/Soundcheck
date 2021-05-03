@@ -2,7 +2,8 @@
     <div class="join">
         <h1>Enter room code...</h1>
         <p>{{ error }}</p>
-        <InputField class="input"
+        <InputField 
+            class="input"
             :text="code"
             placeholder="ABCD"
         />

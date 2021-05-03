@@ -107,6 +107,7 @@ export default {
             date: '',
             selected: false,
             selected_player: null,
+            answers: null,
             tracksForPlaylist: [],
         };
     },
@@ -127,6 +128,7 @@ export default {
             .then(function (response) {
                 var data = response.data;
                 self.players = data.players;
+                self.answers = data.answers;
                 var date = new Date(data.date * 1000);
                 var date_string = date.toLocaleDateString('se');
                 var hour = date.getHours();
@@ -164,6 +166,9 @@ export default {
                 });
 
                 self.state = 'found';
+
+                console.log(self.players)
+                console.log(self.answers)
             })
             .catch(function () {
                 self.state = 'not-found';
@@ -219,7 +224,7 @@ export default {
     margin-bottom: 5px;
 }
 .list {
-    height: calc(100vh - 420px);
+    height: calc(100vh - 250px);
     overflow-y: scroll;
     margin-left: 2rem;
     margin-right: 2rem;
