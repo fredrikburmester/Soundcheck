@@ -7,7 +7,7 @@
         <div
             v-if="loading"
             class="loading"
-            style="display:grid; height: 100vh;"
+            style="display:grid"
         >
             <p>Loading...</p>
         </div>
@@ -128,7 +128,7 @@
         </div>
         <div
             v-else 
-            style="display: grid; height: 100vh;"
+            style="display: block; height: 100vh;"
         >
             <div class="qr">
                 <img :src="qr" @click="showQR = true">
@@ -485,7 +485,6 @@ export default {
 <style scoped>
 .gameroom {
     display: grid;
-    height: 100vh;
 }
 .lobby-grid {
     display: grid;
