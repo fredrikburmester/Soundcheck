@@ -2,7 +2,7 @@
     <div class="join">
         <h1>Enter room code...</h1>
         <p>{{ error }}</p>
-        <InputField
+        <InputField class="input"
             :text="code"
             placeholder="ABCD"
         />
@@ -73,5 +73,8 @@ export default {
     bottom: 20px;
     transform: translate(-50%, -50%);
     margin: 0 auto;
+}
+.input{
+    text-transform: uppercase;
 }
 </style>
