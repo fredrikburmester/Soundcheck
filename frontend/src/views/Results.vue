@@ -156,6 +156,15 @@ export default {
                     }
                 }
 
+                self.players.forEach(player => {
+                    var sid = player.sid
+                    self.answers.forEach(answer => {
+                        if(answer.player == sid) {
+                            answer.player = player.name
+                        }
+                    })
+                })
+
                 self.players.sort(function(a, b) {
                     var keyA = a.points,
                         keyB = b.points;
@@ -165,13 +174,31 @@ export default {
                     return 0;
                 });
 
+                self.players.forEach(player => {
+                    self.answers.forEach((answer, index) => {
+                        var found = false
+                        player.guesses.forEach(guess => {
+                            if (guess.question == index) {
+                                found = true
+                            }   
+                        })
+                        if(!found) {
+                            player.guesses.push({
+                                'correct_answer': answer.player,
+                                'guess': '',
+                                'info': answer.info,
+                                'question': index
+                            })
+                        }
+                    })
+                })
+
                 self.state = 'found';
 
-                console.log(self.players)
-                console.log(self.answers)
             })
-            .catch(function () {
-                self.state = 'not-found';
+            .catch(function (err) {
+                console.log(err)
+                // self.state = 'not-found';
             });
     },
     methods: {
