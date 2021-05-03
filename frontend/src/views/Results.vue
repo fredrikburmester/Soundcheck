@@ -215,7 +215,7 @@ export default {
                 sid: localStorage.getItem('sid'),
                 access_token: localStorage.getItem('access_token'),
                 user_id: localStorage.getItem('user_id'),
-                name: `Music With Friends - ${this.code}`,
+                name: `Soundcheck - ${this.code}`,
                 tracksForPlaylist: this.tracksForPlaylist,
             });
         },
