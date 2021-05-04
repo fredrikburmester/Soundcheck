@@ -7,38 +7,36 @@
         <div 
             v-if="state == 'found'" 
         >
-            <div v-if="selected" class="personalResultsModal">
-                <div class="individual-grid">
-                    <div>
-                        <h1 class="code">
-                            {{ selected_player.name }}
-                        </h1>
-                        <p class="date">
-                            {{ date }}
-                        </p>
-                        <div class="hr" />
-                        <h3 class="title">
-                            Individual results
-                        </h3>
-                        <div class="close-button" @click="deselectPlayer()">
-                            <div
-                                id="line1"
-                                class="line"
-                            />
-                            <div
-                                id="line2"
-                                class="line"
-                            />
-                        </div>
+            <div v-if="selected" :style="personalResultStyle" class="individual-grid">
+                <div>
+                    <h1 class="code">
+                        {{ selected_player.name }}
+                    </h1>
+                    <p class="date">
+                        {{ date }}
+                    </p>
+                    <div class="hr" />
+                    <h3 class="title">
+                        Individual results
+                    </h3>
+                    <div class="close-button" @click="deselectPlayer()">
+                        <div
+                            id="line1"
+                            class="line"
+                        />
+                        <div
+                            id="line2"
+                            class="line"
+                        />
                     </div>
-                    <div class="personal-list">
-                        <div v-for="guess in selected_player.guesses" :key="guess">
-                            <GuessIcon
-                                :trackid="guess.info"
-                                :guess="guess.guess"
-                                :answer="guess.correct_answer"
-                            />
-                        </div>
+                </div>
+                <div class="personal-list">
+                    <div v-for="guess in selected_player.guesses" :key="guess">
+                        <GuessIcon
+                            :trackid="guess.info"
+                            :guess="guess.guess"
+                            :answer="guess.correct_answer"
+                        />
                     </div>
                 </div>
             </div>
@@ -124,6 +122,12 @@ export default {
             return {
                 'height': `${window.innerHeight}px`,
                 'grid-template-rows': '125px auto 100px'
+            }
+        },
+        personalResultStyle() {
+            return {
+                'height': `${window.innerHeight}px`,
+                'width': `${window.innerWidth}px`
             }
         },
     },
@@ -248,10 +252,20 @@ export default {
     grid-template-columns: 1fr;
 }
 .individual-grid {
+    position: fixed;
+    top: 0;
+    left: 0;
     display: grid;
     grid-template-columns: 1fr;
-    grid-template-rows: 180px auto; 
-    height: 100vh;
+    grid-template-rows: 165px auto;
+    background: black;
+    z-index: 2;
+    overflow: hidden;
+}
+.personal-list {
+    overflow-y: scroll;
+    overflow-x: hidden;
+    margin: 1rem 2rem 0 2rem;
 }
 .code {
     text-align: left;
@@ -285,19 +299,7 @@ export default {
     overflow-y: scroll;
     overflow-x: hidden;
 }
-.personal-list {
-    overflow-y: scroll;
-    overflow-x: hidden;
-}
-.personalResultsModal {
-    background-color: black;
-    position: fixed;
-    top: 0;
-    left: 0;
-    height: 100vh;
-    width: 100vw;
-    z-index: 2;
-}
+
 .close-button {
     position: fixed;
     top: 35px;
