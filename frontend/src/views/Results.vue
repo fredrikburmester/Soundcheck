@@ -60,16 +60,21 @@
                         <h3 v-if="index == 2" class="title" style="padding-left: 0; margin-left: 0; color: #26c28">
                             Third place
                         </h3>
-                        <PlayerAvatar
-                            :id="player.sid"
-                            class="player-guess"
-                            :player-name="player.name"
-                            :color="player.color"
-                            @click="selectPlayer(player)"
-                        />
-                        <p class="points">
-                            {{ player.points }} Points
-                        </p>
+                        <h3 v-if="index == 3" class="title" style="padding-left: 0; margin-left: 0; color: #26c28">
+                            The rest of you loosers 💩
+                        </h3>
+                        <div style="height: 80px;">
+                            <PlayerAvatar
+                                :id="player.sid"
+                                class="player-guess"
+                                :player-name="player.name"
+                                :color="player.color"
+                                @click="selectPlayer(player)"
+                            />
+                            <p class="points">
+                                {{ player.points }} Points
+                            </p>
+                        </div>
                     </div>
                     <Button
                         class="createPlaylist"
@@ -77,7 +82,7 @@
                         @click="createPlaylist(date)"
                     />
                 </div>
-                <div>
+                <div class="play-again-container">
                     <div class="hr" />
                     <Button style="margin-top: 20px" class="goHome" button-link="/" button-text="Play again" />
                 </div>
@@ -288,7 +293,7 @@ export default {
     font-style: italic;
     color: darkgrey;
     text-align: left;
-    margin-top: 10px;
+    margin-top: 0;
     margin-left: 2rem;
     margin-bottom:0;
     padding: 0;
@@ -324,5 +329,8 @@ export default {
   text-align: left;
   color: rgb(170, 170, 170);
   font-style: italic;
+}
+.play-again-container {
+    padding: 0 2rem 0 2rem;
 }
 </style>

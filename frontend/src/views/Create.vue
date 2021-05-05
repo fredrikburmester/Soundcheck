@@ -1,7 +1,7 @@
 <template>
     <div class="create">
         <h1 class="head">
-            Settings
+            Room settings
         </h1>
         <div class="hr" />
         
@@ -25,25 +25,29 @@
                 button-text="Create Room"
                 @click="createRoom"
             />
-            <Button
-                button-link="/"
-                button-text="Back"
-                color="#CD1A2B"
-            />
+            <div class="button-container">
+                <div class="back">
+                    <Button
+                        button-link="/"
+                        button-text="Back"
+                        color="#CD1A2B"
+                    />
+                </div>
+            </div>
         </div>
     </div>
 </template>
 
 <script>
 import Button from '../components/Button';
-import SettingsButton from '../components/SettingsButton';
+// import SettingsButton from '../components/SettingsButton';
 //import ToggleSwitch from '../components/ToggleSwitch';
 
 export default {
     name: 'Create',
     components: {
         Button,
-        SettingsButton,
+        // SettingsButton,
         // ToggleSwitch,
     },
     sockets: {
@@ -78,10 +82,12 @@ export default {
 @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap');
 .head {
     display: inline-block;
+    margin: 10px 0 10px 0;
 }
 .create {
     margin-top: 0;
     display: grid;
+    padding: 0 2rem 0 2rem;
 }
 
 .hr {
@@ -91,28 +97,32 @@ export default {
     height: 2px;
     background-color: rgb(63, 63, 63);
 }
-
-.container{
-    height: 80vh;
-    padding-bottom: 80px;
-    overflow-y: scroll;
-    overflow-x: hidden;
-}
-
 .drop-down{
-    display: inline-block;
-    font-size: 15px;
-    font-family: 'Roboto', sans-serif;
-    font-weight: 500;
-    letter-spacing: 1px;
+    background-color: #fff;
+    font-weight: 400;
+    border: 1px solid #000;
     border-radius: 100px;
-    width: 50vw;
-    padding: 15px 20px 15px 20px;
+    height: 47px;
     text-align-last: center;
-    cursor: pointer;
+    font-family: 'Roboto', sans-serif;
+    font-size: 1rem;
     margin-bottom: 10px;
-    font-variant: small-caps;
-    background-color: white;
+
+    /* Width and center*/ 
+    width: 100%;
+    max-width: 340px;
+    /* --------------- */ 
+}
+.button-container {
+    position: fixed;
+    left: 50%;
+    bottom: 20px;
+    transform: translate(-50%, -50%);
+    margin: 0 auto;
+    width: 100vw;
+}
+.back {
+    padding: 0 2rem 0 2rem;
 }
 .drop-down:focus{
     outline: none;

@@ -460,7 +460,7 @@ def remove_player_from_room(data):
                             'sid': player.sid,
                         })
 
-                    socketio.emit("update_players_list", {
+                    socketio.emit("update_list_of_players", {
                                   'players': list_of_players}, room=code)
                     return
 
