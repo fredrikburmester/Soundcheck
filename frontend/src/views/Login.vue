@@ -43,9 +43,11 @@ export default {
 <style scoped>
 .login {
     margin-top: 30vh;
+    padding: 0 2rem 0 2rem;
 }
 #brand > img{
-	width: 18em;
+	width: 80vw;
+    max-width: 400px;
     margin-bottom: 60px;
 }
 p {

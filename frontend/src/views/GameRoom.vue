@@ -531,6 +531,9 @@ export default {
 .buttons {
     margin-top: 20px;
     margin-bottom: 20px;
+    margin-right: 2rem;
+    margin-left: 2rem;
+    
 }
 .buttons p {
     margin-top: 0;
@@ -657,6 +660,8 @@ export default {
 }
 .next-song {
     margin-top: 10px;
+    margin-right: 2rem;
+    margin-left: 2rem;
 }
 #line1 {
     transform: translateY(3px) rotate(45deg);
