@@ -8,6 +8,13 @@
             @click="loginWithSpotify"
         />
         <p>Click to log in with Spotify</p>
+
+        <div class="about" @click="aboutPage">
+            <p>
+                About Soundcheck
+            </p>
+        </div>
+
     </div>
 </template>
 
@@ -36,11 +43,15 @@ export default {
                 this.$router.push('/');
             }
         },
+        aboutPage: function(){
+            this.$router.push('/about');
+        }
     },
 };
 </script>
 
 <style scoped>
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap');
 .login {
     margin-top: 30vh;
     padding: 0 2rem 0 2rem;
@@ -53,5 +64,13 @@ export default {
 p {
     color: rgba(255, 255, 255, 0.68);
     font-style: italic;
+}
+.about{
+    font-family: 'Roboto', sans-serif;
+    width: 100vw;
+    text-align: center;
+    position: fixed;
+    bottom: 0;
+    color: rgba(255, 255, 255, 0.88);
 }
 </style>

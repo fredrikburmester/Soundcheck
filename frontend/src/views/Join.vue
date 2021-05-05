@@ -6,6 +6,7 @@
             class="input"
             :text="code"
             placeholder="ABCD"
+            v-on:keyup="enterPress"
         />
         <Button
             button-text="Join Room"
@@ -62,6 +63,11 @@ export default {
         isRoom: function () {
             this.$socket.client.emit('isRoom', { code: this.code });
         },
+        enterPress: function(e){
+            if(e.keyCode == 13){
+                this.isRoom();
+            }
+        }
     },
 };
 </script>

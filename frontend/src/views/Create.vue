@@ -4,21 +4,23 @@
             Room settings
         </h1>
         <div class="hr" />
-        <div class="settingsbox">
+        
+        <div class="container">
             <h3>Select Time Range</h3>
             <select v-model="time_range" class="drop-down">
                 <option v-for="option in options" :key="option.value" :value="option.value">
                     {{ option.text }}
                 </option>
             </select>
-           
+            
             <h3>Number of songs per player</h3>
             <select v-model="no_songs" class="drop-down"> 
                 <option v-for="n in 8" :key="n">
                     {{ n }}
                 </option>
             </select>
-            
+            <br>
+            <br>
             <Button
                 button-text="Create Room"
                 @click="createRoom"
@@ -88,12 +90,6 @@ export default {
     padding: 0 2rem 0 2rem;
 }
 
-.settingsbox {
-    height: calc(100vh - 160px);
-    overflow-y: scroll;
-    overflow-x: hidden;
-    padding-bottom: 100px;
-}
 .hr {
     margin-left: auto;
     margin-right: auto;
@@ -128,8 +124,7 @@ export default {
 .back {
     padding: 0 2rem 0 2rem;
 }
-option{
-    font-size: 16px;
-    font-family: 'Roboto', sans-serif;
+.drop-down:focus{
+    outline: none;
 }
 </style>
