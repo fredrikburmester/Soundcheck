@@ -64,4 +64,7 @@ input {
     /* Width and center*/
     width: 100%; 
 }
+#input {
+    text-transform: uppercase;
+}
 </style>

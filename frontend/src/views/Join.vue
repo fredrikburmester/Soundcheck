@@ -6,7 +6,7 @@
             class="input"
             :text="code"
             placeholder="ABCD"
-            v-on:keyup="enterPress"
+            @keyup="enterPress"
         />
         <Button
             button-text="Join Room"
@@ -88,9 +88,6 @@ export default {
 }
 .back {
     padding: 0 2rem 0 2rem;
-}
-.input{
-    text-transform: uppercase;
 }
 @media only screen and (min-height: 550px) {
     .join {
