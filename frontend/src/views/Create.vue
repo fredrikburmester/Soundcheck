@@ -15,10 +15,8 @@
             
             <h3>Number of songs per player</h3>
             <select v-model="no_songs" class="drop-down"> 
-                <option v-for="n in 8" :key="n" :value="n"> {{ n }}
-                    <span v-if="n == 1">song</span>
-                    <span v-else> songs </span>
-                    
+                <option v-for="n in 8" :key="n">
+                    {{ n }}
                 </option>
             </select>
             <br>
@@ -58,9 +56,9 @@ export default {
             no_songs: 1,
             time_range: 'short_term',
             options: [
-               {text: '4 weeks', value: 'short_term'},
-               {text: '6 months', value: 'medium_term'},
-               {text: '1 year', value: 'long_term'} 
+                {text: '4 weeks', value: 'short_term'},
+                {text: '6 months', value: 'medium_term'},
+                {text: 'Over a year', value: 'long_term'} 
             ]
         };
     },
@@ -83,6 +81,7 @@ export default {
 }
 .create {
     margin-top: 0;
+    display: grid;
 }
 
 .hr {

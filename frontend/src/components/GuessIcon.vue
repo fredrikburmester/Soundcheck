@@ -83,10 +83,9 @@ export default {
 @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap');
 
 .song {
-
 	display: flex;
 	flex-direction: row;
-	margin: 5vh 2rem 5vh 2rem;
+    margin-bottom: 2rem;
 }
 .image {
 	width: 60px;

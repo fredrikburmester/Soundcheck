@@ -1,6 +1,7 @@
 <template>
     <div
         v-if="found"
+        id="gameroom"
         :key="found"
         class="gameroom"
     >
@@ -55,33 +56,32 @@
         <div
             v-if="started"
             :key="started"
+            class="started-grid"
+            :style="startedGridStyle"
         >
-            <ProgressBar
-                :key="current_question"
-                :time="progressbarTime"
-                class="progressbar"
-            />
-            <h2 class="code">
-                Guess!
-            </h2>
-            <p class="title">
-                Who's song is this?
-            </p>
-            <div class="stats">
-                <p>
-                    Players guessed: {{ getPlayersGuessed }} /
-                    {{ players.length }}
+            <div>
+                <ProgressBar
+                    :key="current_question"
+                    :time="progressbarTime"
+                    class="progressbar"
+                />
+                <h2 class="code">
+                    Guess!
+                </h2>
+                <p class="title">
+                    Who's song is this?
                 </p>
-                <p>
-                    Question: {{ current_question + 1 }} / {{ nr_of_questions }}
-                </p>
+                <div class="stats">
+                    <p>
+                        Players guessed: {{ getPlayersGuessed }} /
+                        {{ players.length }}
+                    </p>
+                    <p>
+                        Question: {{ current_question + 1 }} / {{ nr_of_questions }}
+                    </p>
+                </div>
             </div>
-            <div
-                :key="my_guess"
-                class="list"
-
-                style="height: calc(100vh - 350px)"
-            >
+            <div :key="my_guess" class="list">
                 <PlayerAvatar
                     v-for="player in players"
                     :id="player.id"
@@ -94,31 +94,32 @@
                     @click="guess(player)"
                 />
             </div>
-            <div
-                v-if="host"
-                class="next-song"
-            >
-                <Button
-                    :key="current_question"
-                    :button-text="(current_question + 1) == nr_of_questions ? 'Go to results' : 'next question'"
-                    color="#1DB954"
-                    @click="sendNextQuestion"
-                />
-            </div>
-            <div
-                class="close-button"
-                @click="toggleModal"
-            >
+            <div>
                 <div
-                    id="line1"
-                    class="line"
-                />
+                    v-if="host"
+                    class="next-song"
+                >
+                    <Button
+                        :key="current_question"
+                        :button-text="(current_question + 1) == nr_of_questions ? 'Go to results' : 'next question'"
+                        color="#1DB954"
+                        @click="sendNextQuestion"
+                    />
+                </div>
                 <div
-                    id="line2"
-                    class="line"
-                />
+                    class="close-button"
+                    @click="toggleModal"
+                >
+                    <div
+                        id="line1"
+                        class="line"
+                    />
+                    <div
+                        id="line2"
+                        class="line"
+                    />
+                </div>
             </div>
-
             <iframe
                 class="webplayer"
                 :src="iframeurl"
@@ -126,66 +127,67 @@
                 allow="encrypted-media"
             />
         </div>
-        <div v-else>
-            <h1 class="code">
-                {{ code }}
-            </h1>
-            <div class="hr" style="margin-top: 1rem; margin-bottom: 1rem" />
-            <h3 class="title">
-                Players:
-            </h3>
-            <p v-if="!host">
-                {{ status }}
-            </p>
-
-            <div class="list" style="height: calc(100vh - 390px)">
-                <PlayerAvatar
-                    v-for="player in players"
-                    :key="player.id"
-                    :player-name="player.name"
-                    :color="player.color"
-                    :host="player.host"
-                />
-            </div>
+        <div
+            v-else 
+            class="lobby-grid-outer"
+        >
             <div class="qr">
-                <img
-                    :src="qr"
-                    @click="showQR = true"
-                >
+                <img :src="qr" @click="showQR = true">
             </div>
-            <div class="hr" />
-            <div class="buttons">
-                <div class="copycode">
-                    <Button
-                        :key="clipboardtext"
-                        color="#FFF"
-                        :button-text="clipboardtext"
-                        @click="copyToClipboard"
+            <div 
+                :style="lobbyGridStyle"
+                class="lobby-grid"
+            >
+                <div>
+                    <h1 class="code">
+                        {{ code }}
+                    </h1>
+                    <div class="hr" style="margin-top: 1rem; margin-bottom: 1rem" />
+                    <h3 class="title">
+                        Players:
+                    </h3>
+                </div>
+                <div class="list">
+                    <PlayerAvatar
+                        v-for="player in players"
+                        :key="player.id"
+                        :player-name="player.name"
+                        :color="player.color"
+                        :host="player.host"
                     />
                 </div>
-                <div
-                    v-if="host"
-                    :key="host"
-                    class="startgame"
-                >
-                    <Button
-                        button-text="Start Game"
-                        @click="startGame()"
-                    />
-                </div>
-                <div class="leave">
-                    <Button
-                        v-if="host"
-                        button-text="end game"
-                        color="#CD1A2B"
-                        @click="toggleModal"
-                    />
-                    <Button
-                        v-else
-                        button-text="Leave Room"
-                        color="#CD1A2B"
-                        @click="toggleModal"
-                    />
+                <div class="buttons">
+                    <p v-if="!host">
+                        {{ status }}
+                    </p>
+                    <div class="copycode">
+                        <Button
+                            :key="clipboardtext"
+                            color="#FFF"
+                            :button-text="clipboardtext"
+                            @click="copyToClipboard"
+                        />
+                    </div>
+                    <div v-if="host" :key="host" class="startgame">
+                        <Button
+                            button-text="Start Game"
+                            @click="startGame()"
+                        />
+                    </div>
+                    <div class="leave">
+                        <Button
+                            v-if="host"
+                            button-text="end game"
+                            color="#CD1A2B"
+                            @click="toggleModal"
+                        />
+                        <Button
+                            v-else
+                            button-text="Leave Room"
+                            color="#CD1A2B"
+                            @click="toggleModal"
+                        />
+                    </div>
                 </div>
             </div>
         </div>
@@ -338,6 +340,34 @@ export default {
         getPlayersGuessed() {
             return this.players_guessed.length;
         },
+        lobbyGridStyle() {
+            if(this.host) {
+                return {
+                    'height': `${window.innerHeight}px`,
+                    'grid-template-rows': '125px auto 210px'
+                }
+            } else {
+                return {
+                    'height': `${window.innerHeight}px`,
+                    'grid-template-rows': '125px auto 190px'
+                    
+                };
+            }
+        },
+        startedGridStyle() {
+            if(this.host) {
+                return {
+                    'height': `${window.innerHeight}px`,
+                    'grid-template-rows': '125px auto 70px 80px'
+                }
+            } else {
+                return {
+                    'height': `${window.innerHeight}px`,
+                    'grid-template-rows': '125px auto 0px 80px'
+                    
+                };
+            }
+        },
     },
     mounted: function () {
         this.connectToRoom();
@@ -484,10 +514,26 @@ export default {
 
 <style scoped>
 .gameroom {
-    height: 100vh;
-    width: 100vw;
-    position: fixed;
-    top: 0;
+    display: grid;
+}
+.lobby-grid-outer {
+    display: grid;
+}
+.lobby-grid {
+    display: grid;
+    grid-template-rows: minmax(160px,170px) auto minmax(0px, 220px);
+}
+.started-grid {
+    display: grid;
+    grid-template-rows: 140px auto minmax(0px, 70px) 80px;
+    height: 99vh;
+}
+.buttons {
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+.buttons p {
+    margin-top: 0;
 }
 .code {
     text-align: left;
@@ -500,7 +546,6 @@ export default {
     text-align: left;
     margin-left: 2rem;
     margin-top: 0;
-    margin-bottom: 20px;
 }
 .stats {
     display: flex;
@@ -532,41 +577,16 @@ export default {
     width: 50px;
 }
 .list {
-    overflow-y: scroll;
     margin-left: 2rem;
     margin-right: 2rem;
-    overflow-x: hidden;
-}
-.startgame {
-    position: fixed;
-    left: 50%;
-    bottom: 120px;
-    transform: translate(-50%, -50%);
-    margin: 0 auto;
-    z-index: 1;
-}
-.copycode {
-    position: fixed;
-    left: 50%;
-    bottom: 60px;
-    transform: translate(-50%, -50%);
-    margin: 0 auto;
-    z-index: 1;
-}
-.leave {
-    position: fixed;
-    left: 50%;
-    bottom: 0px;
-    transform: translate(-50%, -50%);
-    margin: 0 auto;
-    z-index: 1;
+    /* height: 100%; */
+    overflow: scroll;
+    border-color: aquamarine;
+    border-bottom: 1px solid gray;
 }
 .webplayer {
-    position: fixed;
     height: 80px;
     width: 100vw;
-    left: 0;
-    bottom: 0;
 }
 .progressbar {
     position: fixed;
@@ -597,12 +617,6 @@ export default {
     transform: translateX(-50%);
 }
 .leave-started-game {
-    position: fixed;
-    bottom: 100px;
-    left: 50%;
-    transform: translateX(-50%);
-}
-.next-song {
     position: fixed;
     bottom: 100px;
     left: 50%;
@@ -641,16 +655,13 @@ export default {
     width: 25px;
     cursor: pointer;
 }
+.next-song {
+    margin-top: 10px;
+}
 #line1 {
     transform: translateY(3px) rotate(45deg);
 }
 #line2 {
     transform: rotate(-45deg);
-}
-@media only screen and (min-width: 600px) {
-    .bigQR > img {
-        height: 30vh;
-        width: auto;
-    }
 }
 </style>

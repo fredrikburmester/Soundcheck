@@ -3,34 +3,32 @@
         <div v-if="state == 'loading'">
             <p>Loading...</p>
         </div>
-        <div v-if="state == 'found'">
-            <h1 class="code">
-                {{ code }}
-            </h1>
-            <p class="date">
-                {{ date }}
-            </p>
-            <div class="hr" />
-            <div v-if="selected" class="personalResultsModal">
-                <h1 class="code">
-                    {{ selected_player.name }}
-                </h1>
-                <p class="date">
-                    {{ date }}
-                </p>
-                <div class="hr" />
-                <h3 class="title">
-                    Individual results
-                </h3>
-                <div class="close-button" @click="deselectPlayer()">
-                    <div
-                        id="line1"
-                        class="line"
-                    />
-                    <div
-                        id="line2"
-                        class="line"
-                    />
+        
+        <div 
+            v-if="state == 'found'" 
+        >
+            <div v-if="selected" :style="personalResultStyle" class="individual-grid">
+                <div>
+                    <h1 class="code">
+                        {{ selected_player.name }}
+                    </h1>
+                    <p class="date">
+                        {{ date }}
+                    </p>
+                    <div class="hr" />
+                    <h3 class="title">
+                        Individual results
+                    </h3>
+                    <div class="close-button" @click="deselectPlayer()">
+                        <div
+                            id="line1"
+                            class="line"
+                        />
+                        <div
+                            id="line2"
+                            class="line"
+                        />
+                    </div>
                 </div>
                 <div class="personal-list">
                     <div v-for="guess in selected_player.guesses" :key="guess">
@@ -42,40 +40,48 @@
                     </div>
                 </div>
             </div>
-            <div class="list">
-                <div v-for="player, index in players" :key="player.sid">
-                    <h3 v-if="index == 0" class="title" style="padding-left: 0; margin-left: 0; color: gold">
-                        Winner
-                    </h3>
-                    <h3 v-if="index == 1" class="title" style="padding-left: 0; margin-left: 0; color: silver">
-                        Second place
-                    </h3>
-                    <h3 v-if="index == 2" class="title" style="padding-left: 0; margin-left: 0; color: #26c28">
-                        Third place
-                    </h3>
-                    <PlayerAvatar
-                        :id="player.sid"
-                        class="player-guess"
-                        :player-name="player.name"
-                        :color="player.color"
-                        @click="selectPlayer(player)"
-                    />
-                    <p class="points">
-                        {{ player.points }} Points
+            <div class="grid" :style="resultGridStyle">
+                <div>
+                    <h1 class="code">
+                        {{ code }}
+                    </h1>
+                    <p class="date">
+                        {{ date }}
                     </p>
                 </div>
-                <Button
-                    class="createPlaylist"
-                    button-text="Create playlist"
-                    @click="createPlaylist(date)"
-                />
-                <Button class="goHome" button-link="/" button-text="Play again" />
+                <div class="list">
+                    <div v-for="player, index in players" :key="player.sid">
+                        <h3 v-if="index == 0" class="title" style="padding-left: 0; margin-left: 0; color: gold">
+                            Winner
+                        </h3>
+                        <h3 v-if="index == 1" class="title" style="padding-left: 0; margin-left: 0; color: silver">
+                            Second place
+                        </h3>
+                        <h3 v-if="index == 2" class="title" style="padding-left: 0; margin-left: 0; color: #26c28">
+                            Third place
+                        </h3>
+                        <PlayerAvatar
+                            :id="player.sid"
+                            class="player-guess"
+                            :player-name="player.name"
+                            :color="player.color"
+                            @click="selectPlayer(player)"
+                        />
+                        <p class="points">
+                            {{ player.points }} Points
+                        </p>
+                    </div>
+                    <Button
+                        class="createPlaylist"
+                        button-text="Create playlist"
+                        @click="createPlaylist(date)"
+                    />
+                </div>
+                <div>
+                    <div class="hr" />
+                    <Button style="margin-top: 20px" class="goHome" button-link="/" button-text="Play again" />
+                </div>
             </div>
-            <Button
-                class="goHome"
-                button-link="/"
-                button-text="Play again"
-            />
         </div>
         <div v-if="state == 'not-found'">
             <NotFound />
@@ -110,6 +116,20 @@ export default {
             answers: null,
             tracksForPlaylist: [],
         };
+    },
+    computed: {
+        resultGridStyle() {
+            return {
+                'height': `${window.innerHeight}px`,
+                'grid-template-rows': '125px auto 100px'
+            }
+        },
+        personalResultStyle() {
+            return {
+                'height': `${window.innerHeight}px`,
+                'width': `${window.innerWidth}px`
+            }
+        },
     },
     mounted() {
         var self = this;
@@ -222,64 +242,64 @@ export default {
         deselectPlayer() {
             this.selected = false;
         },
-    },
+    }
 };
 </script>
 
 <style scoped>
+.grid {
+    display: grid;
+    grid-template-columns: 1fr;
+}
+.individual-grid {
+    position: fixed;
+    top: 0;
+    left: 0;
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: 165px auto;
+    background: black;
+    z-index: 2;
+    overflow: hidden;
+}
+.personal-list {
+    overflow-y: scroll;
+    overflow-x: hidden;
+    margin: 1rem 2rem 0 2rem;
+}
 .code {
     text-align: left;
     margin-left: 2rem;
     margin-bottom: 0;
+    width: 75vw;
 }
 .date {
     text-align: left;
     margin-left: 2rem;
-    margin-bottom: 0;
+    margin-bottom: 20px;
     color: gray;
 }
 .hr {
     height: 2px;
     background-color: rgb(63, 63, 63);
-    margin: 1rem 2rem 1rem 2rem;
+    margin: 0 2rem 0 2rem;
 }
 .title {
     font-style: italic;
     color: darkgrey;
     text-align: left;
+    margin-top: 10px;
     margin-left: 2rem;
-    margin-top: 0;
-    margin-bottom: 5px;
+    margin-bottom:0;
+    padding: 0;
 }
 .list {
-    height: calc(100vh - 250px);
-    overflow-y: scroll;
     margin-left: 2rem;
     margin-right: 2rem;
-    overflow-x: hidden;
-}
-.personal-list {
-    height: calc(100vh - 220px);
     overflow-y: scroll;
     overflow-x: hidden;
 }
-.goHome {
-    position: fixed;
-    left: 50%;
-    bottom: 20px;
-    transform: translate(-50%, -50%);
-    margin: 0 auto;
-    z-index: 1;
-}
-.personalResultsModal {
-    background-color: black;
-    position: fixed;
-    top: 0;
-    left: 0;
-    height: 100vh;
-    width: 100vw;
-    z-index: 2;
-}
+
 .close-button {
     position: fixed;
     top: 35px;
