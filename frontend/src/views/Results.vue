@@ -270,7 +270,7 @@ export default {
 .personal-list {
     overflow-y: scroll;
     overflow-x: hidden;
-    margin: 1rem 2rem 0 2rem;
+    margin: 30px 2rem 0 2rem;
 }
 .code {
     text-align: left;
@@ -293,7 +293,7 @@ export default {
     font-style: italic;
     color: darkgrey;
     text-align: left;
-    margin-top: 0;
+    margin-top: 20px;
     margin-left: 2rem;
     margin-bottom:0;
     padding: 0;
