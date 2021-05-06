@@ -81,7 +81,7 @@
                     </p>
                 </div>
             </div>
-            <div :key="my_guess" class="list">
+            <div id="active-list" :key="my_guess" class="list">
                 <PlayerAvatar
                     v-for="player in players"
                     :id="player.id"
@@ -198,6 +198,7 @@
 import PlayerAvatar from '../components/PlayerAvatar';
 import Button from '../components/Button';
 import ProgressBar from '../components/ProgressBar';
+import { nextTick } from 'vue'
 
 const QRCode = require('qrcode');
 const axios = require('axios');
@@ -419,13 +420,19 @@ export default {
                 code: this.code,
             });
         },
-        guess(player) {
+        async guess(player) {
+            var pos = document.getElementById('active-list')
+            var pos = pos.scrollTop
+
             this.my_guess = player.sid;
             this.$socket.client.emit('player_guess', {
                 sid: localStorage.getItem('sid'),
                 code: this.code,
                 guess: this.my_guess,
             });
+
+            await nextTick()
+            document.getElementById('active-list').scrollTop = pos
         },
         selected(id) {
             if (id == this.my_guess) {
