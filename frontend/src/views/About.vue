@@ -1,26 +1,8 @@
 <template>
     <div class="aboutPage">
-        
         <h1>About Soundcheck</h1>
         <div class="text">
-            <p>
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                Etiam tristique massa lectus, id maximus velit vulputate at.
-                Aenean eget arcu sapien.
-                Sed ut ipsum sit amet enim tincidunt viverra et ut arcu. 
-                Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae;
-                Sed quis mauris a dolor vehicula accumsan.
-                Phasellus vel urna nibh. Praesent hendrerit in ipsum in mollis.
-                <br>
-                <br>
-                Quisque ultricies, arcu ac eleifend finibus, quam enim vulputate est,
-                vitae scelerisque felis leo vitae purus. Praesent commodo est felis,
-                sed luctus libero hendrerit nec. In sem ante, faucibus non tellus eget,
-                fringilla rhoncus tortor. Class aptent taciti sociosqu ad litora torquent
-                per conubia nostra, per inceptos himenaeos. Phasellus ut ante eu lacus
-                auctor mollis at quis ex. Donec posuere sit amet metus vitae lobortis.
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-            </p>
+            <VueMarkdownIt :source="content" />
         </div>
         <Button 
             button-link="/" 
@@ -32,27 +14,44 @@
 
 <script>
 import Button from '../components/Button'
+import VueMarkdownIt from 'vue3-markdown-it'
 
 export default {
     name: 'About',
     components: {
         Button,
+        VueMarkdownIt
     },
-
+    data(){
+        return{
+            content: 'Soundcheck is a game you can play with your friends. You sign in with your spotify account and then you create a room for your friends to join.'
+            + '\n\nWhen you play, a random players top song will be displayed in a music player at the bottom of the screen so everyone can listen to the song'
+            + 'To make a guess, tap on the player you think the song belongs to.\n\n'
+            + 'When the game is over, your Spotify username, top songs and guesses will be saves in our database for users to view the results after the game.:)'
+            + '\n\n _By using this website you agree that the information mentioned above can be stored_.'
+        };
+    },
 };
 </script>
 
 <style scoped>
 @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap');
-.aboutPage{
+.text{
     font-family: 'Roboto', sans-serif;
     display: inline-block;
-    margin: 50px 10px 50px 10px;
+    text-align: left;
+    margin: 0 5px 50px 5px;
+    width: 100%;
+}
+.aboutPage{
+    text-align: center;
+    display: inline-block;
+    margin-top: 25px;
     width: 80vw;
 }
-.text{
-    margin: 50px 20px 50px 20px;
-    font-weight: 300;
+@media only screen and (min-width: 900px) {
+    .text {
+        width: 40vw;
+    }
 }
-
 </style>
