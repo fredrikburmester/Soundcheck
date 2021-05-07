@@ -23,7 +23,7 @@
 </template>
 
 <script>
-import API from '../lib/api.js'
+import API from '../libs/api.js'
 import PreviousResultIcon from '../components/PreviousResultIcon'
 import Button from '../components/Button'
 import Loader from '../components/Loader'

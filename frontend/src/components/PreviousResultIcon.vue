@@ -19,7 +19,7 @@
 </template>
 
 <script>
-import API from '../lib/api'
+import API from '../libs/api'
 
 export default {
     name: 'PreviousResultIcon',
