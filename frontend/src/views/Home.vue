@@ -13,6 +13,11 @@
                 button-link="/join"
                 button-text="Join Room"
             />
+            <Button
+                button-link="/me"
+                button-text="my games"
+                color="#454545"
+            />
             <p>{{ name }}</p>
             <div class="button-container">
                 <div class="logout">

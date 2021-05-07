@@ -96,6 +96,24 @@ COLORS = [
 
 ##################
 
+@app.route('/api/me/<username>/results', methods=['GET'])
+def personal_results(username):
+    global ROOMS
+    table_Rooms = db.table("Rooms")
+    Room = Query()
+    Player = Query()
+    result = table_Rooms.search(Room.players.any(Player.id == username))
+    if result:
+
+        return Response(json.dumps({
+            'results': result,
+        }), status=200, mimetype='application/json', headers={
+            "Access-Control-Allow-Origin": "*"
+        })
+
+    return Response(status=404, headers={
+        "Access-Control-Allow-Origin": "*"
+    })
 
 @app.route('/api/<code>/results', methods=['GET'])
 def results(code):
@@ -119,6 +137,7 @@ def results(code):
     return Response(status=404, headers={
         "Access-Control-Allow-Origin": "*"
     })
+
 
 
 @socketio.on('generate_access_token')

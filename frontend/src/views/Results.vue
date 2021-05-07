@@ -154,16 +154,8 @@ export default {
                 var data = response.data;
                 self.players = data.players;
                 self.answers = data.answers;
-                var date = new Date(data.date * 1000);
-                var date_string = date.toLocaleDateString('se');
-                var hour = date.getHours();
-                var minute = date.getMinutes();
-                if (minute < 10) minute = '0' + minute.toString();
-                // var second = date.getSeconds()
-
-                /* eslint-disable */
-                self.date = `Played on ${date_string} @ ${hour}:${minute}`;
-                /* eslint-enable */
+                
+                self.date = self.getDateFromUnix(data.date)
 
                 // Convert answer ids to names
                 for (let player of data.players) {
@@ -227,6 +219,18 @@ export default {
     methods: {
         getPoints: function (player) {
             return `${player.name}: ${player.points} points`;
+        },
+        getDateFromUnix(unix) {
+            var date = new Date(unix * 1000);
+            var date_string = date.toLocaleDateString('se');
+            var hour = date.getHours();
+            var minute = date.getMinutes();
+            if (minute < 10) minute = '0' + minute.toString();
+            // var second = date.getSeconds()
+
+            /* eslint-disable */
+            return `Played on ${date_string} @ ${hour}:${minute}`;
+            /* eslint-enable */
         },
         selectPlayer(player) {
             this.selected = true;
