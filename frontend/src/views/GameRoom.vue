@@ -394,7 +394,7 @@ export default {
         generateQR() {
             var self = this;
             QRCode.toDataURL(
-                `https://musicwithfriends.fdrive.se/${this.code}`,
+                `https://soundcheck.fdrive.se/${this.code}`,
                 function (err, url) {
                     self.qr = url;
                 }
