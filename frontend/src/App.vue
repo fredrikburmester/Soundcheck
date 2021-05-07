@@ -8,25 +8,20 @@ export default {
 </script>
 
 <style>
-body {
-  min-height: 100vh;
-  min-height: -webkit-fill-available;
-}
-html {
-  height: -webkit-fill-available;
-}
-
 html,
 body {
     margin: 0;
     padding: 0;
 }
+*::-webkit-scrollbar {
+  display: none;
+}
 #app {
     color: white;
     margin: 0;
     padding: 0;
-    min-height: 100vh;
-    min-width: 100vw;
+    height: 100vh;
+    width: 100vw;
     position: fixed;
     top: 0;
     left: 0;
@@ -35,6 +30,6 @@ body {
     -moz-osx-font-smoothing: grayscale;
     text-align: center;
     background-color: #191414;
-    overflow-y: scroll;
+    /* overflow-y: scroll; */
 }
 </style>
