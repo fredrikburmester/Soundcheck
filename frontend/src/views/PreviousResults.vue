@@ -53,9 +53,14 @@ export default {
     },
     methods: {
         async getResults() {
-            const result = await API.getPersonalResults(this.$store.getters.getUsername)
-            this.results = result.data.results
-            this.loaded = true
+            try {
+                const result = await API.getPersonalResults(this.$store.getters.getUsername)
+                this.results = result.data.results
+            } catch {
+                console.log("No songs")
+            } finally {
+                this.loaded = true
+            }
         },
         getDateStringFromUnix(unix) {
             var date = new Date(unix * 1000);
