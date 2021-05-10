@@ -6,6 +6,7 @@ import Create from '../views/Create.vue';
 // import Room from '../views/Room.vue';
 import GameRoom from '../views/GameRoom.vue';
 import Results from '../views/Results.vue';
+import Playlist from '../views/Playlist.vue';
 import LoginCallback from '../views/LoginCallback.vue';
 import NotFound from '../components/NotFound.vue';
 
@@ -139,6 +140,14 @@ const routes = [
         path: '/:pathMatch(.*)*',
         name: 'NotFound',
         component: NotFound,
+    },
+    {
+        path: '/:code/playlist',
+        name: 'Playlist',
+        component: Playlist,
+        beforeEnter: (to, from, next) => {
+            checkAccessToken(to, from, next);
+        },
     },
 ];
 
