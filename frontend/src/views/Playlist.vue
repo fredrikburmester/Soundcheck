@@ -175,7 +175,7 @@ export default {
 .iconlist{
     background: linear-gradient(90deg, rgba(25,20,20,1) 0%, rgba(29,185,84,1) 100%);
     border-radius: 0 40px 40px 0;
-    margin-right: 5px;
+    margin-right: 10px;
     }
 .playlist-modal-view{
     z-index: 2;
@@ -251,6 +251,9 @@ input {
 }
 .track-list-container{
     height: calc(100vh - 260px);
+    max-width: 700px;
+    margin-left: auto;
+    margin-right: auto;
     overflow-y: scroll;
     overflow-x: hidden;
     border-top: 1px gray solid;
