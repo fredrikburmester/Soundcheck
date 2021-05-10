@@ -37,6 +37,10 @@ The server will be hosted under a SSL certified domain name: https://soundcheck.
 
 The website is routed through an nginx reverse proxy and static files will be served from there as well. The webserver config file can be found in the folder `nginx`. 
 
+The nameservers are handeled by Cloudflare without proxying. 
+
+The server is running on a 1-core 512GB RAM Viritual Ubuntu Server.
+
 ## Getting started
 
 Clone this repo to your computer. You will have two folders, frontend and backend. 
