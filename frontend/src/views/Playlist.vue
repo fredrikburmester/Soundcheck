@@ -1,25 +1,25 @@
 <template>
-    <div class="existing-playlist" v-if="existingPlaylist">
+    <div v-if="existingPlaylist" class="existing-playlist">
         <p>existing</p>
     </div>
-    <div class="new-playlist" v-else-if="newPlaylist">
+    <div v-else-if="newPlaylist" class="new-playlist">
         <p>New</p>
     </div>
     <div v-else>      
-         <div>
-            <div v-bind:class="{ iconlist: track[1]}" v-for="track in tracks" :key="track">
-            <TrackIcon
-                :trackid="track[0]"
-                @click="selectTrack(tracks.indexOf(track))"
-            />
+        <div>
+            <div v-for="track in tracks" :key="track" :class="{ iconlist: track[1]}">
+                <TrackIcon
+                    :trackid="track[0]"
+                    @click="selectTrack(tracks.indexOf(track))"
+                />
             </div>
         </div>
         <select v-model="selectedPlaylist" class="drop-down">
-            <option v-for="playlist in userPlaylists" :key="playlist" v-bind:value="playlist[1]">
+            <option v-for="playlist in userPlaylists" :key="playlist" :value="playlist[1]">
                 {{ playlist[0] }}
             </option>
         </select> 
-        <p>Add {{nrOfTrackstoAdd}} songs to:</p>
+        <p>Add {{ nrOfTrackstoAdd }} songs to:</p>
         <Button
             button-text="Existing playlist"
             @click="addToPlaylist()"
@@ -29,7 +29,6 @@
             @click="createNewPlaylist()"
         />
     </div>
-
 </template>
 
 <script>
@@ -57,6 +56,31 @@ export default {
 
         };
     },
+    mounted(){
+        var token = localStorage.getItem('access_token');
+        var user_id = localStorage.getItem('user_id');
+        var self = this;
+        axios
+            .get(
+                `https://api.spotify.com/v1/users/${user_id}/playlists`,
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                        Accept: 'application/json',
+                        'Content-Type': 'application/json',
+                    },
+                }
+            ).then(function (response) {
+                for(let item of response.data.items){
+                    //console.log(item)
+                    //allow user to modify their own + collaborative playlists
+                    if((item.owner.id == user_id) || (item.owner.id != user_id && item.collaborative == true)){
+                        self.userPlaylists.push([item.name, item.id])
+                    }
+                    //TODO sort data
+                }
+            });
+    },
     methods:{
         log(){
             //console.log(this.tracks);
@@ -78,31 +102,6 @@ export default {
         createNewPlaylist(){
             this.newPlaylist = true;
         }
-    },
-    mounted(){
-        var token = localStorage.getItem('access_token');
-        var user_id = localStorage.getItem('user_id');
-        var self = this;
-        axios
-                .get(
-                    `https://api.spotify.com/v1/users/${user_id}/playlists`,
-                    {
-                        headers: {
-                            Authorization: `Bearer ${token}`,
-                            Accept: 'application/json',
-                            'Content-Type': 'application/json',
-                        },
-                    }
-                ).then(function (response) {
-                        for(let item of response.data.items){
-                            //console.log(item)
-                            //allow user to modify their own + collaborative playlists
-                            if((item.owner.id == user_id) || (item.owner.id != user_id && item.collaborative == true)){
-                                self.userPlaylists.push([item.name, item.id])
-                            }
-                            //TODO sort data
-                        }
-                });
     }
 
 }
