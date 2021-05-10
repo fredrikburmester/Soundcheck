@@ -1,25 +1,26 @@
 <template>
     <div> 
         <div :class="{ dim: (existingPlaylist || newPlaylist)}">
-        <div>
-            <div v-for="track in tracks" :key="track" :class="{ iconlist: track[1]}">
-                <TrackIcon
-                    :trackid="track[0]"
-                    @click="selectTrack(tracks.indexOf(track))"
-                />
+            <div><h3>Tap to select/deselect tracks</h3></div>
+            <div class="track-list-container">
+                <div v-for="track in tracks" :key="track" :class="{ iconlist: track[1]}">
+                    <TrackIcon
+                        :trackid="track[0]"
+                        @click="selectTrack(tracks.indexOf(track))"
+                    />
+                </div>
             </div>
-        </div>
-        <p v-if="nrOfTrackstoAdd>1">Add {{ nrOfTrackstoAdd }} tracks to:</p>
-        <p v-else-if="nrOfTrackstoAdd==1">Add {{ nrOfTrackstoAdd }} tracks to:</p>
-        <p v-else>Select tracks to add!</p>
-        <Button
-            button-text="Existing playlist"
-            @click="existingPlaylistToggle()"
-        />
-        <Button
-            button-text="New playlist"
-            @click="newPlaylistToggle()"
-        />
+            <p v-if="nrOfTrackstoAdd>1">Add {{ nrOfTrackstoAdd }} tracks to:</p>
+            <p v-else-if="nrOfTrackstoAdd==1">Add {{ nrOfTrackstoAdd }} tracks to:</p>
+            <p v-else>Select tracks to add!</p>
+            <Button
+                button-text="Existing playlist"
+                @click="existingPlaylistToggle()"
+            />
+            <Button
+                button-text="New playlist"
+                @click="newPlaylistToggle()"
+            />
         </div>
         <div v-if="existingPlaylist" class="playlist-modal-view">
             <span class="close" @click="close(existingPlaylist)">&times;</span>
@@ -247,5 +248,13 @@ input {
 }
 .button-container{
     margin-top: 45px;
+}
+.track-list-container{
+    height: calc(100vh - 220px);
+    overflow-y: scroll;
+    overflow-x: hidden;
+    border-top: 1px gray solid;
+    border-bottom: 1px gray solid
+
 }
 </style>
