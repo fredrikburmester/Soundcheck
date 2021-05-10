@@ -67,7 +67,7 @@
                 <Button
                     class="createPlaylist"
                     button-text="Create playlist"
-                    @click="createPlaylist(date)"
+                    @click="managePlaylists()"
                 />
                 <Button class="goHome" button-link="/" button-text="Play again" />
             </div>
@@ -112,8 +112,12 @@ export default {
         };
     },
     mounted() {
+        
         var self = this;
         var url;
+
+        //Needed to avoid multiple loads of the same tracks in /playlist route
+        self.$store.commit('clearTracksForPlaylist');
 
         if (
             process.env.NODE_ENV == 'development' ||
@@ -190,6 +194,11 @@ export default {
                         }
                     })
                 })
+                
+                //Add tracks to store so that they can be used in the /playlist route
+                self.answers.forEach((answer) => {
+                    self.$store.commit('addTrack', answer['info'])
+                })
 
                 self.state = 'found';
 
@@ -208,9 +217,7 @@ export default {
             this.selected_player = player;
         },
         createPlaylist() {
-            this.answers.forEach((answer) => {
-                this.tracksForPlaylist.push((answer['info']))
-            })
+
             this.$socket.client.emit('createPlaylist', {
                 sid: localStorage.getItem('sid'),
                 access_token: localStorage.getItem('access_token'),
@@ -218,6 +225,9 @@ export default {
                 name: `Soundcheck - ${this.code}`,
                 tracksForPlaylist: this.tracksForPlaylist,
             });
+        },
+        managePlaylists(){
+            this.$router.push(`/${this.code}/playlist`);
         },
         deselectPlayer() {
             this.selected = false;
