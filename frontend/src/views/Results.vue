@@ -1,96 +1,100 @@
 <template>
-    <div :key="state">
-        <div v-if="state == 'loading'">
-            <p>Loading...</p>
-        </div>
-        
-        <div 
-            v-if="state == 'found'" 
-        >
-            <div v-if="selected" :style="personalResultStyle" class="individual-grid">
-                <div>
-                    <h1 class="code">
-                        {{ selected_player.name }}
-                    </h1>
-                    <p class="date">
-                        {{ date }}
-                    </p>
-                    <div class="hr" />
-                    <h3 class="title">
-                        Individual results
-                    </h3>
-                    <div class="close-button" @click="deselectPlayer()">
-                        <div
-                            id="line1"
-                            class="line"
-                        />
-                        <div
-                            id="line2"
-                            class="line"
-                        />
-                    </div>
-                </div>
-                <div class="personal-list">
-                    <div v-for="guess in selected_player.guesses" :key="guess">
-                        <GuessIcon
-                            :trackid="guess.info"
-                            :guess="guess.guess"
-                            :answer="guess.correct_answer"
-                        />
-                    </div>
-                </div>
+    <div>
+        <transition name="fade" mode="out-in">
+            <div v-if="state == 'loading'">
+                <Loader />
             </div>
-            <div class="grid" :style="resultGridStyle">
-                <div>
-                    <h1 class="code">
-                        {{ code }}
-                    </h1>
-                    <p class="date">
-                        {{ date }}
-                    </p>
-                </div>
-                <div class="list">
-                    <div v-for="player, index in players" :key="player.sid">
-                        <h3 v-if="index == 0" class="title" style="padding-left: 0; margin-left: 0; color: gold">
-                            Winner
+        </transition>
+
+        <transition name="fade" mode="out-in">
+            <div v-if="state == 'found'">
+                <div v-if="selected" :style="personalResultStyle" class="individual-grid">
+                    <div>
+                        <h1 class="code">
+                            {{ selected_player.name }}
+                        </h1>
+                        <p class="date">
+                            {{ date }}
+                        </p>
+                        <div class="hr" />
+                        <h3 class="title">
+                            Individual results
                         </h3>
-                        <h3 v-if="index == 1" class="title" style="padding-left: 0; margin-left: 0; color: silver">
-                            Second place
-                        </h3>
-                        <h3 v-if="index == 2" class="title" style="padding-left: 0; margin-left: 0; color: #26c28">
-                            Third place
-                        </h3>
-                        <h3 v-if="index == 3" class="title" style="padding-left: 0; margin-left: 0; color: #26c28">
-                            The rest of you loosers 💩
-                        </h3>
-                        <div style="height: 80px;">
-                            <PlayerAvatar
-                                :id="player.sid"
-                                class="player-guess"
-                                :player-name="player.name"
-                                :color="player.color"
-                                @click="selectPlayer(player)"
+                        <div class="close-button" @click="deselectPlayer()">
+                            <div
+                                id="line1"
+                                class="line"
                             />
-                            <p class="points">
-                                {{ player.points }} Points
-                            </p>
+                            <div
+                                id="line2"
+                                class="line"
+                            />
                         </div>
                     </div>
-                    <Button
-                        class="createPlaylist"
-                        button-text="Create playlist"
-                        @click="createPlaylist(date)"
-                    />
+                    <div class="personal-list">
+                        <div v-for="guess in selected_player.guesses" :key="guess">
+                            <GuessIcon
+                                :trackid="guess.info"
+                                :guess="guess.guess"
+                                :answer="guess.correct_answer"
+                            />
+                        </div>
+                    </div>
                 </div>
-                <div class="play-again-container">
-                    <div class="hr" />
-                    <Button style="margin-top: 20px" class="goHome" button-link="/" button-text="Play again" />
+                <div class="grid" :style="resultGridStyle">
+                    <div>
+                        <h1 class="code">
+                            {{ code }}
+                        </h1>
+                        <p class="date">
+                            {{ date }}
+                        </p>
+                    </div>
+                    <div class="list">
+                        <div v-for="player, index in players" :key="player.sid">
+                            <h3 v-if="index == 0" class="title" style="padding-left: 0; margin-left: 0; color: gold">
+                                Winner
+                            </h3>
+                            <h3 v-if="index == 1" class="title" style="padding-left: 0; margin-left: 0; color: silver">
+                                Second place
+                            </h3>
+                            <h3 v-if="index == 2" class="title" style="padding-left: 0; margin-left: 0; color: #26c28">
+                                Third place
+                            </h3>
+                            <h3 v-if="index == 3" class="title" style="padding-left: 0; margin-left: 0; color: #26c28">
+                                The rest of you loosers 💩
+                            </h3>
+                            <div style="height: 80px;">
+                                <PlayerAvatar
+                                    :id="player.sid"
+                                    class="player-guess"
+                                    :player-name="player.name"
+                                    :color="player.color"
+                                    @click="selectPlayer(player)"
+                                />
+                                <p class="points">
+                                    {{ player.points }} Points
+                                </p>
+                            </div>
+                        </div>
+                        <Button
+                            class="createPlaylist"
+                            button-text="Create playlist"
+                            @click="createPlaylist(date)"
+                        />
+                    </div>
+                    <div class="play-again-container">
+                        <div class="hr" />
+                        <Button style="margin-top: 20px" class="goHome" button-link="/" button-text="Play again" />
+                    </div>
                 </div>
             </div>
-        </div>
-        <div v-if="state == 'not-found'">
-            <NotFound />
-        </div>
+        </transition>
+        <transition name="fade" mode="out-in">
+            <div v-if="state == 'not-found'">
+                <NotFound />
+            </div>
+        </transition>
     </div>
 </template>
 
@@ -99,6 +103,7 @@ import PlayerAvatar from '../components/PlayerAvatar';
 import Button from '../components/Button';
 import NotFound from '../components/NotFound';
 import GuessIcon from '../components/GuessIcon';
+import Loader from '../components/Loader';
 
 const axios = require('axios');
 
@@ -108,7 +113,8 @@ export default {
         PlayerAvatar,
         Button,
         NotFound,
-        GuessIcon
+        GuessIcon,
+        Loader
     },
     data: function () {
         return {
@@ -208,7 +214,7 @@ export default {
                     })
                 })
 
-                self.state = 'found';
+                setTimeout(function(){ self.state = 'found'; }, 300);
 
             })
             .catch(function (err) {
@@ -256,6 +262,14 @@ export default {
 </script>
 
 <style scoped>
+.fade-enter-active, .fade-leave-active {
+  transition: opacity .5s ease;
+}
+
+.fade-enter-from, .fade-leave-to {
+  opacity: 0;
+}
+
 .grid {
     display: grid;
     grid-template-columns: 1fr;

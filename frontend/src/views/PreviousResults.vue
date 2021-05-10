@@ -1,24 +1,30 @@
 <template>
-    <div class="grid" :style="resultGridStyle">
-        <div>
-            <h1 class="title">
-                Previous Games
-            </h1>
-            <p class="username">
-                {{ username }}
-            </p>
-        </div>
-        <div v-if="loaded" class="list">
-            <div v-for="result in results" :key="result" style="height: 80px;" @click="goTo(result.code)">
-                <PreviousResultIcon :code="result.code" :date="getDateStringFromUnix(result.date)" :uri="result.answers[0].info" />
+    <div>
+        <transition name="fade" mode="out-in">
+            <div v-if="!loaded">
+                <Loader />
             </div>
-        </div>
-        <div v-else>
-            <Loader />
-        </div>
-        <div class="buttons">
-            <Button button-text="back" @click="goBack()" />
-        </div>
+        </transition>
+        <transition name="fade" mode="out-in">
+            <div class="grid" :style="resultGridStyle">
+                <div>
+                    <h1 class="title">
+                        Previous Games
+                    </h1>
+                    <p class="username">
+                        {{ username }}
+                    </p>
+                </div>
+                <div class="list">
+                    <div v-for="result in results" :key="result" style="height: 80px;" @click="goTo(result.code)">
+                        <PreviousResultIcon :code="result.code" :date="getDateStringFromUnix(result.date)" :uri="result.answers[0].info" />
+                    </div>
+                </div>
+                <div class="buttons">
+                    <Button button-text="back" @click="goBack()" />
+                </div>
+            </div>
+        </transition>
     </div>
 </template>
 
@@ -59,7 +65,8 @@ export default {
             } catch {
                 console.log("No songs")
             } finally {
-                this.loaded = true
+                var self = this
+                setTimeout(function(){ self.loaded = true; }, 600);
             }
         },
         getDateStringFromUnix(unix) {
@@ -85,6 +92,13 @@ export default {
 </script>
 
 <style scoped>
+.fade-enter-active, .fade-leave-active {
+  transition: opacity .5s ease;
+}
+
+.fade-enter-from, .fade-leave-to {
+  opacity: 0;
+}
 .grid {
     display: grid;
     grid-template-rows: 100px auto 100px;
