@@ -8,6 +8,16 @@ A spotify-authenticated website game for friends to guess each others favourite 
 
 Each player joins a room hosted by 1 player and authenticates with their spotify login. The host selects a gamemode and the game is on!
 
+## Deadlines
+- April 14th: Specifications in README.md file
+- April 14th: Complete wireframe/design
+- April 14th: Project setup ready and first commit done. 
+- May 8th: functional prototype - (time for new functionality) - **Mid course screencast**: https://youtu.be/aEppwet_UZ8
+- May 16th: Project ready for testing and bug fixes
+- May 20th: Fully functioning project, ready for refactoring
+- May 31st: Refactoring done
+- June 4th: Fully finished project
+
 ## Infrastructure
 ### Backend
 The backend is a REST API build with flask and sockets.io for websockets. Communication will be Peer->Server->Peer.
@@ -72,13 +82,5 @@ For the backend:
 ## Issues and Bugs
 https://trello.com/b/7ShV1pMC/spotifygame
 
-## Deadlines
-- April 14th: Specifications in README.md file
-- April 14th: Complete wireframe/design
-- April 14th: Project setup ready and first commit done. 
-- May 8th: functional prototype - (time for new functionality) - Mid course screencast: https://youtu.be/aEppwet_UZ8
-- May 16th: Project ready for testing and bug fixes
-- May 20th: Fully functioning project, ready for refactoring
-- May 31st: Refactoring done
-- June 4th: Fully finished project
+
  
