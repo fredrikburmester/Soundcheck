@@ -24,7 +24,7 @@
         </div>
         <div v-if="existingPlaylist" class="playlist-modal-view">
             <span class="close" @click="close(existingPlaylist)">&times;</span>
-            <div class="button-container">
+            <div class="button-container-modal">
                 <select v-model="selectedPlaylist" class="drop-down" aria-placeholder="Choose a playlist">
                     <option value="" disabled hidden>Select a playlist</option>
                     <option v-for="playlist in userPlaylists" :key="playlist" :value="playlist[1]">
@@ -39,7 +39,7 @@
         </div>
         <div v-if="newPlaylist" class="playlist-modal-view">
             <span class="close" @click="close(newPlaylist)">&times;</span>
-            <div class="button-container">
+            <div class="button-container-modal">
                 <input
                     id="input"
                     v-model="newPlaylistName"
@@ -246,11 +246,11 @@ input {
     cursor: pointer;
     text-align: center;
 }
-.button-container{
+.button-container-modal{
     margin-top: 45px;
 }
 .track-list-container{
-    height: calc(100vh - 220px);
+    height: calc(100vh - 260px);
     overflow-y: scroll;
     overflow-x: hidden;
     border-top: 1px gray solid;
