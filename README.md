@@ -33,7 +33,9 @@ The frontend is built with Vue. We will be using the state manager Vuex for glob
 To store information about the rooms we will use a small database called TinyDB. This way we can store and retrieve information about the users in a room and their scores. When a game starts, a room and user object is created. The room object holds information like the room id, name, players and so on. The user object will hold the score of the player, the player id and name. After each game the user object and room object will be deleted. This means that no scores will be saved for future review at this point. 
 
 ### Hosting
-The server will be hosted under a SSL certified domain name: https://soundcheck.fdrive.se
+The server will be hosted under a SSL certified domain name: https://soundcheck.fdrive.se. 
+
+The website is routed through an nginx reverse proxy and static files will be served from there as well. The webserver config file can be found in the folder `nginx`. 
 
 ## Getting started
 
@@ -71,11 +73,11 @@ For the frontend:
 
 For the backend:
 
-`python3 app.py production`
+`python3 app.py prod`
 
 ## Run with PM2
 
-`pm2 start app.py --name "TDDD27-Backend" --watch -- production`
+`pm2 start app.py --name "TDDD27-Backend" --watch -- prod`
 
 `pm2 start npm --name "TDDD27-Frontend" -- run prod`
 
