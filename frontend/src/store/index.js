@@ -28,12 +28,10 @@ export default createStore({
             if(state.tracksForPlaylist[value][1]){
                 state.tracksForPlaylist[value][1] = false;
                 state.nrOfTrackstoAdd -= 1;
-                console.log(state.nrOfTrackstoAdd)
             }
             else{
                 state.tracksForPlaylist[value][1] = true;
                 state.nrOfTrackstoAdd += 1;
-                console.log(state.nrOfTrackstoAdd)
             }
         },
         //Needed to avoid tracks loading multiple times when reentering /playlist route from /results
