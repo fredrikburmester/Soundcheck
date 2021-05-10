@@ -111,7 +111,7 @@ def personal_results(username):
             "Access-Control-Allow-Origin": "*"
         })
 
-    return Response(status=404, headers={
+    return Response(status=200, headers={
         "Access-Control-Allow-Origin": "*"
     })
 
