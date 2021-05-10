@@ -526,6 +526,27 @@ def createPlaylist(data):
     print(req2.json())
 
 
+@socketio.on('addToPlaylist')
+def addToPlaylist(data):
+    print("TRYING")
+    playlist_id = data['playlist_id']
+    trackList = ""
+    print(data)
+    for i in data['tracksForPlaylist']:
+        trackList = trackList + "spotify:track:" + i + ","
+
+    trackList = trackList[:-1]
+
+    req = requests.post(
+        url=f"https://api.spotify.com/v1/playlists/{playlist_id}/tracks?uris={trackList}",
+        headers={
+            "Accept": "application/json",
+            "Content-Type": "application/json",
+            "Authorization": f"Bearer {data['access_token']}"
+        })
+    print(req.json())
+
+
 def generate_access_token(code):
     global CLIENT_ID
     global CLIENT_SECRET
