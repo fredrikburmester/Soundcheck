@@ -89,6 +89,34 @@
                     </div>
                 </div>
             </div>
+            <div class="list">
+                <div v-for="player, index in players" :key="player.sid">
+                    <h3 v-if="index == 0" class="title" style="padding-left: 0; margin-left: 0; color: gold">
+                        Winner
+                    </h3>
+                    <h3 v-if="index == 1" class="title" style="padding-left: 0; margin-left: 0; color: silver">
+                        Second place
+                    </h3>
+                    <h3 v-if="index == 2" class="title" style="padding-left: 0; margin-left: 0; color: #26c28">
+                        Third place
+                    </h3>
+                    <PlayerAvatar
+                        :id="player.sid"
+                        class="player-guess"
+                        :player-name="player.name"
+                        :color="player.color"
+                        @click="selectPlayer(player)"
+                    />
+                    <p class="points">
+                        {{ player.points }} Points
+                    </p>
+                </div>
+                <Button
+                    class="createPlaylist"
+                    button-text="Create playlist"
+                    @click="managePlaylists()"
+                />
+                <Button class="goHome" button-link="/" button-text="Play again" />
         </transition>
         <transition name="fade" mode="out-in">
             <div v-if="state == 'not-found'">
@@ -143,8 +171,12 @@ export default {
         },
     },
     mounted() {
+        
         var self = this;
         var url;
+
+        //Needed to avoid multiple loads of the same tracks in /playlist route
+        self.$store.commit('clearTracksForPlaylist');
 
         if (
             process.env.NODE_ENV == 'development' ||
@@ -213,6 +245,11 @@ export default {
                         }
                     })
                 })
+                
+                //Add tracks to store so that they can be used in the /playlist route
+                self.answers.forEach((answer) => {
+                    self.$store.commit('addTrack', answer['info'])
+                })
 
                 setTimeout(function(){ self.state = 'found'; }, 300);
 
@@ -243,9 +280,7 @@ export default {
             this.selected_player = player;
         },
         createPlaylist() {
-            this.answers.forEach((answer) => {
-                this.tracksForPlaylist.push((answer['info']))
-            })
+
             this.$socket.client.emit('createPlaylist', {
                 sid: localStorage.getItem('sid'),
                 access_token: localStorage.getItem('access_token'),
@@ -253,6 +288,9 @@ export default {
                 name: `Soundcheck - ${this.code}`,
                 tracksForPlaylist: this.tracksForPlaylist,
             });
+        },
+        managePlaylists(){
+            this.$router.push(`/${this.code}/playlist`);
         },
         deselectPlayer() {
             this.selected = false;
