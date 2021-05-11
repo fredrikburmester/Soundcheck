@@ -77,14 +77,16 @@
                                 </p>
                             </div>
                         </div>
+                    </div>
+                    
+                    <div class="play-again-container">
+                        <div class="hr" />
                         <Button
+                            style="margin-top: 20px"
                             class="createPlaylist"
                             button-text="Create playlist"
                             @click="managePlaylists()"
                         />
-                    </div>
-                    <div class="play-again-container">
-                        <div class="hr" />
                         <Button style="margin-top: 20px" class="goHome" button-link="/" button-text="Play again" />
                     </div>
                 </div>
@@ -132,7 +134,7 @@ export default {
         resultGridStyle() {
             return {
                 'height': `${window.innerHeight}px`,
-                'grid-template-rows': '125px auto 100px'
+                'grid-template-rows': '125px auto 160px'
             }
         },
         personalResultStyle() {
@@ -290,7 +292,7 @@ export default {
     left: 0;
     display: grid;
     grid-template-columns: 1fr;
-    grid-template-rows: 165px auto;
+    grid-template-rows: 190px auto;
     background: black;
     z-index: 2;
     overflow: hidden;

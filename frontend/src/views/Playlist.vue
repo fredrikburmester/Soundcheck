@@ -1,68 +1,96 @@
 <template>
-    <div> 
-        <div :class="{ dim: (existingPlaylist || newPlaylist)}">
-            <div><h3>Tap to select/deselect tracks</h3></div>
-            <div class="track-list-container">
-                <div v-for="track in tracks" :key="track" :class="{ iconlist: track[1]}">
-                    <TrackIcon
-                        :trackid="track[0]"
-                        @click="selectTrack(tracks.indexOf(track))"
-                    />
+    <div>
+        <transition name="fade" mode="out-in">
+            <div v-if="loading">
+                <Loader />
+            </div>
+        </transition>
+        <transition name="fade" mode="out-in">
+            <div> 
+                <div :style="gridStyle" :class="(existingPlaylist || newPlaylist) ? 'dim grid' : 'grid'">
+                    <div>
+                        <h3>Tap to select/deselect tracks</h3>
+                    </div>
+                    <div class="track-list-container">
+                        <div v-for="track in tracks" :key="track" :class="{ iconlist: track[1]}">
+                            <TrackIcon
+                                :trackid="track[0]"
+                                @click="selectTrack(tracks.indexOf(track))"
+                            />
+                        </div>
+                    </div>
+                    <div class="buttons">
+                        <p v-if="nrOfTrackstoAdd>1">
+                            Add {{ nrOfTrackstoAdd }} tracks to:
+                        </p>
+                        <p v-else-if="nrOfTrackstoAdd==1">
+                            Add {{ nrOfTrackstoAdd }} track to:
+                        </p>
+                        <p v-else>
+                            Select tracks to add!
+                        </p>
+                        <Button
+                            button-text="Existing playlist"
+                            :disabled="nrOfTrackstoAdd == 0 ? true : false"
+                            @click="existingPlaylistToggle()"
+                        />
+                        <Button
+                            button-text="New playlist"
+                            :disabled="nrOfTrackstoAdd == 0 ? true : false"
+                            @click="newPlaylistToggle()"
+                        />
+                    </div>
+                </div>
+                <div v-if="existingPlaylist" class="playlist-modal-view">
+                    <span class="close" @click="close(existingPlaylist)">&times;</span>
+                    <p v-if="nrOfTrackstoAdd > 1" style="margin: 10px 0 0 0;">
+                        Add tracks to existing playlist
+                    </p>
+                    <p v-else style="margin: 10px 0 0 0;">
+                        Add track to existing playlist
+                    </p>
+                    <div class="button-container-modal">
+                        <select v-model="selectedPlaylist" class="drop-down" aria-placeholder="Choose a playlist">
+                            <option value="" disabled hidden>
+                                Select a playlist
+                            </option>
+                            <option v-for="playlist in userPlaylists" :key="playlist" :value="playlist[1]">
+                                {{ playlist[0] }}
+                            </option>
+                        </select> 
+                        <Button
+                            class="playlist-modal-button"
+                            button-text="Confirm"
+                            :disabled="selectedPlaylist ? false : true"
+                            @click="addTracksExisting()"
+                        />
+                    </div>
+                </div>
+                <div v-if="newPlaylist" class="playlist-modal-view">
+                    <span class="close" @click="close(newPlaylist)">&times;</span>
+                    <p v-if="nrOfTrackstoAdd > 1">
+                        Add tracks to new playlist
+                    </p>
+                    <p v-else>
+                        Add track to new playlist
+                    </p>
+                    <div class="button-container-modal">
+                        <input
+                            id="input"
+                            v-model="newPlaylistName"
+                            type="text"
+                            placeholder="Enter a name"
+                            autocomplete="off"
+                        >
+                        <Button
+                            class="playlist-modal-button"
+                            button-text="Confirm"
+                            @click="addTracksNew()"
+                        />
+                    </div>
                 </div>
             </div>
-            <p v-if="nrOfTrackstoAdd>1">
-                Add {{ nrOfTrackstoAdd }} tracks to:
-            </p>
-            <p v-else-if="nrOfTrackstoAdd==1">
-                Add {{ nrOfTrackstoAdd }} tracks to:
-            </p>
-            <p v-else>
-                Select tracks to add!
-            </p>
-            <Button
-                button-text="Existing playlist"
-                @click="existingPlaylistToggle()"
-            />
-            <Button
-                button-text="New playlist"
-                @click="newPlaylistToggle()"
-            />
-        </div>
-        <div v-if="existingPlaylist" class="playlist-modal-view">
-            <span class="close" @click="close(existingPlaylist)">&times;</span>
-            <div class="button-container-modal">
-                <select v-model="selectedPlaylist" class="drop-down" aria-placeholder="Choose a playlist">
-                    <option value="" disabled hidden>
-                        Select a playlist
-                    </option>
-                    <option v-for="playlist in userPlaylists" :key="playlist" :value="playlist[1]">
-                        {{ playlist[0] }}
-                    </option>
-                </select> 
-                <Button
-                    class="playlist-modal-button"
-                    button-text="Confirm"
-                    @click="addTracksExisting()"
-                />
-            </div>
-        </div>
-        <div v-if="newPlaylist" class="playlist-modal-view">
-            <span class="close" @click="close(newPlaylist)">&times;</span>
-            <div class="button-container-modal">
-                <input
-                    id="input"
-                    v-model="newPlaylistName"
-                    type="text"
-                    placeholder="Enter a name"
-                    autocomplete="off"
-                >
-                <Button
-                    class="playlist-modal-button"
-                    button-text="Confirm"
-                    @click="addTracksNew()"
-                />
-            </div>
-        </div>
+        </transition>
     </div>
 </template>
 
@@ -70,6 +98,7 @@
 
 import Button from '../components/Button';
 import TrackIcon from '../components/TrackIcon';
+import Loader from '../components/Loader';
 const axios = require('axios');
 
 export default {
@@ -77,6 +106,7 @@ export default {
     components:{
         Button,
         TrackIcon,
+        Loader
     },
     data: function () {
         return {
@@ -87,9 +117,25 @@ export default {
             existingPlaylist: false,
             newPlaylist: false,
             nrOfTrackstoAdd: this.$store.state.nrOfTrackstoAdd,
-
-
+            loading: false,
+            newPlaylistName: ''
         };
+    },
+    sockets: {
+        playlistCreated() {
+            console.log("created")
+            this.loading = false
+            this.existingPlaylist = false
+            this.newPlaylist = false
+        }
+    },
+    computed: {
+        gridStyle() {
+            return {
+                'height': `${window.innerHeight}px`,
+                'width': `${window.innerWidth}px`
+            }
+        },    
     },
     mounted(){
         var token = localStorage.getItem('access_token');
@@ -128,24 +174,27 @@ export default {
         },
         //the following three methods are used to hide/show modal
         existingPlaylistToggle(){
-            this.existingPlaylist = true;
+            if(this.nrOfTrackstoAdd != 0) {
+                this.existingPlaylist = true;
+            }
         },
         newPlaylistToggle(){
-            this.newPlaylist = true;
+            if(this.nrOfTrackstoAdd != 0) {
+                this.newPlaylist = true;
+            }
         },
         close(){
             this.existingPlaylist = false;
             this.newPlaylist = false;
         },
         addTracksExisting(){
-            console.log(this.selectedPlaylist)
             let tracksToSend = [];
-            console.log(this.tracks)
             for(let track of this.tracks){
                 if(track[1]){
                     tracksToSend.push(track[0])
                 }
             }
+            this.loading = true
             this.$socket.client.emit('addToPlaylist', {
                 sid: localStorage.getItem('sid'),
                 access_token: localStorage.getItem('access_token'),
@@ -156,19 +205,18 @@ export default {
 
         },
         addTracksNew(){
-            console.log(this.newPlaylistName)
             let tracksToSend = [];
             for(let track of this.tracks){
                 if(track[1]){
                     tracksToSend.push(track[0])
                 }
             }
-            console.log(tracksToSend)
+            this.loading = true
             this.$socket.client.emit('createPlaylist', {
                 sid: localStorage.getItem('sid'),
                 access_token: localStorage.getItem('access_token'),
                 user_id: localStorage.getItem('user_id'),
-                name: this.newPlaylistName,
+                name: this.newPlaylistName.length > 0 ? this.newPlaylistName : `Soundcheck - ${this.code}`,
                 tracksForPlaylist: tracksToSend,
             });
         }
@@ -183,8 +231,18 @@ export default {
 .iconlist{
     background: linear-gradient(90deg, rgba(25,20,20,1) 0%, rgba(29,185,84,1) 100%);
     border-radius: 0 40px 40px 0;
-    margin-right: 10px;
-    }
+}
+.fade-enter-active, .fade-leave-active {
+  transition: opacity .5s ease;
+}
+
+.fade-enter-from, .fade-leave-to {
+  opacity: 0;
+}
+.grid {
+    display: grid;
+    grid-template-rows: 65px auto 200px;
+}
 .playlist-modal-view{
     z-index: 2;
     position: absolute;
@@ -192,21 +250,22 @@ export default {
     backdrop-filter: blur(10px);
     top: 50%;
     left: 50%;
-    max-width: 300px;
-    max-height: 200px;
-    min-height: 200px;
-    height: 100vw;
-    width: 100vw;
+    width: 300px;
+    height: 200px;
     -webkit-transform: translate(-50%, -50%);
     transform: translate(-50%, -50%);
     border-radius: 10px;
-    }
+    padding: 10px;
+}
+.buttons {
+    margin: 0 2rem 0 2rem;
+}
 .close {
-  color: #aaa;
-  float: right;
-  font-size: 28px;
-  font-weight: bold;
-  margin-right: 10px;
+    color: #aaa;
+    font-size: 28px;
+    font-weight: bold;
+    position: absolute;
+    right: 20px;
 }
 
 .close:hover,
@@ -229,7 +288,6 @@ export default {
     font-family: 'Roboto', sans-serif;
     font-size: 1rem;
     letter-spacing: 3px;
-    border: 1px solid #000;
     border-radius: 100px;
     cursor: pointer;
     margin-bottom: 20px;
@@ -255,17 +313,13 @@ input {
     text-align: center;
 }
 .button-container-modal{
-    margin-top: 45px;
+    margin-top: 20px;
 }
 .track-list-container{
-    height: calc(100vh - 260px);
-    max-width: 700px;
-    margin-left: auto;
-    margin-right: auto;
     overflow-y: scroll;
     overflow-x: hidden;
     border-top: 1px gray solid;
-    border-bottom: 1px gray solid
-
+    border-bottom: 1px gray solid;
+    margin:  0 2rem 0 2rem;
 }
 </style>

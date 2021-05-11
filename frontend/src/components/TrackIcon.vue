@@ -66,7 +66,7 @@ export default {
 .song {
     display: flex;
     flex-direction: row;
-    margin: 5vh 2rem 5vh 2rem;
+    margin: 20px 0 20px 0
 }
 .image {
     width: 60px;
@@ -82,6 +82,9 @@ export default {
     margin-left: 20px;
     text-align: left;
     line-height: 20px;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
 }
 p {
     margin: 0;

@@ -24,6 +24,10 @@ export default {
             type: String,
             default: '#1DB954',
         },
+        disabled: {
+            type: Boolean,
+            default: false,
+        },
     },
     data() {
         return {
@@ -41,7 +45,12 @@ export default {
             }
         },
         colorStyles() {
-            if (
+            if(this.disabled) {
+                return {
+                    'background-color': "#00ff745e",
+                    'color': '#d6d6d645',
+                };
+            } else if (
                 this.color_ == '#FFF' ||
                 this.color_ == '#FFFFFF' ||
                 this.color_ == 'white'

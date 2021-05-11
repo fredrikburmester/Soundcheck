@@ -542,15 +542,13 @@ def createPlaylist(data):
             "Content-Type": "application/json",
             "Authorization": f"Bearer {data['access_token']}"
         })
-    print(req2.json())
-
+    print("playlist created")
+    socketio.emit('playlistCreated', to=request.sid)
 
 @socketio.on('addToPlaylist')
 def addToPlaylist(data):
-    print("TRYING")
     playlist_id = data['playlist_id']
     trackList = ""
-    print(data)
     for i in data['tracksForPlaylist']:
         trackList = trackList + "spotify:track:" + i + ","
 
@@ -563,8 +561,8 @@ def addToPlaylist(data):
             "Content-Type": "application/json",
             "Authorization": f"Bearer {data['access_token']}"
         })
-    print(req.json())
-
+    print("playlist created")
+    socketio.emit('playlistCreated', to=request.sid)
 
 def generate_access_token(code):
     global CLIENT_ID
