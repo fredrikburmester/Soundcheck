@@ -80,7 +80,7 @@
                         <Button
                             class="createPlaylist"
                             button-text="Create playlist"
-                            @click="createPlaylist(date)"
+                            @click="managePlaylists()"
                         />
                     </div>
                     <div class="play-again-container">
@@ -88,35 +88,6 @@
                         <Button style="margin-top: 20px" class="goHome" button-link="/" button-text="Play again" />
                     </div>
                 </div>
-            </div>
-            <div class="list">
-                <div v-for="player, index in players" :key="player.sid">
-                    <h3 v-if="index == 0" class="title" style="padding-left: 0; margin-left: 0; color: gold">
-                        Winner
-                    </h3>
-                    <h3 v-if="index == 1" class="title" style="padding-left: 0; margin-left: 0; color: silver">
-                        Second place
-                    </h3>
-                    <h3 v-if="index == 2" class="title" style="padding-left: 0; margin-left: 0; color: #26c28">
-                        Third place
-                    </h3>
-                    <PlayerAvatar
-                        :id="player.sid"
-                        class="player-guess"
-                        :player-name="player.name"
-                        :color="player.color"
-                        @click="selectPlayer(player)"
-                    />
-                    <p class="points">
-                        {{ player.points }} Points
-                    </p>
-                </div>
-                <Button
-                    class="createPlaylist"
-                    button-text="Create playlist"
-                    @click="managePlaylists()"
-                />
-                <Button class="goHome" button-link="/" button-text="Play again" />
             </div>
         </transition>
         <transition name="fade" mode="out-in">
