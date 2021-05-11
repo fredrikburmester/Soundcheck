@@ -25,10 +25,10 @@ export default {
     data(){
         return{
             content: 'Soundcheck is a game you can play with your friends. You sign in with your spotify account and then you create a room for your friends to join.'
-            + '\n\nWhen you play, a random players top song will be displayed in a music player at the bottom of the screen so everyone can listen to the song'
-            + 'To make a guess, tap on the player you think the song belongs to.\n\n'
-            + 'When the game is over, your Spotify username, top songs and guesses will be saves in our database for users to view the results after the game.:)'
-            + '\n\n _By using this website you agree that the information mentioned above can be stored_.'
+                + '\n\nWhen you play, a random players top song will be displayed in a music player at the bottom of the screen so everyone can listen to the song'
+                + 'To make a guess, tap on the player you think the song belongs to.\n\n'
+                + 'When the game is over, your Spotify username, top songs and guesses will be saves in our database for users to view the results after the game.:)'
+                + '\n\n _By using this website you agree that the information mentioned above can be stored_.'
         };
     },
 };

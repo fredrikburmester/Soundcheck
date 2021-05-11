@@ -117,6 +117,7 @@
                     @click="managePlaylists()"
                 />
                 <Button class="goHome" button-link="/" button-text="Play again" />
+            </div>
         </transition>
         <transition name="fade" mode="out-in">
             <div v-if="state == 'not-found'">

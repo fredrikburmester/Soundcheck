@@ -14,7 +14,6 @@
                 About Soundcheck
             </p>
         </div>
-
     </div>
 </template>
 
