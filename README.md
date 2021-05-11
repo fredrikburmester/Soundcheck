@@ -1,10 +1,22 @@
 # tddd27
 
+https://soundcheck.fdrive.se/
+
 ## Info
 
 A spotify-authenticated website game for friends to guess each others favourite songs and genres. 
 
 Each player joins a room hosted by 1 player and authenticates with their spotify login. The host selects a gamemode and the game is on!
+
+## Deadlines
+- April 14th: Specifications in README.md file
+- April 14th: Complete wireframe/design
+- April 14th: Project setup ready and first commit done. 
+- May 8th: functional prototype - (time for new functionality) - **Mid course screencast**: https://youtu.be/aEppwet_UZ8
+- May 16th: Project ready for testing and bug fixes
+- May 20th: Fully functioning project, ready for refactoring
+- May 31st: Refactoring done
+- June 4th: Fully finished project
 
 ## Infrastructure
 ### Backend
@@ -21,7 +33,13 @@ The frontend is built with Vue. We will be using the state manager Vuex for glob
 To store information about the rooms we will use a small database called TinyDB. This way we can store and retrieve information about the users in a room and their scores. When a game starts, a room and user object is created. The room object holds information like the room id, name, players and so on. The user object will hold the score of the player, the player id and name. After each game the user object and room object will be deleted. This means that no scores will be saved for future review at this point. 
 
 ### Hosting
-The server will be hosted under a SSL certified domain name: https://musicwithfriends.fdrive.se
+The server will be hosted under a SSL certified domain name: https://soundcheck.fdrive.se. 
+
+The website is routed through an nginx reverse proxy and static files will be served from there as well. The webserver config file can be found in the folder `nginx`. 
+
+The nameservers are handeled by Cloudflare without proxying. 
+
+The server is running on a 1-core 512GB RAM Viritual Ubuntu Server.
 
 ## Getting started
 
@@ -59,24 +77,16 @@ For the frontend:
 
 For the backend:
 
-`python3 app.py production`
+`python3 app.py prod`
 
 ## Run with PM2
 
-`pm2 start app.py --name "TDDD27-Backend" --watch -- production`
+`pm2 start app.py --name "TDDD27-Backend" --watch -- prod`
 
 `pm2 start npm --name "TDDD27-Frontend" -- run prod`
 
 ## Issues and Bugs
 https://trello.com/b/7ShV1pMC/spotifygame
 
-## Deadlines
-- April 14th: Specifications in README.md file
-- April 14th: Complete wireframe/design
-- April 14th: Project setup ready and first commit done. 
-- May 8th: functional prototype - (time for new functionality)
-- May 16th: Project ready for testing and bug fixes
-- May 20th: Fully functioning project, ready for refactoring
-- May 31st: Refactoring done
-- June 4th: Fully finished project
+
  

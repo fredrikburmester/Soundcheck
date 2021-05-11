@@ -1,25 +1,35 @@
 <template>
     <div class="home">
-        <div id="brand">
-            <img :src="logo" alt="soundcheck">
-        </div>
-        <!-- <h1>Start a game...</h1> -->
-        <Button
-            button-link="/create"
-            button-text="Create Room"
-        />
-        <Button
-            button-link="/join"
-            button-text="Join Room"
-        />
-        <p>{{ name }}</p>
-        <div class="logout">
+        <div class="content">
+            <div id="brand">
+                <img :src="logo" alt="soundcheck">
+            </div>
+            <!-- <h1>Start a game...</h1> -->
             <Button
-                color="#CD1A2B"
-                button-link="/logout"
-                button-text="Log out"
-                @click="logout"
+                button-link="/create"
+                button-text="Create Room"
             />
+            <Button
+                button-link="/join"
+                button-text="Join Room"
+            />
+            <Button
+                button-link="/me"
+                button-text="my games"
+                color="#454545"
+            />
+            <p>{{ name }}</p>
+            <div class="button-container">
+                <div class="logout">
+                    <Button
+                        color="#CD1A2B"
+                        button-link="/logout"
+                        button-text="Log out"
+                        class="logout"
+                        @click="logout"
+                    />
+                </div>
+            </div>
         </div>
     </div>
 </template>
@@ -68,18 +78,24 @@ export default {
 
 <style scoped>
 #brand > img{
-	width: 18em;
+	width: 80vw;
+    max-width: 400px;
     margin-bottom: 60px;
 }
 .home {
-    margin-top: 30vh;
+    display: grid;
+    padding: 26vh 2rem 0 2rem;
 }
-.logout {
+.button-container {
     position: fixed;
     left: 50%;
     bottom: 20px;
     transform: translate(-50%, -50%);
     margin: 0 auto;
+    width: 100vw;
+}
+.logout {
+    padding: 0 2rem 0 2rem;
 }
 .hr {
     height: 2px;

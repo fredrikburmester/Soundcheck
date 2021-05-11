@@ -9,6 +9,8 @@ import Results from '../views/Results.vue';
 import Playlist from '../views/Playlist.vue';
 import LoginCallback from '../views/LoginCallback.vue';
 import NotFound from '../components/NotFound.vue';
+import About from '../views/About.vue'
+import PreviousResults from '../views/PreviousResults.vue'
 
 const axios = require('axios');
 
@@ -71,6 +73,11 @@ const routes = [
         },
     },
     {
+        path: '/about',
+        name: 'About',
+        component: About
+    },
+    {
         path: '/logincallback',
         name: 'LoginCallback',
         component: LoginCallback,
@@ -87,6 +94,14 @@ const routes = [
         path: '/create',
         name: 'Create',
         component: Create,
+        beforeEnter: (to, from, next) => {
+            checkAccessToken(to, from, next);
+        },
+    },
+    {
+        path: '/me',
+        name: 'PreviousResults',
+        component: PreviousResults,
         beforeEnter: (to, from, next) => {
             checkAccessToken(to, from, next);
         },

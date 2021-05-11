@@ -9,6 +9,7 @@ export default createStore({
         time_range: 'short_term',
         tracksForPlaylist: [],
         nrOfTrackstoAdd: 0,
+        username: ''
     },
     mutations: {
         updateRoomCode(state, value) {
@@ -40,6 +41,15 @@ export default createStore({
             state.tracksForPlaylist = [];
         }
     },
-    actions: {},
+    actions: {
+    },
     modules: {},
+    getters: {
+        getUsername(state) {
+            if(!state.username || state.username.length < 1) {
+                state.username = localStorage.getItem('user_id')
+            }
+            return state.username
+        }
+    }
 });

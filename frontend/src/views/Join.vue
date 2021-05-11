@@ -6,6 +6,7 @@
             class="input"
             :text="code"
             placeholder="ABCD"
+            @keyup="enterPress"
         />
         <Button
             button-text="Join Room"
@@ -16,12 +17,14 @@
             Or...
         </h2>
         <h3>Scan QR-code in your camera app</h3>
-        <div class="back">
-            <Button
-                button-link="/"
-                button-text="Back"
-                color="#CD1A2B"
-            />
+        <div class="back-container">
+            <div class="back">
+                <Button
+                    button-link="/"
+                    button-text="Back"
+                    color="#CD1A2B"
+                />
+            </div>
         </div>
     </div>
 </template>
@@ -60,22 +63,40 @@ export default {
         isRoom: function () {
             this.$socket.client.emit('isRoom', { code: this.code });
         },
+        enterPress: function(e){
+            if(e.keyCode == 13){
+                this.isRoom();
+            }
+        }
     },
 };
 </script>
 
 <style scoped>
 .join {
-    margin-top: 30vh;
+    margin-top: 10vh;
+    margin-left: 2rem;
+    margin-right: 2rem;
 }
-.back {
+.back-container {
     position: fixed;
     left: 50%;
     bottom: 20px;
     transform: translate(-50%, -50%);
     margin: 0 auto;
+    width: 100vw;
 }
-.input{
-    text-transform: uppercase;
+.back {
+    padding: 0 2rem 0 2rem;
+}
+@media only screen and (min-height: 550px) {
+    .join {
+        margin-top: 20vh;
+    }
+}
+@media only screen and (min-height: 680px) {
+    .join {
+        margin-top: 30vh;
+    }
 }
 </style>

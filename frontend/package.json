@@ -25,6 +25,7 @@
     "vuex": "^4.0.0-0"
   },
   "devDependencies": {
+    "@types/marked": "^2.0.2",
     "@vue/cli-plugin-babel": "~4.5.0",
     "@vue/cli-plugin-eslint": "~4.5.0",
     "@vue/cli-plugin-router": "~4.5.0",
@@ -36,7 +37,8 @@
     "eslint": "^6.8.0",
     "eslint-plugin-prettier": "^3.3.1",
     "eslint-plugin-vue": "^7.9.0",
-    "prettier": "^2.2.1"
+    "prettier": "^2.2.1",
+    "vue3-markdown-it": "^1.0.8"
   },
   "eslintConfig": {
     "root": true,

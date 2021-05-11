@@ -70,6 +70,8 @@ export default {
     display: flex;
     position: relative;
     margin-bottom: 10px;
+    margin-top: 10px;
+
     height: 70px;
     overflow-x: hidden;
     flex-wrap: nowrap;

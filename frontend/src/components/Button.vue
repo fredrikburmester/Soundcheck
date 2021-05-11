@@ -73,14 +73,13 @@ export default {
 @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap');
 
 .button {
-    display: inline-block;
     font-size: 15px;
     font-family: 'Roboto', sans-serif;
     font-weight: 500;
     letter-spacing: 2px;
     border-radius: 100px;
-    padding: 15px 20px 15px 20px;
-    width: 50vw;
+    padding: 15px 20px 15px 20px !important;
+    max-width: 300px;
     margin-bottom: 10px;
     cursor: pointer;
 }

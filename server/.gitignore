@@ -4,3 +4,4 @@
 ./.Python
 *.xml
 *.iml
+db.json
