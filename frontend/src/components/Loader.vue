@@ -36,6 +36,7 @@ img {
     transform-origin: 50% 50%; 
     animation-name: spin;
     animation-duration: 1000ms;
+    margin-bottom: 10vh;
     animation-iteration-count: infinite;
     animation-timing-function: cubic-bezier(0.71, 0.05, 0.38, 0.98); 
 }
