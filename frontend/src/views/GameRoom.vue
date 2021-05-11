@@ -676,4 +676,24 @@ export default {
 #line2 {
     transform: rotate(-45deg);
 }
+@media only screen and (min-width: 700px) {
+    .bigQR > img {
+    width: 45vw;
+    height: auto;
+    position: fixed;
+    top: 20%;
+    left: 50%;
+    transform: translateX(-50%);
+    }
+}
+@media only screen and (min-width: 1100px) {
+    .bigQR > img {
+    width: 30vw;
+    height: auto;
+    position: fixed;
+    top: 20%;
+    left: 50%;
+    transform: translateX(-50%);
+    }
+}
 </style>
