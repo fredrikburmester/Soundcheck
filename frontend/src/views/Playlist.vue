@@ -10,9 +10,15 @@
                     />
                 </div>
             </div>
-            <p v-if="nrOfTrackstoAdd>1">Add {{ nrOfTrackstoAdd }} tracks to:</p>
-            <p v-else-if="nrOfTrackstoAdd==1">Add {{ nrOfTrackstoAdd }} tracks to:</p>
-            <p v-else>Select tracks to add!</p>
+            <p v-if="nrOfTrackstoAdd>1">
+                Add {{ nrOfTrackstoAdd }} tracks to:
+            </p>
+            <p v-else-if="nrOfTrackstoAdd==1">
+                Add {{ nrOfTrackstoAdd }} tracks to:
+            </p>
+            <p v-else>
+                Select tracks to add!
+            </p>
             <Button
                 button-text="Existing playlist"
                 @click="existingPlaylistToggle()"
@@ -26,12 +32,15 @@
             <span class="close" @click="close(existingPlaylist)">&times;</span>
             <div class="button-container-modal">
                 <select v-model="selectedPlaylist" class="drop-down" aria-placeholder="Choose a playlist">
-                    <option value="" disabled hidden>Select a playlist</option>
+                    <option value="" disabled hidden>
+                        Select a playlist
+                    </option>
                     <option v-for="playlist in userPlaylists" :key="playlist" :value="playlist[1]">
                         {{ playlist[0] }}
                     </option>
                 </select> 
-                <Button class="playlist-modal-button"
+                <Button
+                    class="playlist-modal-button"
                     button-text="Confirm"
                     @click="addTracksExisting()"
                 />
@@ -46,12 +55,11 @@
                     type="text"
                     placeholder="Enter a name"
                     autocomplete="off"
-
-
                 >
-                <Button class="playlist-modal-button"
-                button-text="Confirm"
-                @click="addTracksNew()"
+                <Button
+                    class="playlist-modal-button"
+                    button-text="Confirm"
+                    @click="addTracksNew()"
                 />
             </div>
         </div>
