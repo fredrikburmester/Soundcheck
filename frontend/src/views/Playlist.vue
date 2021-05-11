@@ -234,6 +234,9 @@ export default {
 }
 .fade-enter-active, .fade-leave-active {
   transition: opacity .5s ease;
+  -webkit-transition: opacity .5s ease;
+  -moz-transition: opacity .5s ease;
+  -o-transition: opacity .5s ease;
 }
 
 .fade-enter-from, .fade-leave-to {
