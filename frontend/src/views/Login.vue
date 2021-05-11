@@ -66,7 +66,9 @@ p {
 }
 .about{
     font-family: 'Roboto', sans-serif;
+    font-size: 16px;
     width: 100vw;
+    margin-left: -2rem;
     text-align: center;
     position: fixed;
     bottom: 0;
