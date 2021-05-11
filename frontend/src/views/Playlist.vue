@@ -214,7 +214,7 @@ export default {
 .drop-down{
     background-color: #fff;
     font-weight: 400;
-    max-width: 300px;
+    max-width: 280px;
     width: 82vw;
     height: 47px;
     text-align-last: center;
@@ -227,7 +227,7 @@ export default {
     margin-bottom: 20px;
 }
 .playlist-modal-button{
-    max-width: 260px;
+    max-width: 240px;
     width: 70vw;
 }
 input {
@@ -236,7 +236,7 @@ input {
     font-family: 'Roboto', sans-serif;
     font-weight: 500;
     letter-spacing: 3px;
-    max-width: 260px;
+    max-width: 240px;
     background-color: white;
     border-radius: 100px;
     border-style: none;
