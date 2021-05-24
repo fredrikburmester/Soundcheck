@@ -77,6 +77,7 @@ export default {
     flex-wrap: nowrap;
     justify-content: flex-start;
     align-items: center;
+    cursor: pointer;
 }
 .circle {
     border-radius: 50%;
