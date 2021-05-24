@@ -7,24 +7,19 @@
         
         <div class="container">
             <h3>Select Time Range</h3>
-            <select v-model="time_range" class="drop-down">
-                <option v-for="option in options" :key="option.value" :value="option.value">
-                    {{ option.text }}
-                </option>
-            </select>
-            
+            <Select :list="timeRanges" :default-value="timeRanges[0]" @selected="setTimeRange" />
+           
             <h3>Number of songs per player</h3>
-            <select v-model="no_songs" class="drop-down"> 
-                <option v-for="n in 8" :key="n">
-                    {{ n }}
-                </option>
-            </select>
+            <Select :list="nrOfSongsArray" :default-value="nrOfSongsArray[0]" @selected="setNrOfSongs" />
+           
             <br>
             <br>
+
             <Button
                 button-text="Create Room"
                 @click="createRoom"
             />
+
             <div class="button-container">
                 <div class="back">
                     <Button
@@ -40,6 +35,7 @@
 
 <script>
 import Button from '../components/Button';
+import Select from '../components/Select';
 // import SettingsButton from '../components/SettingsButton';
 //import ToggleSwitch from '../components/ToggleSwitch';
 
@@ -47,6 +43,7 @@ export default {
     name: 'Create',
     components: {
         Button,
+        Select,
         // SettingsButton,
         // ToggleSwitch,
     },
@@ -59,11 +56,12 @@ export default {
         return {
             no_songs: 1,
             time_range: 'short_term',
-            options: [
-                {text: '4 weeks', value: 'short_term'},
-                {text: '6 months', value: 'medium_term'},
-                {text: 'Over a year', value: 'long_term'} 
-            ]
+            timeRanges: [
+                {value: '4 weeks', key: 'short_term'},
+                {value: '6 months', key: 'medium_term'},
+                {value: 'Over a year', key: 'long_term'} 
+            ],
+            nrOfSongsArray: Array.from({length: 20}, (_, i) => i + 1)
         };
     },
     methods: {
@@ -74,6 +72,12 @@ export default {
                 no_songs: this.no_songs,
             });
         },
+        setTimeRange(value) {
+            this.time_range = value
+        },
+        setNrOfSongs(value) {
+            this.no_songs = value
+        }
     },
 };
 </script>
@@ -112,6 +116,8 @@ export default {
     width: 100%;
     max-width: 340px;
     /* --------------- */ 
+
+    -webkit-appearance: none;
 }
 .button-container {
     position: fixed;

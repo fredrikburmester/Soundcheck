@@ -67,7 +67,7 @@ export default {
     margin-bottom: 10px;
     margin-top: 10px;
 
-    height: 70px;
+    /* height: 70px; */
     overflow-x: hidden;
     flex-wrap: nowrap;
     justify-content: flex-start;
