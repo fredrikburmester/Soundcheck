@@ -11,12 +11,13 @@ import LoginCallback from '../views/LoginCallback.vue';
 import NotFound from '../components/NotFound.vue';
 import About from '../views/About.vue'
 import PreviousResults from '../views/PreviousResults.vue'
+import store from '../store';
 
 const axios = require('axios');
 
 function checkAccessToken(to, from, next) {
-    if (localStorage.getItem('access_token')) {
-        var token = localStorage.getItem('access_token');
+    if (store.getters.getAccessToken) {
+        var token = store.getters.getAccessToken;
     } else {
         next({ name: 'Login' });
         return;
@@ -63,7 +64,7 @@ const routes = [
         name: 'Login',
         component: Login,
         beforeEnter: (to, from, next) => {
-            if (localStorage.getItem('access_token')) {
+            if (store.getters.getAccessToken) {
                 next({ name: 'Home' });
                 return;
             } else {
@@ -122,8 +123,8 @@ const routes = [
             var code = window.location.href.split('/');
             code = code[code.length - 1];
 
-            if (localStorage.getItem('access_token')) {
-                var token = localStorage.getItem('access_token');
+            if (store.getters.getAccessToken) {
+                var token = store.getters.getAccessToken;
             } else {
                 localStorage.setItem('toRoom', code);
                 next({ name: 'Login' });
