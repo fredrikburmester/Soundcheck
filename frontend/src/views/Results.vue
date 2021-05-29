@@ -253,16 +253,6 @@ export default {
             this.selected = true;
             this.selected_player = player;
         },
-        createPlaylist() {
-
-            this.$socket.client.emit('createPlaylist', {
-                sid: localStorage.getItem('sid'),
-                access_token: localStorage.getItem('access_token'),
-                user_id: localStorage.getItem('user_id'),
-                name: `Soundcheck - ${this.code}`,
-                tracksForPlaylist: this.tracksForPlaylist,
-            });
-        },
         managePlaylists(){
             this.$router.push(`/${this.code}/playlist`);
         },
