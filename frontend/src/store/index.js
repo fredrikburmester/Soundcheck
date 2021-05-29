@@ -9,7 +9,9 @@ export default createStore({
         time_range: 'short_term',
         tracksForPlaylist: [],
         nrOfTrackstoAdd: 0,
-        username: ''
+        username: '',
+        accessToken: null,
+        sid: null,
     },
     mutations: {
         updateRoomCode(state, value) {
@@ -47,9 +49,21 @@ export default createStore({
     getters: {
         getUsername(state) {
             if(!state.username || state.username.length < 1) {
-                state.username = localStorage.getItem('user_id')
+                state.username = localStorage.getItem('user_id');
             }
-            return state.username
-        }
+            return state.username;
+        },
+        getAccessToken(state){
+            if(!state.accessToken){
+                state.accessToken = localStorage.getItem('access_token');
+            }
+            return state.accessToken;
+        },
+        getSid(state){
+            if(!state.sid){
+                state.sid = localStorage.getItem('sid');
+            }
+            return state.sid;
+        },
     }
 });
