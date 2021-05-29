@@ -106,18 +106,9 @@
                         @click="sendNextQuestion"
                     />
                 </div>
-                <div
-                    class="close-button"
-                    @click="toggleModal"
-                >
-                    <div
-                        id="line1"
-                        class="line"
-                    />
-                    <div
-                        id="line2"
-                        class="line"
-                    />
+                <div class="close-button">
+                    <CloseButton 
+                    @click="toggleModal"/>
                 </div>
             </div>
             <iframe
@@ -198,6 +189,7 @@
 import PlayerAvatar from '../components/PlayerAvatar';
 import Button from '../components/Button';
 import ProgressBar from '../components/ProgressBar';
+import CloseButton from '../components/CloseButton';
 import { nextTick } from 'vue'
 
 const QRCode = require('qrcode');
@@ -209,6 +201,7 @@ export default {
         PlayerAvatar,
         Button,
         ProgressBar,
+        CloseButton,
     },
     data: function () {
         return {
@@ -656,25 +649,13 @@ export default {
 }
 .close-button {
     position: fixed;
-    top: 35px;
+    top: 30px;
     right: 2rem;
-}
-.line {
-    background-color: red;
-    height: 3px;
-    width: 25px;
-    cursor: pointer;
 }
 .next-song {
     margin-top: 10px;
     margin-right: 2rem;
     margin-left: 2rem;
-}
-#line1 {
-    transform: translateY(3px) rotate(45deg);
-}
-#line2 {
-    transform: rotate(-45deg);
 }
 @media only screen and (min-width: 700px) {
     .bigQR > img {

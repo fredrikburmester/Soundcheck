@@ -9,7 +9,11 @@
             <div> 
                 <div :style="gridStyle" :class="(existingPlaylist || newPlaylist) ? 'dim grid' : 'grid'">
                     <div>
-                        <h3>Tap to select/deselect tracks</h3>
+                        <h3>Tap to select/deselect</h3>
+                        <div class="close-button">
+                            <CloseButton 
+                            @click="goBack()"/>
+                        </div>
                     </div>
                     <div class="track-list-container">
                         <div v-for="track in tracks" :key="track" :class="{ iconlist: track[1]}">
@@ -99,6 +103,7 @@
 import Button from '../components/Button';
 import TrackIcon from '../components/TrackIcon';
 import Loader from '../components/Loader';
+import CloseButton from '../components/CloseButton';
 const axios = require('axios');
 
 export default {
@@ -106,7 +111,8 @@ export default {
     components:{
         Button,
         TrackIcon,
-        Loader
+        Loader,
+        CloseButton,
     },
     data: function () {
         return {
@@ -140,7 +146,7 @@ export default {
         // if user refreshes the page, the "tracks" variable in the store will be empty and /playlist will have nothing to display.
         if(this.tracks.length == 0){
             // if this is the case, push user back to /results, in order to force an update in the store
-            this.$router.push(`/${this.code}/results`)
+            this.goBack();
         }
 
         var token = this.$store.getters.getAccessToken;
@@ -167,10 +173,11 @@ export default {
             });
     },
     methods:{
-        log(){
-            //console.log(this.tracks);
-            //console.log(this.userPlaylists);  
-            console.log(this.selectedPlaylist)
+        test(){
+            console.log("hej")
+        },
+        goBack(){
+            this.$router.push(`/${this.code}/results`);
         },
         selectTrack(index){
             //change boolean value associated with track in store
@@ -329,5 +336,10 @@ input {
     border-top: 1px gray solid;
     border-bottom: 1px gray solid;
     margin:  0 2rem 0 2rem;
+}
+.close-button {
+    position: fixed;
+    top: 25px;
+    right: 1rem;
 }
 </style>
