@@ -382,11 +382,11 @@ export default {
             this.clipboardtext = 'copied!';
         },
         connectToRoom() {
-            var access_token = localStorage.getItem('access_token');
+            var access_token = this.$store.getters.getAccessToken;
             var refresh_token = localStorage.getItem('refresh_token');
             this.$socket.client.emit('connect_to_room', {
                 code: this.code,
-                sid: localStorage.getItem('sid'),
+                sid: this.$store.getters.getSid,
                 access_token: access_token,
                 refresh_token: refresh_token,
             });
@@ -403,7 +403,7 @@ export default {
         isHost() {
             var self = this;
             this.players.forEach((player) => {
-                if (player.sid == localStorage.getItem('sid')) {
+                if (player.sid == this.$store.getters.getSid) {
                     if (player.host == true) {
                         self.host = true;
                     }
@@ -426,7 +426,7 @@ export default {
 
             this.my_guess = player.sid;
             this.$socket.client.emit('player_guess', {
-                sid: localStorage.getItem('sid'),
+                sid: this.$store.getters.getSid,
                 code: this.code,
                 guess: this.my_guess,
             });
@@ -446,13 +446,13 @@ export default {
         leaveRoom() {
             this.$socket.client.emit('leave_room', {
                 code: this.code,
-                sid: localStorage.getItem('sid'),
+                sid: this.$store.getters.getSid,
             });
             this.$router.push('/');
         },
         getTopTrack() {
             var self = this;
-            var token = localStorage.getItem('access_token');
+            var token = this.$store.getters.getAccessToken;
 
             var time_range = this.settings[0];
             var no_songs = this.settings[1];
@@ -495,7 +495,7 @@ export default {
                                     }
                                     self.$socket.client.emit('toptrack', {
                                         trackid: trackid,
-                                        sid: localStorage.getItem('sid'),
+                                        sid: self.$store.getters.getSid,
                                         room: self.code,
                                     });
                                 }
@@ -509,7 +509,7 @@ export default {
                         }
                         self.$socket.client.emit('toptrack', {
                             trackid: trackid,
-                            sid: localStorage.getItem('sid'),
+                            sid: self.$store.getters.getSid,
                             room: self.code,
                         });
                     }

@@ -53,7 +53,7 @@ export default {
     methods: {
         getUserData: function () {
             var self = this;
-            var token = localStorage.getItem('access_token');
+            var token = this.$store.getters.getAccessToken;
             axios
                 .get('https://api.spotify.com/v1/me', {
                     headers: {

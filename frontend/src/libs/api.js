@@ -1,4 +1,6 @@
 import axios from 'axios'
+import store from '../store';
+
 var url = ''
 
 if (
@@ -34,7 +36,7 @@ export default {
         return result
     },
     async getAlbumArt(uri) {
-        var token = localStorage.getItem('access_token');
+        var token = store.getters.getAccessToken;
         var result = ''
         await axios
             .get(`https://api.spotify.com/v1/tracks/${uri}`, {
