@@ -12,7 +12,8 @@
                         <h3>Tap to select/deselect</h3>
                         <div class="close-button">
                             <CloseButton 
-                            @click="goBack()"/>
+                                @click="goBack()"
+                            />
                         </div>
                     </div>
                     <div class="track-list-container">

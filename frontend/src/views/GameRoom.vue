@@ -108,7 +108,8 @@
                 </div>
                 <div class="close-button">
                     <CloseButton 
-                    @click="toggleModal"/>
+                        @click="toggleModal"
+                    />
                 </div>
             </div>
             <iframe
