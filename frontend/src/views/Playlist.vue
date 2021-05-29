@@ -123,7 +123,6 @@ export default {
     },
     sockets: {
         playlistCreated() {
-            console.log("created")
             this.loading = false
             this.existingPlaylist = false
             this.newPlaylist = false
@@ -138,8 +137,14 @@ export default {
         },    
     },
     mounted(){
-        var token = localStorage.getItem('access_token');
-        var user_id = localStorage.getItem('user_id');
+        // if user refreshes the page, the "tracks" variable in the store will be empty and /playlist will have nothing to display.
+        if(this.tracks.length == 0){
+            // if this is the case, push user back to /results, in order to force an update in the store
+            this.$router.push(`/${this.code}/results`)
+        }
+
+        var token = this.$store.getters.getAccessToken;
+        var user_id = this.$store.getters.getUsername;
         var self = this;
         axios
             .get(
@@ -196,9 +201,9 @@ export default {
             }
             this.loading = true
             this.$socket.client.emit('addToPlaylist', {
-                sid: localStorage.getItem('sid'),
-                access_token: localStorage.getItem('access_token'),
-                user_id: localStorage.getItem('user_id'),
+                sid: this.$store.getters.getSid,
+                access_token: this.$store.getters.getAccessToken,
+                user_id: this.$store.getters.getUsername,
                 playlist_id: this.selectedPlaylist,
                 tracksForPlaylist: tracksToSend,
             });
@@ -213,9 +218,9 @@ export default {
             }
             this.loading = true
             this.$socket.client.emit('createPlaylist', {
-                sid: localStorage.getItem('sid'),
-                access_token: localStorage.getItem('access_token'),
-                user_id: localStorage.getItem('user_id'),
+                sid: this.$store.getters.getSid,
+                access_token: this.$store.getters.getAccessToken,
+                user_id: this.$store.getters.getUsername,
                 name: this.newPlaylistName.length > 0 ? this.newPlaylistName : `Soundcheck - ${this.code}`,
                 tracksForPlaylist: tracksToSend,
             });
