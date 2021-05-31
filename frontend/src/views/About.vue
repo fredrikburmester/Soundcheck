@@ -9,7 +9,7 @@ About page.
             <VueMarkdownIt :style="style" :source="content" />
         </div>
         <Button 
-            button-link="/" 
+            button-link="/login" 
             button-text="Back"
             color="#CD1A2B"
         />
