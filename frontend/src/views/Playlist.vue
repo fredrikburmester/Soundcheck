@@ -9,7 +9,12 @@
             <div> 
                 <div :style="gridStyle" :class="(existingPlaylist || newPlaylist) ? 'dim grid' : 'grid'">
                     <div>
-                        <h3>Tap to select/deselect tracks</h3>
+                        <h3>Tap to select/deselect</h3>
+                        <div class="close-button">
+                            <CloseButton 
+                                @click="goBack()"
+                            />
+                        </div>
                     </div>
                     <div class="track-list-container">
                         <div v-for="track in tracks" :key="track" :class="{ iconlist: track[1]}">
@@ -99,6 +104,7 @@
 import Button from '../components/Button';
 import TrackIcon from '../components/TrackIcon';
 import Loader from '../components/Loader';
+import CloseButton from '../components/CloseButton';
 const axios = require('axios');
 
 export default {
@@ -106,7 +112,8 @@ export default {
     components:{
         Button,
         TrackIcon,
-        Loader
+        Loader,
+        CloseButton,
     },
     data: function () {
         return {
@@ -123,7 +130,6 @@ export default {
     },
     sockets: {
         playlistCreated() {
-            console.log("created")
             this.loading = false
             this.existingPlaylist = false
             this.newPlaylist = false
@@ -138,8 +144,14 @@ export default {
         },    
     },
     mounted(){
-        var token = localStorage.getItem('access_token');
-        var user_id = localStorage.getItem('user_id');
+        // if user refreshes the page, the "tracks" variable in the store will be empty and /playlist will have nothing to display.
+        if(this.tracks.length == 0){
+            // if this is the case, push user back to /results, in order to force an update in the store
+            this.goBack();
+        }
+
+        var token = this.$store.getters.getAccessToken;
+        var user_id = this.$store.getters.getUsername;
         var self = this;
         axios
             .get(
@@ -162,10 +174,11 @@ export default {
             });
     },
     methods:{
-        log(){
-            //console.log(this.tracks);
-            //console.log(this.userPlaylists);  
-            console.log(this.selectedPlaylist)
+        test(){
+            console.log("hej")
+        },
+        goBack(){
+            this.$router.push(`/${this.code}/results`);
         },
         selectTrack(index){
             //change boolean value associated with track in store
@@ -196,9 +209,9 @@ export default {
             }
             this.loading = true
             this.$socket.client.emit('addToPlaylist', {
-                sid: localStorage.getItem('sid'),
-                access_token: localStorage.getItem('access_token'),
-                user_id: localStorage.getItem('user_id'),
+                sid: this.$store.getters.getSid,
+                access_token: this.$store.getters.getAccessToken,
+                user_id: this.$store.getters.getUsername,
                 playlist_id: this.selectedPlaylist,
                 tracksForPlaylist: tracksToSend,
             });
@@ -213,9 +226,9 @@ export default {
             }
             this.loading = true
             this.$socket.client.emit('createPlaylist', {
-                sid: localStorage.getItem('sid'),
-                access_token: localStorage.getItem('access_token'),
-                user_id: localStorage.getItem('user_id'),
+                sid: this.$store.getters.getSid,
+                access_token: this.$store.getters.getAccessToken,
+                user_id: this.$store.getters.getUsername,
                 name: this.newPlaylistName.length > 0 ? this.newPlaylistName : `Soundcheck - ${this.code}`,
                 tracksForPlaylist: tracksToSend,
             });
@@ -324,5 +337,10 @@ input {
     border-top: 1px gray solid;
     border-bottom: 1px gray solid;
     margin:  0 2rem 0 2rem;
+}
+.close-button {
+    position: fixed;
+    top: 25px;
+    right: 1rem;
 }
 </style>

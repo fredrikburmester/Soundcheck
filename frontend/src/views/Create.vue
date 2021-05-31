@@ -67,7 +67,7 @@ export default {
     methods: {
         createRoom: function () {
             this.$socket.client.emit('createRoom', {
-                sid: localStorage.getItem('sid'),
+                sid: this.$store.getters.getSid,
                 time_range: this.time_range,
                 no_songs: this.no_songs,
             });

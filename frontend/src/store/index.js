@@ -9,8 +9,10 @@ export default createStore({
         time_range: 'short_term',
         tracksForPlaylist: [],
         nrOfTrackstoAdd: 0,
-        username: '',
-        loading: false
+        username: null,
+        loading: false,
+        accessToken: null,
+        sid: null,
     },
     mutations: {
         updateRoomCode(state, value) {
@@ -43,6 +45,17 @@ export default createStore({
         clearTracksForPlaylist(state){
             state.nrOfTrackstoAdd = 0;
             state.tracksForPlaylist = [];
+        },
+        clearCredentials(state) {
+            state.username = null
+            state.accessToken = null
+            state.sid = null
+            state.error = ''
+
+            localStorage.removeItem('access_token');
+            localStorage.removeItem('refresh_token');
+            localStorage.removeItem('user_id');
+            localStorage.removeItem('sid');
         }
     },
     actions: {
@@ -50,11 +63,23 @@ export default createStore({
     modules: {},
     getters: {
         getUsername(state) {
-            if(!state.username || state.username.length < 1) {
-                state.username = localStorage.getItem('user_id')
+            if(!state.username) {
+                state.username = localStorage.getItem('user_id');
             }
             return state.username
         },
-        getLoadingStatus: state => state.loading
+        getAccessToken(state){
+            if(!state.accessToken){
+                state.accessToken = localStorage.getItem('access_token');
+            }
+            return state.accessToken;
+        },
+        getSid(state){
+            if(!state.sid){
+                state.sid = localStorage.getItem('sid');
+            }
+            return state.sid;
+        },
+        getLoadingStatus: state => state.loading,
     }
 });

@@ -100,17 +100,9 @@
                         @click="sendNextQuestion"
                     />
                 </div>
-                <div
-                    class="close-button"
-                    @click="toggleModal"
-                >
-                    <div
-                        id="line1"
-                        class="line"
-                    />
-                    <div
-                        id="line2"
-                        class="line"
+                <div class="close-button">
+                    <CloseButton 
+                        @click="toggleModal"
                     />
                 </div>
             </div>
@@ -192,6 +184,7 @@
 import PlayerAvatar from '../components/PlayerAvatar';
 import Button from '../components/Button';
 import ProgressBar from '../components/ProgressBar';
+import CloseButton from '../components/CloseButton';
 import { nextTick } from 'vue'
 
 const QRCode = require('qrcode');
@@ -203,6 +196,7 @@ export default {
         PlayerAvatar,
         Button,
         ProgressBar,
+        CloseButton,
     },
     data: function () {
         return {
@@ -375,11 +369,11 @@ export default {
             this.clipboardtext = 'copied!';
         },
         connectToRoom() {
-            var access_token = localStorage.getItem('access_token');
+            var access_token = this.$store.getters.getAccessToken;
             var refresh_token = localStorage.getItem('refresh_token');
             this.$socket.client.emit('connect_to_room', {
                 code: this.code,
-                sid: localStorage.getItem('sid'),
+                sid: this.$store.getters.getSid,
                 access_token: access_token,
                 refresh_token: refresh_token,
             });
@@ -396,7 +390,7 @@ export default {
         isHost() {
             var self = this;
             this.players.forEach((player) => {
-                if (player.sid == localStorage.getItem('sid')) {
+                if (player.sid == this.$store.getters.getSid) {
                     if (player.host == true) {
                         self.host = true;
                     }
@@ -419,7 +413,7 @@ export default {
 
             this.my_guess = player.sid;
             this.$socket.client.emit('player_guess', {
-                sid: localStorage.getItem('sid'),
+                sid: this.$store.getters.getSid,
                 code: this.code,
                 guess: this.my_guess,
             });
@@ -439,13 +433,13 @@ export default {
         leaveRoom() {
             this.$socket.client.emit('leave_room', {
                 code: this.code,
-                sid: localStorage.getItem('sid'),
+                sid: this.$store.getters.getSid,
             });
             this.$router.push('/');
         },
         getTopTrack() {
             var self = this;
-            var token = localStorage.getItem('access_token');
+            var token = this.$store.getters.getAccessToken;
 
             var time_range = this.settings[0];
             var no_songs = this.settings[1];
@@ -488,7 +482,7 @@ export default {
                                     }
                                     self.$socket.client.emit('toptrack', {
                                         trackid: trackid,
-                                        sid: localStorage.getItem('sid'),
+                                        sid: self.$store.getters.getSid,
                                         room: self.code,
                                     });
                                 }
@@ -502,7 +496,7 @@ export default {
                         }
                         self.$socket.client.emit('toptrack', {
                             trackid: trackid,
-                            sid: localStorage.getItem('sid'),
+                            sid: self.$store.getters.getSid,
                             room: self.code,
                         });
                     }
@@ -649,25 +643,13 @@ export default {
 }
 .close-button {
     position: fixed;
-    top: 35px;
+    top: 30px;
     right: 2rem;
-}
-.line {
-    background-color: red;
-    height: 3px;
-    width: 25px;
-    cursor: pointer;
 }
 .next-song {
     margin-top: 10px;
     margin-right: 2rem;
     margin-left: 2rem;
-}
-#line1 {
-    transform: translateY(3px) rotate(45deg);
-}
-#line2 {
-    transform: rotate(-45deg);
 }
 @media only screen and (min-width: 700px) {
     .bigQR > img {
