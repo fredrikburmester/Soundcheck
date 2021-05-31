@@ -1,3 +1,7 @@
+/* 
+Takes a placeholder text to display in the input field. Commits the value of the input to the parent. 
+*/
+
 <template>
     <div class="inner-container">
         <input

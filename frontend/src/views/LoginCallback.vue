@@ -1,3 +1,8 @@
+/* 
+After authenticating with Spotify, the client is directed to this page which saves the recieved token and request a 
+new spotify API token from our server.   
+ */
+
 <template>
     <Loader />
 </template>
@@ -10,6 +15,7 @@ export default {
         Loader
     },
     sockets: {
+        // get access_token from our server back. 
         access_token(data) {
             this.$store.commit('setAccessToken', data.access_token)
             this.$store.commit('setSid', data.sid)
@@ -28,6 +34,7 @@ export default {
         },
     },
     mounted() {
+        // Send spotify token to our server
         this.handleLoginCallback();
     },
     methods: {

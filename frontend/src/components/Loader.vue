@@ -1,3 +1,8 @@
+/* 
+Loading component, covers entire screen. Implemented in App.vue, enabled by changing the store loadingState to true. 
+Takes no arguments.
+*/
+
 <template>
     <div class="loader">
         <img

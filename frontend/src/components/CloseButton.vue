@@ -1,3 +1,7 @@
+/* 
+Simple close icon, no logic here.
+*/
+
 <template>
     <div>
         <div

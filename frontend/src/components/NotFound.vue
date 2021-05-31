@@ -1,3 +1,8 @@
+/* 
+404 page.
+Takes no arguments. 
+*/
+
 <template>
     <div class="page">
         <div class="text">

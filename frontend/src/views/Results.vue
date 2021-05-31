@@ -1,3 +1,8 @@
+/*
+Page for displaying the results of one game. A list of all users and their points are displayed. If a player is clicked, their personal guesses are 
+displayed in a modal. 
+ */
+
 <template>
     <div>
         <div v-if="state == 'found'">
@@ -148,6 +153,8 @@ export default {
         } else {
             url = `https://${process.env.VUE_APP_SERVER_URL}/api/${this.code}/results`;
         }
+
+        // When pressing a player for more information the data is loaded from the server:
         axios
             .get(url)
             .then(function (response) {
@@ -157,7 +164,7 @@ export default {
                 
                 self.date = self.getDateFromUnix(data.date)
 
-                // Convert answer ids to names
+                // Convert answer ids to names for display
                 for (let player of data.players) {
                     for (let guess of player.guesses) {
                         for (let player2 of data.players) {
@@ -170,7 +177,6 @@ export default {
                         }
                     }
                 }
-
                 self.players.forEach(player => {
                     var sid = player.sid
                     self.answers.forEach(answer => {
@@ -180,6 +186,7 @@ export default {
                     })
                 })
 
+                // sorting the players based on points
                 self.players.sort(function(a, b) {
                     var keyA = a.points,
                         keyB = b.points;
@@ -189,6 +196,7 @@ export default {
                     return 0;
                 });
 
+                // compile answers list for each player.
                 self.players.forEach(player => {
                     self.answers.forEach((answer, index) => {
                         var found = false

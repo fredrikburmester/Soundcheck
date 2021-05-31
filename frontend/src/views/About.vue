@@ -1,3 +1,7 @@
+/*
+About page.
+ */
+
 <template>
     <div class="aboutPage">
         <h1>About Soundcheck</h1>

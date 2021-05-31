@@ -1,3 +1,7 @@
+/* 
+Takes a link, text and color as props, returns a button component to the dom.  
+*/
+
 <template>
     <div
         :style="colorStyles"

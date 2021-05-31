@@ -1,3 +1,7 @@
+/*
+Page for joining a room by entering a room code. 
+ */
+
 <template>
     <div class="join">
         <h1>Enter room code...</h1>
@@ -45,6 +49,7 @@ export default {
         };
     },
     sockets: {
+        // If the room exists the person is pushed to the room url. Otherwise an error message is displayed.
         isRoom(data) {
             if (data.isRoom == 'true' || data.isRoom == true) {
                 this.$router.push(this.code);
@@ -60,6 +65,7 @@ export default {
         },
     },
     methods: {
+        // Before joining, the client checks with the server if the room exists. 
         isRoom: function () {
             this.$socket.client.emit('isRoom', { code: this.code });
         },

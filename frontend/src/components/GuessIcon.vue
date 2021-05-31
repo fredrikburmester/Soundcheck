@@ -1,3 +1,9 @@
+/* 
+Component that displays a persons guess in the game on the results page. 
+Takes the trackid, guess and answer as props. 
+Gathers album art, track and artist name from spotify API here.
+*/
+
 <template>
     <div>
         <div class="song">

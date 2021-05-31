@@ -1,3 +1,7 @@
+/* 
+Takes a list with key-value pairs for creating a html select with our design. 
+*/
+
 <template>
     <div>
         <select v-model="selectedValue" class="select" @change="emitValueToParent">

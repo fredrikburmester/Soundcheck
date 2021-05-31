@@ -1,3 +1,6 @@
+/*
+Page for saving game tracks to a user playlist in spotify. 
+ */
 <template>
     <div>
         <transition name="fade" mode="out-in">
@@ -129,6 +132,7 @@ export default {
         };
     },
     sockets: {
+        // If the playlist has been created close modals
         playlistCreated() {
             this.loading = false
             this.existingPlaylist = false
@@ -153,6 +157,8 @@ export default {
         var token = this.$store.getters.getAccessToken;
         var user_id = this.$store.getters.getUserId;
         var self = this;
+
+        // gather user playlists from spotify api
         axios
             .get(
                 `https://api.spotify.com/v1/users/${user_id}/playlists`,
@@ -174,9 +180,6 @@ export default {
             });
     },
     methods:{
-        test(){
-            console.log("hej")
-        },
         goBack(){
             this.$router.push(`/${this.code}/results`);
         },
@@ -200,6 +203,7 @@ export default {
             this.existingPlaylist = false;
             this.newPlaylist = false;
         },
+        // add the tracks to an existing playlist of user choice
         addTracksExisting(){
             let tracksToSend = [];
             for(let track of this.tracks){
@@ -217,6 +221,7 @@ export default {
             });
 
         },
+        // add tracks to a new playlist with a name defined by the user
         addTracksNew(){
             let tracksToSend = [];
             for(let track of this.tracks){

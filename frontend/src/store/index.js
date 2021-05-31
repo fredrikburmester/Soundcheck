@@ -37,13 +37,13 @@ export default createStore({
         updateError(state, value) {
             state.error = value;
         },
+        //used to mark which tracks a user wants to save to a playlist
         addTrack(state, value){
             if(!state.tracksForPlaylist.includes(value)){
                 state.tracksForPlaylist.push([value, true]);
                 state.nrOfTrackstoAdd +=1;
             }
         },
-        //used to mark which tracks a user wants to save to a playlist
         updateTracksForPlaylist(state, value){
             if(state.tracksForPlaylist[value][1]){
                 state.tracksForPlaylist[value][1] = false;

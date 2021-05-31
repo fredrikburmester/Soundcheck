@@ -1,3 +1,7 @@
+/*
+This is the main container for the app. A global loader based on the store value 'loading' is implemented here, kept updated by the watch function. 
+ */
+
 <template>
     <transition name="fade" mode="out-in">
         <Loader v-if="loading" />

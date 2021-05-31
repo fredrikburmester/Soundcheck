@@ -1,3 +1,7 @@
+/*
+Home page with options for creating or joining a room and logging out. 
+ */
+
 <template>
     <div class="home">
         <div class="content">
@@ -20,15 +24,13 @@
             />
 
             <div v-if="error" class="errorpopup">
-                <div  class="noTopTrack"/>           
+                <div class="noTopTrack" />           
                 <div class="modal-view">
-                        <span class="close" @click="close()">&times;</span>
-                        <h3>Error!</h3>
-                        <p>No top tracks found</p>   
+                    <span class="close" @click="close()">&times;</span>
+                    <h3>Error!</h3>
+                    <p>No top tracks found</p>   
                 </div>
             </div>
-            
-            <p>{{ name }}</p>
             <div class="button-container">
                 <div class="logout">
                     <Button
@@ -45,7 +47,6 @@
 </template>
 
 <script>
-const axios = require('axios');
 import Button from '../components/Button';
 import logo from '../assets/soundcheck.png'
 
@@ -56,31 +57,16 @@ export default {
     },
     data: function () {
         return {
-            name: '',
             logo: logo,
             error: this.$store.state.noTracksFound
         };
     },
     methods: {
-        getUserData: function () {
-            var self = this;
-            var token = this.$store.getters.getAccessToken;
-            axios
-                .get('https://api.spotify.com/v1/me', {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                        Accept: 'application/json',
-                        'Content-Type': 'application/json',
-                    },
-                })
-                .then(function (response) {
-                    self.name = response.data.display_name;
-                });
-        },
         logout: function () {
             this.$store.commit('clearCredentials')
             this.$router.push('/login');
         },
+        // closes the "player has no tracks" modal
         close(){
             this.error = false
             self.$store.commit(

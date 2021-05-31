@@ -1,3 +1,7 @@
+/*
+Collection of functions for interacting with our API. 
+ */
+
 import axios from 'axios'
 import store from '../store';
 
@@ -13,6 +17,7 @@ if (
 }
 
 export default {
+    // Used for getting all information about a room results.
     async getRoomResults(code) {
         axios
             .get(`${url}/${code}/results`)
@@ -23,6 +28,7 @@ export default {
                 return err
             });
     },
+    // Used for getting all played games codes for a specific player
     async getPersonalResults(username) {
         var result = null
         await axios
@@ -35,6 +41,7 @@ export default {
             });
         return result
     },
+    // Gets the album art from spotify API. 
     async getAlbumArt(uri) {
         var token = store.getters.getAccessToken;
         var result = ''

@@ -1,3 +1,7 @@
+/*
+View for creating a game room. This view have settings that are sent to the server, returned from the server is the game room code. 
+ */
+
 <template>
     <div class="create">
         <h1 class="head">
@@ -36,18 +40,15 @@
 <script>
 import Button from '../components/Button';
 import Select from '../components/Select';
-// import SettingsButton from '../components/SettingsButton';
-//import ToggleSwitch from '../components/ToggleSwitch';
 
 export default {
     name: 'Create',
     components: {
         Button,
         Select,
-        // SettingsButton,
-        // ToggleSwitch,
     },
     sockets: {
+        // When the server has created the room, the client is pushed to the url by this function. 
         roomCode(data) {
             this.$router.push(data.code);
         },
@@ -55,7 +56,8 @@ export default {
     data() {
         return {
             no_songs: 1,
-            time_range: 'short_term',
+            time_range: 'short_term', 
+            // Time rages are specific to the spotify API and not chosen by us. 
             timeRanges: [
                 {value: '4 weeks', key: 'short_term'},
                 {value: '6 months', key: 'medium_term'},
@@ -65,6 +67,7 @@ export default {
         };
     },
     methods: {
+        // After setting all settings, they are sent to the server. 
         createRoom: function () {
             this.$socket.client.emit('createRoom', {
                 sid: this.$store.getters.getSid,

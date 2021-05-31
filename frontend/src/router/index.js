@@ -16,6 +16,7 @@ import API from '../libs/api'
 
 const axios = require('axios');
 
+// Check the accesstoken and return false if there is none or if it's expired.
 async function checkAccessToken(to, from, next) {
     var check = false
     if (store.getters.getAccessToken) {
@@ -193,6 +194,8 @@ const router = createRouter({
     routes,
 });
 
+// Used to enable loading between each route. This function waites for beforeEnter function to make sure credentials
+// have been checked and information has been gathered. 
 router.beforeEach((to, from, next) => {
     store.commit('updateLoading', true)
     next()

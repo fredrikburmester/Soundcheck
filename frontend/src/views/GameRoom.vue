@@ -1,3 +1,7 @@
+/*
+This view containes the entire game. There are 2 stages, a room lobby/waiting room, and the game itself. 
+ */
+
 <template>
     <div
         v-if="found"
@@ -219,30 +223,36 @@ export default {
             players_guessed: [],
         };
     },
+    // All functions under the "sockets" are websockets from the sever and the functions are 
+    // automatically run when the client recieves the corresponding socket function call. 
     sockets: {
+        // The server responds to the request to join the room. Depending on the state of the game, the client is updated with
+        // all relevant information about the game like: 
         connectToRoom({
-            status,
-            access,
-            question,
-            settings,
-            answers,
-            questionTimeStarted,
-            players_guessed,
+            status, // Has the game started? 
+            access, // Does the client have access to the game is progress? (used for rejoining active game)
+            question, // What is the current question? 
+            settings, // What are the game settings? 
+            answers, // What are the answers to the questions? (encoded)
+            questionTimeStarted, // How long has it been since the last question started? Used in progressbar.
+            players_guessed, // How many players have guessed on a question? 
         }) {
-            console.log({
-                status,
-                access,
-                question,
-                settings,
-                answers,
-                questionTimeStarted,
-            });
+            // console.log({
+            //     status,
+            //     access,
+            //     question,
+            //     settings,
+            //     answers,
+            //     questionTimeStarted,
+            // });
+            // The game has not started and the client should be put in the lobby
             if (status == 'lobby') {
                 // join lobby
                 this.generateQR();
                 this.settings = settings;
                 this.getTopTrack();
                 this.found = true;
+            // If the game has started the player can either rejoin or is redirected if not in the game. 
             } else if (status == 'playing') {
                 if (access == true) {
                     // enter room
@@ -275,9 +285,11 @@ export default {
                     // go to join
                     this.$router.push('/join');
                 }
+            // If the game has ended the client is pushed to the results page. 
             } else if (status == 'ended') {
                 // game has ended
                 this.$router.push(`/${this.code}/results`);
+            // If the room for some reason does not exist the client is sent to the join page with a error code. 
             } else if (status == 'NaR') {
                 // Room does not exist
                 // set error
@@ -286,19 +298,23 @@ export default {
                 this.$router.push('/join');
             }
         },
+        // Updating the list of current players each time a player joines or leaves. 
         update_list_of_players({ players }) {
             this.players = players;
             this.isHost();
         },
+        // Used if the host closes the room. 
         room_closed_by_host() {
             this.started = false;
             this.status = 'Host ended the game...';
             this.players = [];
             this.$store.commit('clearPlayersGuessed');
         },
+        // Updates the number of players that have guess on a question
         nr_of_players_guessed(data) {
             this.players_guessed = data.players; // set the array of players who have guessed
         },
+        // Updates the current question if the host goes to the next question
         next_question(data) {
             // Set the current question and reset the progressbar
             this.current_question = data.current_question;
@@ -314,10 +330,6 @@ export default {
 
             // Reset number of players guessed
             this.players_guessed = [];
-        },
-        game_ended() {
-            // this.loading = true;
-            // this.$router.push(`/${this.code}/results`);
         },
         start_game(data) {
             this.nr_of_questions = data.nr_of_questions;
@@ -358,9 +370,11 @@ export default {
         },
     },
     mounted: function () {
+        // Function called when the dom has loaded. 
         this.connectToRoom();
     },
     methods: {
+        // toggles the leave room modal 
         toggleModal() {
             this.leaveRoomModal = !this.leaveRoomModal;
         },
@@ -368,6 +382,7 @@ export default {
             await navigator.clipboard.writeText(window.location.href);
             this.clipboardtext = 'copied!';
         },
+        // When the page has loaded the client requests to join the room by sending a websocket to the server with credentials, room code and personal information. 
         connectToRoom() {
             var access_token = this.$store.getters.getAccessToken;
             var refresh_token = null;
@@ -401,12 +416,14 @@ export default {
             this.$socket.client.emit('start_game', { code: this.code });
             this.sendNextQuestion();
         },
+        // notifies the server to advance to the next question 
         sendNextQuestion() {
             // Send next question
             this.$socket.client.emit('next_question', {
                 code: this.code,
             });
         },
+        // when guessing, the guess is sent to the server.
         async guess(player) {
             var pos = document.getElementById('active-list')
             var pos = pos.scrollTop
@@ -437,6 +454,7 @@ export default {
             });
             this.$router.push('/');
         },
+        // gets the top track for the user when joining the room. These are then sent to the server. 
         getTopTrack() {
             var self = this;
             var token = this.$store.getters.getAccessToken;

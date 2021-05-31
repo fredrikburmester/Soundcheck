@@ -1,3 +1,9 @@
+/* 
+Component for displaying a previous game icon. 
+Takes the game code, date and a trackuri as arguments. 
+Gathers information about the game from our API. 
+*/
+
 <template>
     <div v-if="loaded" class="roomIcon">
         <div class="image">

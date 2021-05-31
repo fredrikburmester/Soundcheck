@@ -7,6 +7,7 @@ import store from './store';
 var io = require('socket.io-client');
 var socket;
 
+// Depending on if the server is running in production of development we assign different node process variables. 
 if (process.env.NODE_ENV == 'development' || process.env.NODE_ENV == 'dev') {
     console.log('Running in development mode');
     socket = io('http://localhost:5000');

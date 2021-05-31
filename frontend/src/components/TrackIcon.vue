@@ -1,3 +1,8 @@
+/*
+Used to display a simple icon, showing the album art, track name and artist name.
+Implemented in create playlist.
+ */
+
 <template>
     <div>
         <div class="song">

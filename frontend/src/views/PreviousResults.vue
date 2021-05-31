@@ -1,3 +1,7 @@
+/*
+Displays a list of previous games for one user. 
+ */
+
 <template>
     <div v-if="!loading">
         <div class="grid" :style="resultGridStyle">
@@ -32,6 +36,7 @@ export default {
         PreviousResultIcon,
         Button,
     },
+    // before entering the route the previous games are loaded from the server. loading time is added here as well for design puposes. 
     beforeRouteEnter (to, from, next) {
         API.getPersonalResults(store.getters.getUserId).then((result) => {
             setTimeout(()=> {

@@ -1,3 +1,10 @@
+/* 
+Player avatar implemented in the game waiting room. Displays if the person is host or not and the name of the player. 
+Takes player name, color, and host and selected as arguments. 
+
+Component also implemented as guessing icon when game has started. Hence the selected prop.
+*/
+
 <template>
     <div class="playerAvatar">
         <div>

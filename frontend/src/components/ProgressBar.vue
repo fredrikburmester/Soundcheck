@@ -1,3 +1,10 @@
+/* 
+Dynamic progressbar, active during each game round. 
+Takes the progress time as argument. 
+
+Currently not implemented in game functionality except design. 
+*/
+
 <template>
     <div id="container" />
 </template>
