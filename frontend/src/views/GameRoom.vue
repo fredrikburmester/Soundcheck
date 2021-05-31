@@ -469,7 +469,7 @@ export default {
                     }
                 )
                 .then(function (response) {
-                    if (response.data.items.length == 0) {
+                    if (response.data.items.length < no_songs) {
                         axios
                             .get(
                                 `https://api.spotify.com/v1/me/top/tracks?time_range=long_term&limit=${no_songs}`,
@@ -482,7 +482,11 @@ export default {
                                 }
                             )
                             .then(function (response) {
-                                if (response.data.items.length == 0) {
+                                if (response.data.items.length < no_songs) {
+                                    self.$store.commit(
+                                        'updateNoTracks',
+                                        true
+                                    );
                                     self.leaveRoom();
                                 } else {
                                     var trackid = [];
