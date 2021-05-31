@@ -14,15 +14,18 @@ import PreviousResults from '../views/PreviousResults.vue'
 
 const axios = require('axios');
 
-function checkAccessToken(to, from, next) {
+import store from '../store/index'
+import API from '../libs/api'
+
+async function checkAccessToken(to, from, next) {
+    var check = false
     if (localStorage.getItem('access_token')) {
         var token = localStorage.getItem('access_token');
     } else {
-        next({ name: 'Login' });
-        return;
+        return false;
     }
 
-    axios
+    await axios
         .get('https://api.spotify.com/v1/me', {
             headers: {
                 Authorization: `Bearer ${token}`,
@@ -34,19 +37,18 @@ function checkAccessToken(to, from, next) {
             if(!localStorage.getItem('user_id', response.data.id)) {
                 localStorage.setItem('user_id', response.data.id);
             }
-            
-            next();
-            return;
+            console.log("[1]")
+            check = true;
         })
         .catch(function () {
             localStorage.removeItem('access_token');
             localStorage.removeItem('refresh_token');
             localStorage.removeItem('user_id');
-            next({ name: 'Login' });
-            return;
+            console.log("[2]")
+            check = false;
         });
 
-    return;
+    return check;
 }
 
 const routes = [
@@ -55,7 +57,11 @@ const routes = [
         name: 'Home',
         component: Home,
         beforeEnter: (to, from, next) => {
-            checkAccessToken(to, from, next);
+            if(!checkAccessToken()) {
+                next({ name: 'Login' });
+            } else {
+                next()
+            }
         },
     },
     {
@@ -87,7 +93,11 @@ const routes = [
         name: 'Join',
         component: Join,
         beforeEnter: (to, from, next) => {
-            checkAccessToken(to, from, next);
+            if(!checkAccessToken()) {
+                next({ name: 'Login' });
+            } else {
+                next()
+            }
         },
     },
     {
@@ -95,7 +105,11 @@ const routes = [
         name: 'Create',
         component: Create,
         beforeEnter: (to, from, next) => {
-            checkAccessToken(to, from, next);
+            if(!checkAccessToken()) {
+                next({ name: 'Login' });
+            } else {
+                next()
+            }
         },
     },
     {
@@ -103,7 +117,11 @@ const routes = [
         name: 'PreviousResults',
         component: PreviousResults,
         beforeEnter: (to, from, next) => {
-            checkAccessToken(to, from, next);
+            if(!checkAccessToken()) {
+                next({ name: 'Login' });
+            } else {
+                next()
+            }
         },
     },
     {
@@ -111,7 +129,11 @@ const routes = [
         name: 'Results',
         component: Results,
         beforeEnter: (to, from, next) => {
-            checkAccessToken(to, from, next);
+            if(!checkAccessToken()) {
+                next({ name: 'Login' });
+            } else {
+                next()
+            }
         },
     },
     {
@@ -161,7 +183,11 @@ const routes = [
         name: 'Playlist',
         component: Playlist,
         beforeEnter: (to, from, next) => {
-            checkAccessToken(to, from, next);
+            if(!checkAccessToken()) {
+                next({ name: 'Login' });
+            } else {
+                next()
+            }
         },
     },
 ];
@@ -170,5 +196,13 @@ const router = createRouter({
     history: createWebHistory(process.env.BASE_URL),
     routes,
 });
+
+router.beforeEach((to, from, next) => {
+    store.commit('updateLoading', true)
+    next()
+})
+router.afterEach(() => {
+    store.commit('updateLoading', false)
+})
 
 export default router;

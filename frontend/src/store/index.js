@@ -9,11 +9,15 @@ export default createStore({
         time_range: 'short_term',
         tracksForPlaylist: [],
         nrOfTrackstoAdd: 0,
-        username: ''
+        username: '',
+        loading: false
     },
     mutations: {
         updateRoomCode(state, value) {
             state.roomCode = value.toUpperCase();
+        },
+        updateLoading(state, value) {
+            state.loading = value;
         },
         updateError(state, value) {
             state.error = value;
@@ -50,6 +54,7 @@ export default createStore({
                 state.username = localStorage.getItem('user_id')
             }
             return state.username
-        }
+        },
+        getLoadingStatus: state => state.loading
     }
 });

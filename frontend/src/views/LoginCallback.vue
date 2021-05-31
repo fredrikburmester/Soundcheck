@@ -1,10 +1,14 @@
 <template>
-    <div>Nothing to see here</div>
+    <Loader />
 </template>
 
 <script>
+import Loader from '../components/Loader'
 export default {
     name: 'LoginCallback',
+    components: {
+        Loader
+    },
     sockets: {
         access_token(data) {
             localStorage.setItem('access_token', data.access_token);

@@ -1,30 +1,23 @@
 <template>
-    <div>
-        <transition name="fade" mode="out-in">
-            <div v-if="!loaded">
-                <Loader />
+    <div v-if="!loading">
+        <div class="grid" :style="resultGridStyle">
+            <div>
+                <h1 class="title">
+                    Previous Games
+                </h1>
+                <p class="username">
+                    {{ username }}
+                </p>
             </div>
-        </transition>
-        <transition name="fade" mode="out-in">
-            <div class="grid" :style="resultGridStyle">
-                <div>
-                    <h1 class="title">
-                        Previous Games
-                    </h1>
-                    <p class="username">
-                        {{ username }}
-                    </p>
-                </div>
-                <div class="list">
-                    <div v-for="result in results" :key="result" style="height: 80px;" @click="goTo(result.code)">
-                        <PreviousResultIcon :code="result.code" :date="getDateStringFromUnix(result.date)" :uri="result.answers[0].info" />
-                    </div>
-                </div>
-                <div class="buttons">
-                    <Button button-text="back" @click="goBack()" />
+            <div class="list">
+                <div v-for="result in results" :key="result" style="height: 80px;" @click="goTo(result.code)">
+                    <PreviousResultIcon :code="result.code" :date="getDateStringFromUnix(result.date)" :uri="result.answers[0].info" />
                 </div>
             </div>
-        </transition>
+            <div class="buttons">
+                <Button button-text="back" @click="goBack()" />
+            </div>
+        </div>
     </div>
 </template>
 
@@ -32,19 +25,24 @@
 import API from '../libs/api.js'
 import PreviousResultIcon from '../components/PreviousResultIcon'
 import Button from '../components/Button'
-import Loader from '../components/Loader'
+import store from '../store/index'
 
 export default {
     components: {
         PreviousResultIcon,
         Button,
-        Loader
+    },
+    beforeRouteEnter (to, from, next) {
+        API.getPersonalResults(store.getters.getUsername).then((result) => {
+            setTimeout(()=> {
+                next(self => self.results = result.data.results)
+            },600)
+        })
     },
     data() {
         return {
             results: [],
-            loaded: false,
-            username: this.$store.getters.getUsername
+            username: this.$store.getters.getUsername,
         }
     },
     computed: {
@@ -52,23 +50,9 @@ export default {
             return {
                 'height': `${window.innerHeight}px`,
             }
-        },
-    },
-    mounted() {
-        this.getResults()
+        }
     },
     methods: {
-        async getResults() {
-            try {
-                const result = await API.getPersonalResults(this.$store.getters.getUsername)
-                this.results = result.data.results
-            } catch {
-                console.log("No songs")
-            } finally {
-                var self = this
-                setTimeout(function(){ self.loaded = true; }, 600);
-            }
-        },
         getDateStringFromUnix(unix) {
             var date = new Date(unix * 1000);
             var date_string = date.toLocaleDateString('se');
@@ -92,16 +76,7 @@ export default {
 </script>
 
 <style scoped>
-.fade-enter-active, .fade-leave-active {
-  transition: opacity .5s ease;
-  -webkit-transition: opacity .5s ease;
-  -moz-transition: opacity .5s ease;
-  -o-transition: opacity .5s ease;
-}
 
-.fade-enter-from, .fade-leave-to {
-  opacity: 0;
-}
 .grid {
     display: grid;
     grid-template-rows: 100px auto 100px;

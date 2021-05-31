@@ -6,12 +6,6 @@
         class="gameroom"
     >
         <div
-            v-if="loading"
-            class="loading"
-        >
-            <p>Loading...</p>
-        </div>
-        <div
             v-if="showQR"
             class="bigQR"
             @click="showQR = false"
@@ -225,7 +219,6 @@ export default {
             showQR: false,
             found: false,
             host: false,
-            loading: false,
             leaveRoomModal: false,
             players: [],
             progressbarTime: 0,
@@ -319,7 +312,7 @@ export default {
 
             // If the current question is -1 then the game is ending and we show a loading screen and await the "game_ended" socket
             if (data.current_question == '-1') {
-                this.loading = true;
+                // this.loading = true;
             } else {
                 this.setIframeUrl(data.trackid); // Set the song in the iframe
                 this.my_guess = ''; // Reset the guess
@@ -329,7 +322,7 @@ export default {
             this.players_guessed = [];
         },
         game_ended() {
-            this.loading = true;
+            // this.loading = true;
             // this.$router.push(`/${this.code}/results`);
         },
         start_game(data) {
@@ -632,7 +625,7 @@ export default {
     left: 50%;
     transform: translateX(-50%);
 }
-.loading {
+/* .loading {
     position: fixed;
     top: 0;
     left: 0;
@@ -642,7 +635,7 @@ export default {
     display: grid;
     place-items: center;
     z-index: 2;
-}
+} */
 .leaveroom-modal {
     display: grid;
     place-items: center;
