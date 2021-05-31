@@ -1,3 +1,7 @@
+# ---------
+# This file contains API endpoints, sockets that handle communication with frontend, and database logic
+# ---------
+
 import os
 from flask import Flask
 from flask_socketio import join_room, leave_room, close_room
@@ -84,6 +88,7 @@ ROOMS = []
 PLAYERS = []
 
 COLOR_COUNTER = 0
+# Used for player icons
 COLORS = [
     '#FF8360',
     '#E8E288',
@@ -94,7 +99,10 @@ COLORS = [
     '#B5838D'
 ]
 
-##################
+################## API Endpoints ##################
+
+# Personal results endpoint. Searches DB for any rooms containing the user and returns game statistics.
+
 
 @app.route('/api/me/<username>/results', methods=['GET'])
 def personal_results(username):
@@ -114,6 +122,9 @@ def personal_results(username):
     return Response(status=200, headers={
         "Access-Control-Allow-Origin": "*"
     })
+
+# Room results endpoint. Searches DB for room that matches code, and returns game statistics.
+
 
 @app.route('/api/<code>/results', methods=['GET'])
 def results(code):
@@ -137,14 +148,19 @@ def results(code):
     return Response(status=404, headers={
         "Access-Control-Allow-Origin": "*"
     })
+#############################################
 
 
+################## SOCKETS ##################
 
+# Generate access_token from the spotify authentication token
 @socketio.on('generate_access_token')
 def check_token(data):
     access_token, refresh_token = generate_access_token(data['code'])
     socketio.emit("access_token", {'access_token': access_token, 'refresh_token': refresh_token, 'sid': request.sid},
                   to=request.sid)
+
+# Checks if room exists with specific code
 
 
 @socketio.on('isRoom')
@@ -158,7 +174,7 @@ def isRoom(data):
     socketio.emit('isRoom', {'isRoom': 'false'}, to=request.sid)
     return
 
-# Used to calculate show how many players have guessed
+# When the user makes a guess on the client side, it emits a websocket that is recieved here, and the logic is handled.
 
 
 @socketio.on('player_guess')
@@ -193,6 +209,8 @@ def player_guess(data):
                     }, room=code)
                     return
 
+# Here are the scores calculated, for each right answer you get 10 points.
+
 
 def compile_results(code):
     global ROOMS
@@ -216,6 +234,7 @@ def compile_results(code):
                     'guesses': player.guesses,
                     'sid': player.sid
                 })
+                # Adds the result to the database.
             db.table('Rooms').insert({
                 "code": code,
                 "questions": Room.questions,
@@ -228,6 +247,8 @@ def compile_results(code):
             })
 
             return
+
+# Handles the backend logic when a user enters a room.
 
 
 @socketio.on('connect_to_room')
@@ -323,6 +344,8 @@ def connect_to_room(data):
     }, to=request.sid)
     return
 
+# Creates a list of all players in a room and sends it to the client.
+
 
 def send_list_of_players(code):
     global ROOMS
@@ -346,10 +369,12 @@ def send_list_of_players(code):
         'players': list_of_players,
     }, room=code)
 
+# When the host proceeds to the next question on the frontend, it sends a websocket that is recieved here.
+
 
 @socketio.on('next_question')
 def next_question(data):
-    code = data['code']
+    code = data['code']  # Specifying the room code.
 
     global ROOMS
     for Room in ROOMS:
@@ -385,6 +410,8 @@ def next_question(data):
                     'questionTimeStarted':  Room.questionTimeStarted
                 }, room=code)
                 return
+
+# Used to start the game. Sends out a socket to all players in the room that the game is starting.
 
 
 @socketio.on('start_game')
@@ -433,6 +460,8 @@ def get_top_track(data):
                         'info': trackid[0][x],
                     })
 
+# Deleting and closing the room on host close room
+
 
 def close_socket_room(code):
     for Room in ROOMS:
@@ -442,6 +471,9 @@ def close_socket_room(code):
 
             close_room(code)
             print(f"[Server] Deleting room {code}")
+
+# Removes a player from the Room object if the player decides to leave the room
+# Also sends a updated list of all players to the users in the room.
 
 
 @socketio.on('leave_room')
@@ -483,6 +515,9 @@ def remove_player_from_room(data):
                                   'players': list_of_players}, room=code)
                     return
 
+# Creating a Room object to store all room information in and sends the code of the room to the host client requesting
+# to create the room
+
 
 @socketio.on('createRoom')
 def createRoom(data):
@@ -514,9 +549,12 @@ def createRoom(data):
 
     socketio.emit('roomCode', {'code': code}, to=request.sid)
 
+# Called from /playlist route on frontend. Generates a new playlist with tracks chosen by the user.
+
 
 @socketio.on('createPlaylist')
 def createPlaylist(data):
+    # create playlist on users account
     req = requests.post(
         url=f"https://api.spotify.com/v1/users/{data['user_id']}/playlists",
         headers={
@@ -527,14 +565,17 @@ def createPlaylist(data):
         json={
             "name": f"{data['name']}"
         })
+    # Store the new playlist ID that gets created by request above
     playlist_id = req.json()['id']
     trackList = ""
+
+    # Collect tracks which user wants to save. Format them into a string which Spotify API will accept.
     for i in data['tracksForPlaylist']:
-        print(i)
         trackList = trackList + "spotify:track:" + i + ","
 
     trackList = trackList[:-1]
 
+    # Add tracks to the new playlist and emit to the client
     req2 = requests.post(
         url=f"https://api.spotify.com/v1/playlists/{playlist_id}/tracks?uris={trackList}",
         headers={
@@ -545,15 +586,21 @@ def createPlaylist(data):
     print("playlist created")
     socketio.emit('playlistCreated', to=request.sid)
 
+# Add tracks to existing playlist
+
+
 @socketio.on('addToPlaylist')
 def addToPlaylist(data):
+    # playlist ID user wants to add the tracks to.
     playlist_id = data['playlist_id']
     trackList = ""
+    # format (same as function above)
     for i in data['tracksForPlaylist']:
         trackList = trackList + "spotify:track:" + i + ","
 
     trackList = trackList[:-1]
 
+    # add tracks and emit to client
     req = requests.post(
         url=f"https://api.spotify.com/v1/playlists/{playlist_id}/tracks?uris={trackList}",
         headers={
@@ -563,6 +610,12 @@ def addToPlaylist(data):
         })
     print("playlist created")
     socketio.emit('playlistCreated', to=request.sid)
+#############################################
+
+################## Regular functions ##################
+
+# Generates a access_token based on the token from the spotify authentication logincallback
+
 
 def generate_access_token(code):
     global CLIENT_ID
@@ -602,6 +655,8 @@ def generate_access_token(code):
         refresh_token = response['refresh_token']
         return access_token, refresh_token
 
+# Generates a color for a player
+
 
 def getColor():
     global COLORS
@@ -615,6 +670,8 @@ def getColor():
 
     return color
 
+# Generates a random room code and checks that the code is unique
+
 
 def generateId():
     letters = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"
@@ -623,7 +680,7 @@ def generateId():
         code += letters[random.randint(0, 31)]
 
     # Check for bad words and make sure the room doesn't already exist
-    if code in ['NGGR', 'FUCK', 'SHIT', 'CUNT', 'DICK', 'NSFW', 'BICH', 'HORE', 'HORA', 'KUKA', '6969', '6666', '8008']:
+    if code in ['NGGR', 'NIGR', 'FACK', 'FUCK', 'SHIT', 'CUNT', 'DICK', 'NSFW', 'BICH', 'HORE', 'HORA', 'KUKA', '6969', '6666', '8008', 'BOOB', 'DWRF', 'MILF', 'WEED']:
         code = generateId()
 
     table_Rooms = db.table("Rooms")
@@ -632,14 +689,10 @@ def generateId():
         print(f"[Server] Room code {code} in use, creating new")
         code = generateId()
 
-    # global ROOMS
-    # for Room in ROOMS:
-    #     if Room.code == code:
-    #         code = generateId()
-
     return code
 
 
+# Run the server in either dev or prod
 if __name__ == '__main__':
     if ENV == 'production' or 'prod':
         socketio.run(app, host='0.0.0.0', port=5000)
