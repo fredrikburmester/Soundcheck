@@ -33,17 +33,15 @@ async function checkAccessToken(to, from, next) {
             },
         })
         .then(function (response) {
-            if(!localStorage.getItem('user_id', response.data.id)) {
-                localStorage.setItem('user_id', response.data.id);
+            if(!store.getters.getUserId) {
+                // localStorage.setItem('user_id', response.data.id);
+                store.commit('setUserId', response.data.id)
             }
-            console.log("[1]")
             check = true;
         })
-        .catch(function () {
-            localStorage.removeItem('access_token');
-            localStorage.removeItem('refresh_token');
-            localStorage.removeItem('user_id');
-            console.log("[2]")
+        .catch(function (err) {
+            console.log("Login error: ", err)
+            store.commit('clearCredentials')
             check = false;
         });
 
@@ -164,8 +162,7 @@ const routes = [
                     return;
                 })
                 .catch(function () {
-                    localStorage.removeItem('access_token');
-                    localStorage.removeItem('refresh_token');
+                    store.commit('clearCredentials')
                     localStorage.setItem('toRoom', code);
                     next({ name: 'Login' });
                     return;

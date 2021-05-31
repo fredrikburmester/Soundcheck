@@ -370,7 +370,7 @@ export default {
         },
         connectToRoom() {
             var access_token = this.$store.getters.getAccessToken;
-            var refresh_token = localStorage.getItem('refresh_token');
+            var refresh_token = null;
             this.$socket.client.emit('connect_to_room', {
                 code: this.code,
                 sid: this.$store.getters.getSid,

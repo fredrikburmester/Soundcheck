@@ -10,12 +10,24 @@ export default createStore({
         tracksForPlaylist: [],
         nrOfTrackstoAdd: 0,
         noTracksFound: false,
-        username: null,
+        user_id: null,
         loading: false,
         accessToken: null,
         sid: null,
     },
     mutations: {
+        setUserId(state, value) {
+            localStorage.setItem('user_id', value)
+            state.user_id = value
+        },
+        setSid(state, value) {
+            localStorage.setItem('sid', value)
+            state.sid = value
+        },
+        setAccessToken(state, value) {
+            localStorage.setItem('access_token', value)
+            state.accessToken = value
+        },
         updateRoomCode(state, value) {
             state.roomCode = value.toUpperCase();
         },
@@ -51,7 +63,7 @@ export default createStore({
             state.noTracksFound = value;
         },
         clearCredentials(state) {
-            state.username = null
+            state.user_id = null
             state.accessToken = null
             state.sid = null
             state.error = ''
@@ -67,11 +79,11 @@ export default createStore({
     },
     modules: {},
     getters: {
-        getUsername(state) {
-            if(!state.username) {
-                state.username = localStorage.getItem('user_id');
+        getUserId(state) {
+            if(!state.user_id) {
+                state.user_id = localStorage.getItem('user_id');
             }
-            return state.username
+            return state.user_id
         },
         getAccessToken(state){
             if(!state.accessToken){

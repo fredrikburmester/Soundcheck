@@ -11,9 +11,12 @@ export default {
     },
     sockets: {
         access_token(data) {
-            localStorage.setItem('access_token', data.access_token);
-            localStorage.setItem('refresh_token', data.refresh_token);
-            localStorage.setItem('sid', data.sid);
+            this.$store.commit('setAccessToken', data.access_token)
+            this.$store.commit('setSid', data.sid)
+
+            // localStorage.setItem('access_token', data.access_token);
+            // localStorage.setItem('sid', data.sid);
+            // localStorage.setItem('refresh_token', data.refresh_token);
 
             if (localStorage.getItem('toRoom')) {
                 var toRoom = localStorage.getItem('toRoom');

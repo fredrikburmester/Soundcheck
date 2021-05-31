@@ -151,7 +151,7 @@ export default {
         }
 
         var token = this.$store.getters.getAccessToken;
-        var user_id = this.$store.getters.getUsername;
+        var user_id = this.$store.getters.getUserId;
         var self = this;
         axios
             .get(
@@ -211,7 +211,7 @@ export default {
             this.$socket.client.emit('addToPlaylist', {
                 sid: this.$store.getters.getSid,
                 access_token: this.$store.getters.getAccessToken,
-                user_id: this.$store.getters.getUsername,
+                user_id: this.$store.getters.getUserId,
                 playlist_id: this.selectedPlaylist,
                 tracksForPlaylist: tracksToSend,
             });
@@ -228,7 +228,7 @@ export default {
             this.$socket.client.emit('createPlaylist', {
                 sid: this.$store.getters.getSid,
                 access_token: this.$store.getters.getAccessToken,
-                user_id: this.$store.getters.getUsername,
+                user_id: this.$store.getters.getUserId,
                 name: this.newPlaylistName.length > 0 ? this.newPlaylistName : `Soundcheck - ${this.code}`,
                 tracksForPlaylist: tracksToSend,
             });

@@ -33,7 +33,7 @@ export default {
         Button,
     },
     beforeRouteEnter (to, from, next) {
-        API.getPersonalResults(store.getters.getUsername).then((result) => {
+        API.getPersonalResults(store.getters.getUserId).then((result) => {
             setTimeout(()=> {
                 next(self => self.results = result.data.results)
             },600)
@@ -42,7 +42,7 @@ export default {
     data() {
         return {
             results: [],
-            username: this.$store.getters.getUsername,
+            username: this.$store.getters.getUserId,
         }
     },
     computed: {
