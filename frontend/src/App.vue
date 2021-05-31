@@ -1,9 +1,25 @@
 <template>
-    <router-view />
+    <transition name="fade" mode="out-in">
+        <Loader v-if="loading" />
+        <router-view v-else />
+    </transition>
 </template>
 
 <script>
+import Loader from './components/Loader'
+
 export default {
+    components: {
+        Loader,
+    },
+    computed: {
+        loading() {
+            return this.$store.state.loading
+        }
+    },
+    watch: {
+        '$store.state.loading': function() {}
+    }
 }
 </script>
 
@@ -31,5 +47,15 @@ body {
     text-align: center;
     background-color: #191414;
     /* overflow-y: scroll; */
+}
+.fade-enter-active, .fade-leave-active {
+  transition: opacity .2s ease;
+  -webkit-transition: opacity .2s ease;
+  -moz-transition: opacity .2s ease;
+  -o-transition: opacity .2s ease;
+}
+
+.fade-enter-from, .fade-leave-to {
+  opacity: 0;
 }
 </style>

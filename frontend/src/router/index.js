@@ -11,18 +11,20 @@ import LoginCallback from '../views/LoginCallback.vue';
 import NotFound from '../components/NotFound.vue';
 import About from '../views/About.vue'
 import PreviousResults from '../views/PreviousResults.vue'
+import store from '../store';
+import API from '../libs/api'
 
 const axios = require('axios');
 
-function checkAccessToken(to, from, next) {
-    if (localStorage.getItem('access_token')) {
-        var token = localStorage.getItem('access_token');
+async function checkAccessToken(to, from, next) {
+    var check = false
+    if (store.getters.getAccessToken) {
+        var token = store.getters.getAccessToken;
     } else {
-        next({ name: 'Login' });
-        return;
+        return false;
     }
 
-    axios
+    await axios
         .get('https://api.spotify.com/v1/me', {
             headers: {
                 Authorization: `Bearer ${token}`,
@@ -34,19 +36,18 @@ function checkAccessToken(to, from, next) {
             if(!localStorage.getItem('user_id', response.data.id)) {
                 localStorage.setItem('user_id', response.data.id);
             }
-            
-            next();
-            return;
+            console.log("[1]")
+            check = true;
         })
         .catch(function () {
             localStorage.removeItem('access_token');
             localStorage.removeItem('refresh_token');
             localStorage.removeItem('user_id');
-            next({ name: 'Login' });
-            return;
+            console.log("[2]")
+            check = false;
         });
 
-    return;
+    return check;
 }
 
 const routes = [
@@ -55,7 +56,11 @@ const routes = [
         name: 'Home',
         component: Home,
         beforeEnter: (to, from, next) => {
-            checkAccessToken(to, from, next);
+            if(!checkAccessToken()) {
+                next({ name: 'Login' });
+            } else {
+                next()
+            }
         },
     },
     {
@@ -63,7 +68,7 @@ const routes = [
         name: 'Login',
         component: Login,
         beforeEnter: (to, from, next) => {
-            if (localStorage.getItem('access_token')) {
+            if (store.getters.getAccessToken) {
                 next({ name: 'Home' });
                 return;
             } else {
@@ -87,7 +92,11 @@ const routes = [
         name: 'Join',
         component: Join,
         beforeEnter: (to, from, next) => {
-            checkAccessToken(to, from, next);
+            if(!checkAccessToken()) {
+                next({ name: 'Login' });
+            } else {
+                next()
+            }
         },
     },
     {
@@ -95,7 +104,11 @@ const routes = [
         name: 'Create',
         component: Create,
         beforeEnter: (to, from, next) => {
-            checkAccessToken(to, from, next);
+            if(!checkAccessToken()) {
+                next({ name: 'Login' });
+            } else {
+                next()
+            }
         },
     },
     {
@@ -103,7 +116,11 @@ const routes = [
         name: 'PreviousResults',
         component: PreviousResults,
         beforeEnter: (to, from, next) => {
-            checkAccessToken(to, from, next);
+            if(!checkAccessToken()) {
+                next({ name: 'Login' });
+            } else {
+                next()
+            }
         },
     },
     {
@@ -111,7 +128,11 @@ const routes = [
         name: 'Results',
         component: Results,
         beforeEnter: (to, from, next) => {
-            checkAccessToken(to, from, next);
+            if(!checkAccessToken()) {
+                next({ name: 'Login' });
+            } else {
+                next()
+            }
         },
     },
     {
@@ -122,8 +143,8 @@ const routes = [
             var code = window.location.href.split('/');
             code = code[code.length - 1];
 
-            if (localStorage.getItem('access_token')) {
-                var token = localStorage.getItem('access_token');
+            if (store.getters.getAccessToken) {
+                var token = store.getters.getAccessToken;
             } else {
                 localStorage.setItem('toRoom', code);
                 next({ name: 'Login' });
@@ -161,7 +182,11 @@ const routes = [
         name: 'Playlist',
         component: Playlist,
         beforeEnter: (to, from, next) => {
-            checkAccessToken(to, from, next);
+            if(!checkAccessToken()) {
+                next({ name: 'Login' });
+            } else {
+                next()
+            }
         },
     },
 ];
@@ -170,5 +195,13 @@ const router = createRouter({
     history: createWebHistory(process.env.BASE_URL),
     routes,
 });
+
+router.beforeEach((to, from, next) => {
+    store.commit('updateLoading', true)
+    next()
+})
+router.afterEach(() => {
+    store.commit('updateLoading', false)
+})
 
 export default router;

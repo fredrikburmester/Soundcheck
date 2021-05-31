@@ -59,7 +59,7 @@ export default {
     },
     methods: {
         async getAlbumArt(uri) {
-            var token = localStorage.getItem('access_token');
+            var token = this.$store.getters.getAccessToken;
             var self = this;
             axios
                 .get(`https://api.spotify.com/v1/tracks/${uri}`, {
