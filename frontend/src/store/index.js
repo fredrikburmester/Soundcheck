@@ -9,7 +9,8 @@ export default createStore({
         time_range: 'short_term',
         tracksForPlaylist: [],
         nrOfTrackstoAdd: 0,
-        username: ''
+        username: '',
+        noTracksFound: false
     },
     mutations: {
         updateRoomCode(state, value) {
@@ -39,7 +40,11 @@ export default createStore({
         clearTracksForPlaylist(state){
             state.nrOfTrackstoAdd = 0;
             state.tracksForPlaylist = [];
+        },
+        updateNoTracksModal(state, value){
+            state.noTracksFound = value;
         }
+
     },
     actions: {
     },
