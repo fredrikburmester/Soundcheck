@@ -6,6 +6,7 @@ Group screencast: [TDDD27 - LiU - Soundcheck - Group Screencast](https://youtu.b
 
 ## Individual Screencasts 
 Fredrik Burmester (frebu645): [TDDD27 - LiU - Individual Screencast - Soundcheck - Fredrik Burmester](https://youtu.be/DkEs84ja3XI)
+
 Josef Hamnert (josha196): [TDDD27 - LiU - Individual Screencast - Soundcheck - Fredrik Josef Hamnert](https://youtu.be/mitou7tS_KI)
 
 ## Info
