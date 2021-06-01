@@ -54,8 +54,8 @@ const routes = [
         path: '/',
         name: 'Home',
         component: Home,
-        beforeEnter: (to, from, next) => {
-            if(!checkAccessToken()) {
+        beforeEnter: async (to, from, next) => {
+            if(!(await checkAccessToken())) {
                 next({ name: 'Login' });
             } else {
                 next()
@@ -90,8 +90,8 @@ const routes = [
         path: '/join',
         name: 'Join',
         component: Join,
-        beforeEnter: (to, from, next) => {
-            if(!checkAccessToken()) {
+        beforeEnter: async (to, from, next) => {
+            if(!(await checkAccessToken())) {
                 next({ name: 'Login' });
             } else {
                 next()
@@ -102,8 +102,8 @@ const routes = [
         path: '/create',
         name: 'Create',
         component: Create,
-        beforeEnter: (to, from, next) => {
-            if(!checkAccessToken()) {
+        beforeEnter: async (to, from, next) => {
+             if(!(await checkAccessToken())) {
                 next({ name: 'Login' });
             } else {
                 next()
@@ -114,8 +114,8 @@ const routes = [
         path: '/me',
         name: 'PreviousResults',
         component: PreviousResults,
-        beforeEnter: (to, from, next) => {
-            if(!checkAccessToken()) {
+        beforeEnter: async (to, from, next) => {
+             if(!(await checkAccessToken())) {
                 next({ name: 'Login' });
             } else {
                 next()
@@ -126,8 +126,8 @@ const routes = [
         path: '/:code/results',
         name: 'Results',
         component: Results,
-        beforeEnter: (to, from, next) => {
-            if(!checkAccessToken()) {
+        beforeEnter: async (to, from, next) => {
+             if(!(await checkAccessToken())) {
                 next({ name: 'Login' });
             } else {
                 next()
@@ -179,8 +179,8 @@ const routes = [
         path: '/:code/playlist',
         name: 'Playlist',
         component: Playlist,
-        beforeEnter: (to, from, next) => {
-            if(!checkAccessToken()) {
+        beforeEnter: async (to, from, next) => {
+             if(!(await checkAccessToken())) {
                 next({ name: 'Login' });
             } else {
                 next()
