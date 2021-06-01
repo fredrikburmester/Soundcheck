@@ -1,6 +1,11 @@
 # tddd27
 
-https://soundcheck.fdrive.se/
+Link to website: [Soundcheck](https://soundcheck.fdrive.se/)
+
+Group screencast: [TDDD27 - LiU - Soundcheck - Group Screencast](https://youtu.be/Ds02lgNWZ20)
+
+## Individual Screencasts 
+Fredrik Burmester (frebu645): [TDDD27 - LiU - Individual Screencast - Soundcheck - Fredrik Burmester](https://youtu.be/DkEs84ja3XI)
 
 ## Info
 
