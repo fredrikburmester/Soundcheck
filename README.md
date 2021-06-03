@@ -9,6 +9,8 @@ Fredrik Burmester (frebu645): [TDDD27 - LiU - Individual Screencast - Soundcheck
 
 Josef Hamnert (josha196): [TDDD27 - LiU - Individual Screencast - Soundcheck - Josef Hamnert](https://youtu.be/mitou7tS_KI)
 
+Josef Hamnert (danha896): [TDDD27 - LiU - Individual Screencast - Soundcheck - Daniel Hagstedt](https://youtu.be/Jh9TE5do6Os)
+
 ## Info
 
 A spotify-authenticated website game for friends to guess each others favourite songs and genres. 
