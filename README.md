@@ -1,5 +1,7 @@
 # Soundcheck - TDDD27
 
+![Soundcheck Logo](https://raw.githubusercontent.com/fredrikburmester/Soundcheck/master/frontend/src/assets/soundcheck-logo.png)
+
 Link to website: [Soundcheck](https://soundcheck.fdrive.se/)
 
 ## Info
