@@ -9,7 +9,7 @@ Link to website: [Soundcheck](https://soundcheck.fdrive.se/)
 
 A spotify-authenticated website game for friends to guess each others favourite songs and genres. 
 
-Each player joins a room hosted by 1 player and authenticates with their spotify login. The host selects a gamemode and the game is on!
+Each player joins a room hosted by 1 player and authenticates with their spotify login. The host selects a gamemode and the game is on! Press on an avatar to guess who's favourite song is playing right now. At the bottom there's a spotify web player (which sadly is limited to 30s of streaming) were you can listen to the song. If you are on desktop the player is able to play the entire song, so we recommend that the host is on desktop if you are all gathered and want the full song experience.
 
 ## Deadlines
 - April 14th: Specifications in README.md file
