@@ -2,15 +2,6 @@
 
 Link to website: [Soundcheck](https://soundcheck.fdrive.se/)
 
-Group screencast: [TDDD27 - LiU - Soundcheck - Group Screencast](https://youtu.be/Ds02lgNWZ20)
-
-## Individual Screencasts 
-Fredrik Burmester (frebu645): [TDDD27 - LiU - Individual Screencast - Soundcheck - Fredrik Burmester](https://youtu.be/DkEs84ja3XI)
-
-Josef Hamnert (josha196): [TDDD27 - LiU - Individual Screencast - Soundcheck - Josef Hamnert](https://youtu.be/mitou7tS_KI)
-
-Daniel Hagstedt (danha896): [TDDD27 - LiU - Individual Screencast - Soundcheck - Daniel Hagstedt](https://youtu.be/Jh9TE5do6Os)
-
 ## Info
 
 A spotify-authenticated website game for friends to guess each others favourite songs and genres. 
@@ -97,5 +88,13 @@ For the backend:
 ## Issues and Bugs
 https://trello.com/b/7ShV1pMC/spotifygame
 
+# More Information and Presentations 
+Group screencast: [TDDD27 - LiU - Soundcheck - Group Screencast](https://youtu.be/Ds02lgNWZ20)
 
- 
+## Individual Screencasts 
+Fredrik Burmester (frebu645): [TDDD27 - LiU - Individual Screencast - Soundcheck - Fredrik Burmester](https://youtu.be/DkEs84ja3XI)
+
+Josef Hamnert (josha196): [TDDD27 - LiU - Individual Screencast - Soundcheck - Josef Hamnert](https://youtu.be/mitou7tS_KI)
+
+Daniel Hagstedt (danha896): [TDDD27 - LiU - Individual Screencast - Soundcheck - Daniel Hagstedt](https://youtu.be/Jh9TE5do6Os)
+
