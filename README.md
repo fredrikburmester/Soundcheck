@@ -1,4 +1,5 @@
-# Soundcheck - TDDD27
+# Soundcheck - A Music Game for Friends!
+> TDDD27
 
 ![Soundcheck Logo](https://raw.githubusercontent.com/fredrikburmester/Soundcheck/master/frontend/src/assets/soundcheck-logo.png)
 
