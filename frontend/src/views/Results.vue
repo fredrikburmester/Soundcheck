@@ -7,7 +7,7 @@ displayed in a modal.
     <div>
         <div v-if="state == 'found'">
             <div v-if="selected" :style="personalResultStyle" class="individual-grid">
-                <div>
+                <div class="individual-grid-header">
                     <h1 class="code">
                         {{ selected_player.name }}
                     </h1>
@@ -40,7 +40,7 @@ displayed in a modal.
                 </div>
             </div>
             <div class="grid" :style="resultGridStyle">
-                <div>
+                <div class="grid-header">
                     <h1 class="code">
                         {{ code }}
                     </h1>
@@ -53,13 +53,13 @@ displayed in a modal.
                         <h3 v-if="index == 0" class="title" style="padding-left: 0; margin-left: 0; color: gold">
                             Winner
                         </h3>
-                        <h3 v-if="index == 1" class="title" style="padding-left: 0; margin-left: 0; color: silver">
+                        <h3 v-if="index == 1 && players[index-1].points != player.points" class="title" style="padding-left: 0; margin-left: 0; color: silver">
                             Second place
                         </h3>
-                        <h3 v-if="index == 2" class="title" style="padding-left: 0; margin-left: 0; color: #26c28">
+                        <h3 v-if="index == 2 && players[index-1].points != player.points" class="title" style="padding-left: 0; margin-left: 0; color: #26c28">
                             Third place
                         </h3>
-                        <h3 v-if="index == 3" class="title" style="padding-left: 0; margin-left: 0; color: #26c28">
+                        <h3 v-if="index == 3 && players[index-1].points != player.points" class="title" style="padding-left: 0; margin-left: 0; color: #26c28">
                             The rest of you loosers 💩
                         </h3>
                         <div style="height: 80px;">
@@ -127,7 +127,7 @@ export default {
         resultGridStyle() {
             return {
                 'height': `${window.innerHeight}px`,
-                'grid-template-rows': '125px auto 160px'
+                'grid-template-rows': '170px auto 160px'
             }
         },
         personalResultStyle() {
@@ -268,16 +268,22 @@ export default {
     display: grid;
     grid-template-columns: 1fr;
 }
+.grid-header{
+    margin-top: 45px
+}
 .individual-grid {
     position: fixed;
     top: 0;
     left: 0;
     display: grid;
     grid-template-columns: 1fr;
-    grid-template-rows: 190px auto;
+    grid-template-rows: 220px auto;
     background: black;
     z-index: 2;
     overflow: hidden;
+}
+.individual-grid-header {
+    margin-top: 45px;
 }
 .personal-list {
     overflow-y: scroll;
@@ -305,7 +311,7 @@ export default {
     font-style: italic;
     color: darkgrey;
     text-align: left;
-    margin-top: 20px;
+    margin-top: 10px;
     margin-left: 2rem;
     margin-bottom:0;
     padding: 0;
@@ -319,7 +325,7 @@ export default {
 
 .close-button {
     position: fixed;
-    top: 35px;
+    top: 70px;
     right: 2rem;
     height: 35px;
     width: 35px;
