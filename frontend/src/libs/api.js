@@ -30,7 +30,8 @@ export default {
                 result = response;
             })
             .catch(function (err) {
-                result =  err
+                console.log("Error: ", err)
+                result = null
             });
         return result
     },
