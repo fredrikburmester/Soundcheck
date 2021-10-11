@@ -13,8 +13,7 @@ if (process.env.NODE_ENV == 'development' || process.env.NODE_ENV == 'dev') {
     socket = io('http://localhost:5001');
 } else {
     console.log('Running in production mode');
-    //socket = io('https://soundcheck.fdrive.se/', { path: '/ws' });
-    socket = io('http://localhost:5001');
+    socket = io('https://soundcheck.fdrive.se/', { path: '/ws' });
 }
 
 const app = createApp(App);
