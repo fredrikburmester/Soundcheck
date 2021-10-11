@@ -4,12 +4,11 @@ View for creating a game room. This view have settings that are sent to the serv
 
 <template>
     <div class="create">
-        <h1 class="head">
-            Room settings
-        </h1>
-        <div class="hr" />
-        
         <div class="container">
+            <h1 class="head">
+                Room settings
+            </h1>
+            <div class="hr" />
             <h3>Select Time Range</h3>
             <Select :list="timeRanges" :default-value="timeRanges[0]" @selected="setTimeRange" />
            
@@ -18,20 +17,20 @@ View for creating a game room. This view have settings that are sent to the serv
            
             <br>
             <br>
-
-            <Button
-                button-text="Create Room"
-                @click="createRoom"
-            />
-
-            <div class="button-container">
-                <div class="back">
-                    <Button
-                        button-link="/"
-                        button-text="Back"
-                        color="#CD1A2B"
-                    />
-                </div>
+        </div>
+        <div class="button-container">
+            <div class="create-room">
+                <Button
+                    button-text="Create Room"
+                    @click="createRoom"
+                />
+            </div>
+            <div class="back">
+                <Button
+                    button-link="/"
+                    button-text="Back"
+                    color="#CD1A2B"
+                />
             </div>
         </div>
     </div>
@@ -88,21 +87,33 @@ export default {
 <style scoped>
 @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap');
 .head {
-    display: inline-block;
     margin: 10px 0 10px 0;
 }
-.create {
-    margin-top: 0;
-    display: grid;
-    padding: 0 2rem 0 2rem;
+h1 {
+    text-align: left;
 }
-
+h3 {
+    opacity: 0.7;
+    margin-bottom: 5px;
+    font-size: 15px;
+}
+.create {
+    display: grid;
+    grid-template-rows: auto 185px;
+    height: 99vh;
+}
+.container {
+    padding: 2rem;
+    padding-top: 50px;
+    overflow-y: scroll;
+}
 .hr {
     margin-left: auto;
     margin-right: auto;
     width: 80vw;
     height: 2px;
     background-color: rgb(63, 63, 63);
+    margin-bottom: 20px;
 }
 .drop-down{
     background-color: #fff;
@@ -122,16 +133,25 @@ export default {
 
     -webkit-appearance: none;
 }
-.button-container {
+/* .button-container {
     position: fixed;
     left: 50%;
-    bottom: 20px;
+    bottom: 0;
     transform: translate(-50%, -50%);
     margin: 0 auto;
     width: 100vw;
+} */
+.button-container {
+    padding-top: 30px;
+    width: 100%;
 }
 .back {
     padding: 0 2rem 0 2rem;
+    margin: 0;
+}
+.create-room {
+    padding: 0 2rem 0 2rem;
+    margin: 0
 }
 .drop-down:focus{
     outline: none;

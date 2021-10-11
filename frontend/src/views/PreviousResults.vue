@@ -5,7 +5,7 @@ Displays a list of previous games for one user.
 <template>
     <div v-if="!loading">
         <div class="grid" :style="resultGridStyle">
-            <div>
+            <div class="grid-header">
                 <h1 class="title">
                     Previous Games
                 </h1>
@@ -14,7 +14,7 @@ Displays a list of previous games for one user.
                 </p>
             </div>
             <div class="list">
-                <div v-for="result in results" :key="result" style="height: 80px;" @click="goTo(result.code)">
+                <div class="list-item" v-for="result in results" :key="result" style="height: 80px;" @click="goTo(result.code)">
                     <PreviousResultIcon :code="result.code" :date="getDateStringFromUnix(result.date)" :uri="result.answers[0].info" />
                 </div>
             </div>
@@ -36,12 +36,17 @@ export default {
         PreviousResultIcon,
         Button,
     },
-    // before entering the route the previous games are loaded from the server. loading time is added here as well for design puposes. 
+    // before entering the route the previous games are loaded from the server. loading time is added here for design puposes. 
     beforeRouteEnter (to, from, next) {
+        var self = this;
         API.getPersonalResults(store.getters.getUserId).then((result) => {
-            setTimeout(()=> {
-                next(self => self.results = result.data.results)
-            },600)
+            if(result === null) {
+                next(self => self.results = [])
+            } else {
+                setTimeout(()=> {
+                    next(self => self.results = result.data.results)
+                },600)
+            }
         })
     },
     data() {
@@ -84,8 +89,11 @@ export default {
 
 .grid {
     display: grid;
-    grid-template-rows: 100px auto 100px;
+    grid-template-rows: 120px auto 100px;
     padding: 0 2rem 0 2rem;
+}
+.grid-header {
+margin-top: 20px;
 }
 .title, .username {
     text-align: left;
@@ -105,7 +113,10 @@ export default {
     border-top: 1px gray solid;
     border-bottom: 1px gray solid
 }
-
+.list-item {
+    padding-top: 5px;
+    overflow-y: hidden;
+}
 .date {
   position: relative;
   top: -40px;

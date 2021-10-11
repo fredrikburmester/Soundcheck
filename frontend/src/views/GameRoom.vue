@@ -57,7 +57,7 @@ This view containes the entire game. There are 2 stages, a room lobby/waiting ro
             class="started-grid"
             :style="startedGridStyle"
         >
-            <div>
+            <div class="started-grid-header">
                 <ProgressBar
                     :key="current_question"
                     :time="progressbarTime"
@@ -128,7 +128,7 @@ This view containes the entire game. There are 2 stages, a room lobby/waiting ro
                 :style="lobbyGridStyle"
                 class="lobby-grid"
             >
-                <div>
+                <div class="lobby-grid-header">
                     <h1 class="code">
                         {{ code }}
                     </h1>
@@ -344,12 +344,12 @@ export default {
             if(this.host) {
                 return {
                     'height': `${window.innerHeight}px`,
-                    'grid-template-rows': '125px auto 210px'
+                    'grid-template-rows': '180px auto 210px'
                 }
             } else {
                 return {
                     'height': `${window.innerHeight}px`,
-                    'grid-template-rows': '125px auto 190px'
+                    'grid-template-rows': '180px auto 190px'
                     
                 };
             }
@@ -358,12 +358,12 @@ export default {
             if(this.host) {
                 return {
                     'height': `${window.innerHeight}px`,
-                    'grid-template-rows': '125px auto 70px 80px'
+                    'grid-template-rows': '190px auto 70px 80px'
                 }
             } else {
                 return {
                     'height': `${window.innerHeight}px`,
-                    'grid-template-rows': '125px auto 0px 80px'
+                    'grid-template-rows': '190px auto 0px 80px'
                     
                 };
             }
@@ -539,10 +539,16 @@ export default {
     display: grid;
     grid-template-rows: minmax(160px,170px) auto minmax(0px, 220px);
 }
+.lobby-grid-header {
+    margin-top: 40px;
+}
 .started-grid {
     display: grid;
     grid-template-rows: 140px auto minmax(0px, 70px) 80px;
     height: 99vh;
+}
+.started-grid-header {
+    margin-top: 45px
 }
 .buttons {
     margin-top: 20px;
@@ -589,7 +595,7 @@ export default {
 .qr {
     position: fixed;
     right: 0;
-    top: 0;
+    top: 30px;
     padding: 1rem 2rem;
 }
 .qr > img {
@@ -609,7 +615,7 @@ export default {
 }
 .progressbar {
     position: fixed;
-    top: 90px;
+    top: 130px;
     width: calc(100vw - 4rem);
     margin-left: 50%;
     transform: translateX(-50%);
@@ -665,9 +671,10 @@ export default {
 }
 .close-button {
     position: fixed;
-    top: 30px;
+    top: 70px;
     right: 2rem;
 }
+
 .next-song {
     margin-top: 10px;
     margin-right: 2rem;
