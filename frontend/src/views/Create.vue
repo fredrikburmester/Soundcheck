@@ -110,7 +110,6 @@ h3 {
 .hr {
     margin-left: auto;
     margin-right: auto;
-    width: 80vw;
     height: 2px;
     background-color: rgb(63, 63, 63);
     margin-bottom: 20px;
