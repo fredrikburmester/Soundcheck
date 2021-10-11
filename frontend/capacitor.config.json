@@ -1,0 +1,6 @@
+{
+  "appId": "soundcheck.fdrive.se",
+  "appName": "Soundcheck",
+  "webDir": "dist",
+  "bundledWebRuntime": false
+}

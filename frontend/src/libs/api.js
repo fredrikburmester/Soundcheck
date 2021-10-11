@@ -7,14 +7,7 @@ import store from '../store';
 
 var url = ''
 
-if (
-    process.env.NODE_ENV == 'development' ||
-            process.env.NODE_ENV == 'dev'
-) {
-    url = `http://${process.env.VUE_APP_SERVER_URL}/api/`;
-} else {
-    url = `https://${process.env.VUE_APP_SERVER_URL}/api/`;
-}
+url = `${process.env.VUE_APP_PROTOCOL}://${process.env.VUE_APP_SERVER_URL}/api`;
 
 export default {
     // Used for getting all information about a room results.

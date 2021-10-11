@@ -10,6 +10,8 @@ from flask import request, jsonify, Response
 import time
 import logging
 
+import threading
+
 from flask_cors import CORS
 
 import json
@@ -38,7 +40,7 @@ app = Flask(__name__)
 app.config['SECRET_KEY'] = 'secret!'
 cors = CORS(app, resources={r"/api/*": {"origins": "*"}})
 log = logging.getLogger('werkzeug')
-log.disabled = True
+log.disabled = False
 
 # Allow cross origin to be able to do websockets from different servers
 # socketio = SocketIO(app)
@@ -157,12 +159,15 @@ def results(code):
 @socketio.on('generate_access_token')
 def check_token(data):
     access_token, refresh_token = generate_access_token(data['code'])
-    socketio.emit("access_token", {'access_token': access_token, 'refresh_token': refresh_token, 'sid': request.sid},
-                  to=request.sid)
+    socketio.emit("access_token", {'access_token': access_token, 'refresh_token': refresh_token, 'sid': data['sid']},
+                  to=data['sid'])
+
+@socketio.on('generate-sid')
+def generate_sid():
+    print("Generating SID", str(request.sid))
+    socketio.emit("generate_sid", {'sid': request.sid}, to=request.sid)
 
 # Checks if room exists with specific code
-
-
 @socketio.on('isRoom')
 def isRoom(data):
     global ROOMS
@@ -247,6 +252,7 @@ def compile_results(code):
             })
 
             return
+    return
 
 # Handles the backend logic when a user enters a room.
 
@@ -390,7 +396,11 @@ def next_question(data):
                 socketio.emit('game_ended', room=code)
 
                 print(f"[{code}] Compiling results")
-                compile_results(code)
+                #compile_results(code)
+                
+                thread = threading.Thread(target=compile_results, args=(code,))
+                thread.start()
+                thread.join()
 
                 print(f"[{code}] Sending: Go to results")
                 socketio.emit("connectToRoom", {
@@ -695,6 +705,6 @@ def generateId():
 # Run the server in either dev or prod
 if __name__ == '__main__':
     if ENV == 'production' or 'prod':
-        socketio.run(app, host='0.0.0.0', port=5000)
+        socketio.run(app, host='0.0.0.0', port=5001)
     else:
         socketio.run(app)

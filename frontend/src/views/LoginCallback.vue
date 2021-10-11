@@ -9,40 +9,30 @@ new spotify API token from our server.
 
 <script>
 import Loader from '../components/Loader'
+import { Browser } from '@capacitor/browser';
+
 export default {
     name: 'LoginCallback',
     components: {
         Loader
     },
     sockets: {
-        // get access_token from our server back. 
-        access_token(data) {
-            this.$store.commit('setAccessToken', data.access_token)
-            this.$store.commit('setSid', data.sid)
-
-            // localStorage.setItem('access_token', data.access_token);
-            // localStorage.setItem('sid', data.sid);
-            // localStorage.setItem('refresh_token', data.refresh_token);
-
-            if (localStorage.getItem('toRoom')) {
-                var toRoom = localStorage.getItem('toRoom');
-                localStorage.removeItem('toRoom');
-                this.$router.push(`/${toRoom}`);
-            } else {
-                this.$router.push('/');
-            }
-        },
     },
-    mounted() {
-        // Send spotify token to our server
-        this.handleLoginCallback();
+    async mounted() {
+        this.getToken()
     },
     methods: {
-        handleLoginCallback: function () {
+        getToken: function() {
             let uri = window.location.href.split('=')[1];
             let code = uri.split('&')[0];
-            this.$socket.client.emit('generate_access_token', { code: code });
+
+            this.$socket.client.emit('generate_access_token', { code: code, sid: this.$store.getters.getSid });
+
+            //this.closeCapacitorBrowser()
         },
+        closeCapacitorBrowser: async function() {
+            await Browser.close();
+        }
     },
 };
 </script>

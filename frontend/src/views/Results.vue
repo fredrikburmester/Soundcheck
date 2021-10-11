@@ -145,14 +145,7 @@ export default {
         //Needed to avoid multiple loads of the same tracks in /playlist route
         self.$store.commit('clearTracksForPlaylist');
 
-        if (
-            process.env.NODE_ENV == 'development' ||
-            process.env.NODE_ENV == 'dev'
-        ) {
-            url = `http://${process.env.VUE_APP_SERVER_URL}/api/${this.code}/results`;
-        } else {
-            url = `https://${process.env.VUE_APP_SERVER_URL}/api/${this.code}/results`;
-        }
+        url = `${process.env.VUE_APP_PROTOCOL}://${process.env.VUE_APP_SERVER_URL}/api/${this.code}/results`;
 
         // When pressing a player for more information the data is loaded from the server:
         axios
@@ -328,18 +321,27 @@ export default {
     position: fixed;
     top: 35px;
     right: 2rem;
+    height: 35px;
+    width: 35px;
 }
 .line {
     background-color: red;
+    
     height: 3px;
     width: 25px;
     cursor: pointer;
 }
 #line1 {
     transform: translateY(3px) rotate(45deg);
+    margin-top: 10px;
+    margin-left: 5px;
+
 }
 #line2 {
     transform: rotate(-45deg);
+    margin-top: 0px;
+    margin-left: 5px;
+
 }
 .points {
   position: relative;

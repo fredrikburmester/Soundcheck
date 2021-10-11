@@ -8,6 +8,7 @@ import GameRoom from '../views/GameRoom.vue';
 import Results from '../views/Results.vue';
 import Playlist from '../views/Playlist.vue';
 import LoginCallback from '../views/LoginCallback.vue';
+import LoginRedirect from '../views/LoginRedirect.vue';
 import NotFound from '../components/NotFound.vue';
 import About from '../views/About.vue'
 import PreviousResults from '../views/PreviousResults.vue'
@@ -66,7 +67,7 @@ const routes = [
         path: '/login',
         name: 'Login',
         component: Login,
-        beforeEnter: (to, from, next) => {
+        beforeEnter: (to, from, next) => {            
             if (store.getters.getAccessToken) {
                 next({ name: 'Home' });
                 return;
@@ -87,6 +88,11 @@ const routes = [
         component: LoginCallback,
     },
     {
+        path: '/login-redirect/:sid',
+        name: 'LoginRedirect',
+        component: LoginRedirect,
+    },
+    {
         path: '/join',
         name: 'Join',
         component: Join,
@@ -103,7 +109,7 @@ const routes = [
         name: 'Create',
         component: Create,
         beforeEnter: async (to, from, next) => {
-             if(!(await checkAccessToken())) {
+            if(!(await checkAccessToken())) {
                 next({ name: 'Login' });
             } else {
                 next()
@@ -115,7 +121,7 @@ const routes = [
         name: 'PreviousResults',
         component: PreviousResults,
         beforeEnter: async (to, from, next) => {
-             if(!(await checkAccessToken())) {
+            if(!(await checkAccessToken())) {
                 next({ name: 'Login' });
             } else {
                 next()
@@ -127,7 +133,7 @@ const routes = [
         name: 'Results',
         component: Results,
         beforeEnter: async (to, from, next) => {
-             if(!(await checkAccessToken())) {
+            if(!(await checkAccessToken())) {
                 next({ name: 'Login' });
             } else {
                 next()
@@ -180,7 +186,7 @@ const routes = [
         name: 'Playlist',
         component: Playlist,
         beforeEnter: async (to, from, next) => {
-             if(!(await checkAccessToken())) {
+            if(!(await checkAccessToken())) {
                 next({ name: 'Login' });
             } else {
                 next()

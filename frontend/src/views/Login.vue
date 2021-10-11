@@ -12,7 +12,7 @@ The flow for logging in is as such:
         </div>
         <Button
             button-text="Authenticate"
-            @click="loginWithSpotify"
+            @click="loginRedirect"
         />
         <p>Click to log in with Spotify</p>
 
@@ -27,6 +27,10 @@ The flow for logging in is as such:
 <script>
 import Button from '../components/Button';
 import logo from '../assets/soundcheck.png';
+import { Browser } from '@capacitor/browser';
+import { Clipboard } from '@capacitor/clipboard';
+
+
 export default {
     name: 'Login',
     components: {
@@ -34,16 +38,44 @@ export default {
     },
     data: function () {
         return {
-            logo: logo
+            logo: logo,
+            sid: String
         };
+    },
+    sockets: {
+        generate_sid({sid}) {
+            this.sid = sid
+        },
+        access_token(data) {
+            this.$store.commit('setAccessToken', data.access_token)
+            this.$store.commit('setSid', data.sid)
+
+            if (localStorage.getItem('toRoom')) {
+                var toRoom = localStorage.getItem('toRoom');
+                localStorage.removeItem('toRoom');
+                this.$router.push(`/${toRoom}`);
+            } else {
+                this.$router.push('/');
+            }
+
+            this.closeBrowser()
+        },
     },
     beforeMount() {
         this.checkToken();
     },
+    mounted() {
+        this.$socket.client.emit('generate-sid');
+    },
     methods: {
         // Sends the user to spotify authentication system
-        loginWithSpotify: function () {
-            window.location.href = `https://accounts.spotify.com/authorize?client_id=bad02ecfaf4046638a1daa7f60cbe42b&response_type=code&redirect_uri=${process.env.VUE_APP_CALLBACK_URL}&scope=user-read-private%20user-top-read%20user-read-email%20playlist-modify-public%20playlist-modify-private%20playlist-read-private%20playlist-read-collaborative&state=34fFs29kd09&show_dialog=true`;
+        loginRedirect: async function() {
+            if(this.sid != null) {
+                await Browser.open({ url: `${process.env.VUE_APP_PROTOCOL}://${process.env.VUE_APP_PUBLIC_URL}/login-redirect/${this.sid}` });
+            }
+        },
+        closeBrowser: async function() {
+            await Browser.close()
         },
         checkToken: function () {
             if (this.$store.getters.getAccessToken) {

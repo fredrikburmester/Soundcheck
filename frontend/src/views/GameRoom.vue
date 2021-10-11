@@ -396,7 +396,7 @@ export default {
         generateQR() {
             var self = this;
             QRCode.toDataURL(
-                `https://soundcheck.fdrive.se/${this.code}`, {scale: 30, margin: 1, color: {dark: '#eee', light: '#191414'}}, 
+                `${process.env.VUE_APP_PROTOCOL}://${process.env.VUE_APP_PUBLIC_URL}/${this.code}`, {scale: 30, margin: 1, color: {dark: '#eee', light: '#191414'}}, 
                 function (err, url) {
                     self.qr = url;
                 }
