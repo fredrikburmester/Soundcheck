@@ -10,7 +10,7 @@ var socket;
 // Depending on if the server is running in production of development we assign different node process variables. 
 if (process.env.NODE_ENV == 'development' || process.env.NODE_ENV == 'dev') {
     console.log('Running in development mode');
-    socket = io('http://localhost:5001');
+    socket = io('http://localhost:5000');
 } else {
     console.log('Running in production mode');
     socket = io('https://soundcheck.fdrive.se/', { path: '/ws' });
