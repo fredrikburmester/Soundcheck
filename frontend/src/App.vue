@@ -51,7 +51,6 @@ body {
     text-align: center;
     background-color: #191414;
     /* overflow-y: scroll; */
-    padding-top: 10px;
 }
 .fade-enter-active, .fade-leave-active {
   transition: opacity .2s ease;
