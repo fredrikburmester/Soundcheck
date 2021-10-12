@@ -3,7 +3,7 @@ View for creating a game room. This view have settings that are sent to the serv
  */
 
 <template>
-    <div class="create">
+    <div class="create" :style="gridStyle">
         <div class="container">
             <h1 class="head">
                 Room settings
@@ -52,6 +52,14 @@ export default {
             this.$router.push(data.code);
         },
     },
+    computed: {
+        gridStyle() {
+            return {
+                'height': `${window.innerHeight}px`,
+                'grid-template-rows': 'auto 178px'
+            }
+        }
+    },
     data() {
         return {
             no_songs: 1,
@@ -99,8 +107,6 @@ h3 {
 }
 .create {
     display: grid;
-    grid-template-rows: auto 178px;
-    height: 100vh;
 }
 .container {
     padding: 2rem;
