@@ -6,6 +6,7 @@ displayed in a modal.
 <template>
     <div>
         <div v-if="state == 'found'">
+            <transition name="fade">
             <div v-if="selected" :style="personalResultStyle" class="individual-grid">
                 <div class="individual-grid-header">
                     <h1 class="code">
@@ -19,14 +20,7 @@ displayed in a modal.
                         Individual results
                     </h3>
                     <div class="close-button" @click="deselectPlayer()">
-                        <div
-                            id="line1"
-                            class="line"
-                        />
-                        <div
-                            id="line2"
-                            class="line"
-                        />
+                        <CloseButton color="red"/>
                     </div>
                 </div>
                 <div class="personal-list">
@@ -39,6 +33,7 @@ displayed in a modal.
                     </div>
                 </div>
             </div>
+            </transition>
             <div class="grid" :style="resultGridStyle">
                 <div class="grid-header">
                     <h1 class="code">
@@ -79,13 +74,14 @@ displayed in a modal.
                     
                 <div class="play-again-container">
                     <div class="hr" />
-                    <Button
-                        style="margin-top: 20px"
-                        class="createPlaylist"
-                        button-text="Create playlist"
-                        @click="managePlaylists()"
-                    />
-                    <Button style="margin-top: 20px" class="goHome" button-link="/" button-text="Play again" />
+                    <div class="button-container">
+                        <Button
+                            class="createPlaylist"
+                            button-text="Create playlist"
+                            @click="managePlaylists()"
+                        />
+                        <Button class="goHome" button-link="/" button-text="Play again" />
+                    </div>
                 </div>
             </div>
         </div>
@@ -100,6 +96,7 @@ import PlayerAvatar from '../components/PlayerAvatar';
 import Button from '../components/Button';
 import NotFound from '../components/NotFound';
 import GuessIcon from '../components/GuessIcon';
+import CloseButton from '../components/CloseButton';
 
 const axios = require('axios');
 
@@ -110,6 +107,7 @@ export default {
         Button,
         NotFound,
         GuessIcon,
+        CloseButton
     },
     data: function () {
         return {
@@ -127,7 +125,7 @@ export default {
         resultGridStyle() {
             return {
                 'height': `${window.innerHeight}px`,
-                'grid-template-rows': '170px auto 160px'
+                'grid-template-rows': '170px auto 178px'
             }
         },
         personalResultStyle() {
@@ -254,10 +252,10 @@ export default {
 
 <style scoped>
 .fade-enter-active, .fade-leave-active {
-  transition: opacity .5s ease;
-  -webkit-transition: opacity .5s ease;
-  -moz-transition: opacity .5s ease;
-  -o-transition: opacity .5s ease;
+  transition: opacity .2s ease;
+  -webkit-transition: opacity .2s ease;
+  -moz-transition: opacity .2s ease;
+  -o-transition: opacity .2s ease;
 }
 
 .fade-enter-from, .fade-leave-to {
@@ -268,8 +266,8 @@ export default {
     display: grid;
     grid-template-columns: 1fr;
 }
-.grid-header{
-    margin-top: 45px
+.grid-header {
+    margin-top: 45px;
 }
 .individual-grid {
     position: fixed;
@@ -278,9 +276,10 @@ export default {
     display: grid;
     grid-template-columns: 1fr;
     grid-template-rows: 220px auto;
-    background: black;
+    background: rgba(0, 0, 0, 0.84);
     z-index: 2;
     overflow: hidden;
+    backdrop-filter: blur(4px);
 }
 .individual-grid-header {
     margin-top: 45px;
@@ -288,7 +287,10 @@ export default {
 .personal-list {
     overflow-y: scroll;
     overflow-x: hidden;
-    margin: 30px 2rem 0 2rem;
+    margin: 0px 2rem 0 2rem;
+}
+.song > .image {
+    margin: 5px;
 }
 .code {
     text-align: left;
@@ -329,6 +331,9 @@ export default {
     right: 2rem;
     height: 35px;
     width: 35px;
+}
+.button-container { 
+    margin-top: 20px;
 }
 .line {
     background-color: red;

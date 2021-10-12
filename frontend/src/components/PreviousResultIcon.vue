@@ -111,6 +111,7 @@ export default {
 .image {
 	width: 60px;
 	height: 60px;
+    margin: 5px;
 }
 .image img {
 	width: 60px;

@@ -53,10 +53,10 @@ body {
     /* overflow-y: scroll; */
 }
 .fade-enter-active, .fade-leave-active {
-  transition: opacity .2s ease;
-  -webkit-transition: opacity .2s ease;
-  -moz-transition: opacity .2s ease;
-  -o-transition: opacity .2s ease;
+  transition: opacity .1s ease;
+  -webkit-transition: opacity .1s ease;
+  -moz-transition: opacity .1s ease;
+  -o-transition: opacity .1s ease;
 }
 
 .fade-enter-from, .fade-leave-to {

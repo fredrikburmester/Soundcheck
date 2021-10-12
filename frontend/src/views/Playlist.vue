@@ -9,15 +9,17 @@ Page for saving game tracks to a user playlist in spotify.
             </div>
         </transition>
         <transition name="fade" mode="out-in">
+            
             <div> 
+                <div class="close-button">
+                    <CloseButton 
+                        @click="goBack()"
+                    />
+                </div>
                 <div :style="gridStyle" :class="(existingPlaylist || newPlaylist) ? 'dim grid' : 'grid'">
-                    <div>
+                    <div class="grid-header">
                         <h3>Tap to select/deselect</h3>
-                        <div class="close-button">
-                            <CloseButton 
-                                @click="goBack()"
-                            />
-                        </div>
+                        
                     </div>
                     <div class="track-list-container">
                         <div v-for="track in tracks" :key="track" :class="{ iconlist: track[1]}">
@@ -262,7 +264,10 @@ export default {
 }
 .grid {
     display: grid;
-    grid-template-rows: 65px auto 200px;
+    grid-template-rows: 110px auto 200px;
+}
+.grid-header {
+    margin-top: 45px;
 }
 .playlist-modal-view{
     z-index: 2;
@@ -345,7 +350,7 @@ input {
 }
 .close-button {
     position: fixed;
-    top: 25px;
-    right: 1rem;
+    top: 50px;
+    right: calc(2rem - 10px);
 }
 </style>

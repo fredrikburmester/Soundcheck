@@ -111,7 +111,9 @@ p {
     margin-left: -2rem;
     text-align: center;
     position: fixed;
-    bottom: 0;
-    color: rgba(255, 255, 255, 0.88);
+    bottom: 40px;
+}
+.about > p {
+    color: rgb(101, 101, 101)
 }
 </style>

@@ -99,8 +99,8 @@ h3 {
 }
 .create {
     display: grid;
-    grid-template-rows: auto 185px;
-    height: 99vh;
+    grid-template-rows: auto 178px;
+    height: 100vh;
 }
 .container {
     padding: 2rem;
@@ -141,7 +141,7 @@ h3 {
     width: 100vw;
 } */
 .button-container {
-    padding-top: 30px;
+    padding-top: 20px;
     width: 100%;
 }
 .back {

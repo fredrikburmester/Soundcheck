@@ -7,38 +7,60 @@ Simple close icon, no logic here.
             <div
                 id="line1"
                 class="line"
+                :style="colorStyles"
             />
             <div
                 id="line2"
                 class="line"
+                :style="colorStyles"
             />
     </div>
 </template>
 
 <script>
 export default {
-    name: 'CloseButton'
+    name: 'CloseButton',
+    props: {
+        color: {
+            type: String,
+            default: 'gray'
+        }
+    },
+    computed: {
+        colorStyles() {
+            if(this.color == "red") {
+                return {
+                    'background-color': "red"
+                };
+            } else {
+                return {
+                    "background-color": "gray"
+                }
+            }
+        }
+    }
 }
 </script>
 
 <style scoped>
     .close-button-component{
-        width: 30px;
-        height: 30px;
+        width: 25px;
+        height: 25px;
         cursor: pointer;
-        padding-top: 5px;
-        padding-left: 5px
+        padding: 10px
     }
     .line {
         background-color: gray;
         height: 3px;
         width: 25px;
-        position: relative
+        position: absolute;
     }
-        #line1 {
-        transform: translateY(3px) rotate(45deg);
+    #line1 {
+        margin-top: 10px;
+        transform: translateY(0px) rotate(45deg);
     }
         #line2 {
-        transform: rotate(-45deg);
+            margin-top: 0;
+        transform: translateY(10px) rotate(-45deg);
     }
 </style>

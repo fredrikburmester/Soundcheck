@@ -80,7 +80,7 @@ export default {
     margin-top: 10px;
 
     height: 70px;
-    overflow-x: hidden;
+    overflow: hidden;
     flex-wrap: nowrap;
     justify-content: flex-start;
     align-items: center;
