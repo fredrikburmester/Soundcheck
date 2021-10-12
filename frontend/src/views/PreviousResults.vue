@@ -14,7 +14,7 @@ Displays a list of previous games for one user.
                 </p>
             </div>
             <div class="list">
-                <div class="list-item" v-for="result in results.slice().reverse()" :key="result" style="height: 80px;" @click="goTo(result.code)">
+                <div class="list-item" v-for="result in results.slice().reverse()" :key="result" @click="goTo(result.code)">
                     <PreviousResultIcon :code="result.code" :date="getDateStringFromUnix(result.date)" :uri="result.answers[0].info" />
                 </div>
             </div>
@@ -125,10 +125,10 @@ margin-top: 45px;
     border-top: 1px gray solid;
     border-bottom: 1px gray solid;
     padding-bottom: 20px;
+    padding-top: 5px
 }
 .list-item {
-    padding-top: 5px;
-    overflow-y: hidden;
+    overflow: hidden;
 }
 .date {
   position: relative;

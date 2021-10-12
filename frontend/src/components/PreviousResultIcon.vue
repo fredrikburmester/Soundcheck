@@ -70,14 +70,11 @@ export default {
 .roomIcon {
     display: flex;
     position: relative;
-    margin-bottom: 10px;
-    margin-top: 10px;
-
-    /* height: 70px; */
-    overflow-x: hidden;
+    overflow: hidden;
     flex-wrap: nowrap;
     justify-content: flex-start;
     align-items: center;
+    height: 85px;
 }
 .circle {
     border-radius: 50%;
