@@ -14,7 +14,7 @@ Displays a list of previous games for one user.
                 </p>
             </div>
             <div class="list">
-                <div class="list-item" v-for="result in results" :key="result" style="height: 80px;" @click="goTo(result.code)">
+                <div class="list-item" v-for="result in results.slice().reverse()" :key="result" style="height: 80px;" @click="goTo(result.code)">
                     <PreviousResultIcon :code="result.code" :date="getDateStringFromUnix(result.date)" :uri="result.answers[0].info" />
                 </div>
             </div>
@@ -64,16 +64,28 @@ export default {
     },
     methods: {
         getDateStringFromUnix(unix) {
-            var date = new Date(unix * 1000);
-            var date_string = date.toLocaleDateString('se');
-            var hour = date.getHours();
-            var minute = date.getMinutes();
-            if (minute < 10) minute = '0' + minute.toString();
-            // var second = date.getSeconds()
+            var gameDate = new Date(unix * 1000);
+            var currentDate = new Date();
 
-            /* eslint-disable */
-            return `Played on ${date_string} @ ${hour}:${minute}`;
-            /* eslint-enable */
+            var hour = gameDate.getHours();
+            var minute = gameDate.getMinutes();
+            if (minute < 10) minute = '0' + minute.toString();
+
+            var gameDateString = `${gameDate.getFullYear()}-${gameDate.getMonth()}-${gameDate.getDate()}`;
+            currentDate = `${currentDate.getFullYear()}-${currentDate.getMonth()}-${currentDate.getDate()}`;
+
+            var date_string;
+            if(gameDateString == currentDate) {
+                date_string = "Today"
+                /* eslint-disable */
+                return `${date_string} @ ${hour}:${minute}`;
+                /* eslint-enable */
+            } else {
+                date_string = gameDate.toLocaleDateString('se');
+                /* eslint-disable */
+                return `Played on ${date_string} @ ${hour}:${minute}`;
+                /* eslint-enable */
+            }
         },
         goTo(code) {
             this.$router.push(`/${code}/results`)
@@ -89,11 +101,11 @@ export default {
 
 .grid {
     display: grid;
-    grid-template-rows: 120px auto 100px;
+    grid-template-rows: 150px auto 120px;
     padding: 0 2rem 0 2rem;
 }
 .grid-header {
-margin-top: 20px;
+margin-top: 45px;
 }
 .title, .username {
     text-align: left;
@@ -111,7 +123,8 @@ margin-top: 20px;
     overflow-y: scroll;
     overflow-x: hidden;
     border-top: 1px gray solid;
-    border-bottom: 1px gray solid
+    border-bottom: 1px gray solid;
+    padding-bottom: 20px;
 }
 .list-item {
     padding-top: 5px;
