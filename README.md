@@ -89,6 +89,46 @@ For the backend:
 
 `pm2 start npm --name "TDDD27-Frontend" -- run prod`
 
+## Buttons
+The button structure looks like this. 
+
+- The button component is `48px` tall with a `10px` bottom margin. 
+- The standard grid on the page has a footer that is `62px + <button-size> + <button-margin> = 120`
+- Adding another button will therefore result in a footer that is `178px` tall.   
+
+A fixed button looks like this, firstly we need a button container: 
+```
+.button-container {
+    position: fixed;
+    left: 50%;
+    bottom: 15px;
+    transform: translate(-50%, -50%);
+    margin: 0 auto;
+    width: 100vw;
+}
+
+```
+And then a div for the button actual button: 
+```
+.logout-button-div {
+    padding: 0 2rem 0 2rem;
+}
+```
+And then just place the button inside that div: 
+```
+<div class="button-container">
+    <div class="logout">
+        <Button
+            color="#CD1A2B"
+            button-link="/logout"
+            button-text="Log out"
+            class="logout"
+            @click="logout"
+        />
+    </div>
+</div>
+```
+
 ## Issues and Bugs
 https://trello.com/b/7ShV1pMC/spotifygame
 
