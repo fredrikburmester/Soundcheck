@@ -60,5 +60,6 @@ export default {
     /* --------------- */ 
 
     -webkit-appearance: none;
+    color: black !important;
 }
 </style>
