@@ -134,16 +134,23 @@ This view containes the entire game. There are 2 stages, a room lobby/waiting ro
                     </h1>
                     <div class="hr" style="margin-top: 1rem; margin-bottom: 1rem" />
                     <h3 class="title">
-                        Players:
+                        <p v-if="players.length > 1">
+                            {{players.length}} Players:
+                        </p>
+                        <p v-else>
+                            So empty... Invite some friends!
+                        </p>
                     </h3>
                 </div>
                 <div class="list">
-                    <PlayerAvatar
+                    <PlayerLobbyAvatar 
+                        @updateName="sendName"
                         v-for="player in players"
                         :key="player.id"
                         :player-name="player.name"
                         :color="player.color"
                         :host="player.host"
+                        :isMe="player.name == name"
                     />
                 </div>
                 <div class="buttons">
@@ -189,6 +196,7 @@ import PlayerAvatar from '../components/PlayerAvatar';
 import Button from '../components/Button';
 import ProgressBar from '../components/ProgressBar';
 import CloseButton from '../components/CloseButton';
+import PlayerLobbyAvatar from '../components/PlayerLobbyAvatar';
 import { nextTick } from 'vue'
 
 const QRCode = require('qrcode');
@@ -201,6 +209,7 @@ export default {
         Button,
         ProgressBar,
         CloseButton,
+        PlayerLobbyAvatar
     },
     data: function () {
         return {
@@ -221,6 +230,7 @@ export default {
             players: [],
             progressbarTime: 0,
             players_guessed: [],
+            name: ""
         };
     },
     // All functions under the "sockets" are websockets from the sever and the functions are 
@@ -252,6 +262,7 @@ export default {
                 this.settings = settings;
                 this.getTopTrack();
                 this.found = true;
+
             // If the game has started the player can either rejoin or is redirected if not in the game. 
             } else if (status == 'playing') {
                 if (access == true) {
@@ -300,7 +311,18 @@ export default {
         },
         // Updating the list of current players each time a player joines or leaves. 
         update_list_of_players({ players }) {
+            // Set the current player name
+            players.forEach(player => {
+                if (player.sid == this.$store.getters.getSid) {
+                    this.name = player.name
+                    console.log("me:", this.name)
+                }
+            });
+
+            // Update array of players
             this.players = players;
+
+            // Check who is host
             this.isHost();
         },
         // Used if the host closes the room. 
@@ -377,6 +399,19 @@ export default {
         // toggles the leave room modal 
         toggleModal() {
             this.leaveRoomModal = !this.leaveRoomModal;
+        },
+        sendName(name) {
+            for(let player in this.players) {
+                if(player.sid == this.$store.getters.getSid) {
+                    //
+                }
+            }
+
+            this.$socket.client.emit('update_name', {
+                sid: this.$store.getters.getSid,
+                name: name,
+                code: this.code
+            });
         },
         async copyToClipboard() {
             await navigator.clipboard.writeText(window.location.href);
@@ -669,6 +704,7 @@ export default {
     background-color: black;
     z-index: 2;
 }
+
 .close-button {
     position: fixed;
     top: 70px;
@@ -680,12 +716,14 @@ export default {
     margin-right: 2rem;
     margin-left: 2rem;
 }
+
 .webplayer {
     border: none !important;
     border-radius: 15px;
     width: calc(100vw - 2rem);
     margin-left: 1rem;
 }
+
 @media only screen and (min-width: 700px) {
     .bigQR > img {
     width: 45vw;

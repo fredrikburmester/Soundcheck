@@ -375,6 +375,37 @@ def send_list_of_players(code):
         'players': list_of_players,
     }, room=code)
 
+@socketio.on('update_name')
+def update_player_name(data):
+    sid = data['sid']
+    code = data['code']
+    name = data['name']
+
+    print("UPDATE PLAYER NAME")
+    
+    for Room in ROOMS:
+        if Room.code == code:
+            list_of_players = []
+            for player in Room.players:
+                if player.sid == sid:
+                    player.name = name
+                list_of_players.append({
+                    'name': player.name,
+                    'id': player.id,
+                    'points': player.points,
+                    'access_token': player.access_token,
+                    'refresh_token': player.refresh_token,
+                    'color': player.color,
+                    'sid': player.sid,
+                    'host': player.host
+                })
+            break                
+    socketio.emit("update_list_of_players", {
+        'players': list_of_players,
+    }, room=code)
+
+
+
 # When the host proceeds to the next question on the frontend, it sends a websocket that is recieved here.
 
 
@@ -631,10 +662,13 @@ def generate_access_token(code):
     global CLIENT_ID
     global CLIENT_SECRET
 
+    scope = "streaming app-remote-control user-read-currently-playing user-read-playback-state user-modify-playback-state user-read-email user-read-private"
+
     if ENV == 'production' or ENV == 'prod':
         data = {
             "grant_type": "authorization_code",
             "code": code,
+            "scope": scope,
             "redirect_uri": "https://soundcheck.fdrive.se/logincallback",
             'client_id': CLIENT_ID,
             'client_secret': CLIENT_SECRET
@@ -643,6 +677,7 @@ def generate_access_token(code):
         data = {
             "grant_type": "authorization_code",
             "code": code,
+            "scope": scope,
             "redirect_uri": "http://localhost:8080/logincallback",
             'client_id': CLIENT_ID,
             'client_secret': CLIENT_SECRET
@@ -705,6 +740,6 @@ def generateId():
 # Run the server in either dev or prod
 if __name__ == '__main__':
     if ENV == 'production' or 'prod':
-        socketio.run(app, host='0.0.0.0', port=5000)
+        socketio.run(app, host='0.0.0.0', port=5001)
     else:
         socketio.run(app)
