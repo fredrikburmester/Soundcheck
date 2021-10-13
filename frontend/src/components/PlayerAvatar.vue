@@ -27,7 +27,7 @@ Component also implemented as guessing icon when game has started. Hence the sel
             v-if="host"
             class="star"
         >
-            👑
+            👑 <span style="font-size: 12px; color: gray; margin-left: 8px">Game leader</span> 
         </div>
     </div>
 </template>
