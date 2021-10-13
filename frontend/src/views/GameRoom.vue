@@ -358,12 +358,12 @@ export default {
             if(this.host) {
                 return {
                     'height': `${window.innerHeight}px`,
-                    'grid-template-rows': '190px auto 70px 80px'
+                    'grid-template-rows': '190px auto 70px 100px'
                 }
             } else {
                 return {
                     'height': `${window.innerHeight}px`,
-                    'grid-template-rows': '190px auto 0px 80px'
+                    'grid-template-rows': '190px auto 0px 100px'
                     
                 };
             }
@@ -544,7 +544,7 @@ export default {
 }
 .started-grid {
     display: grid;
-    grid-template-rows: 140px auto minmax(0px, 70px) 80px;
+    grid-template-rows: 140px auto minmax(0px, 70px) 100px;
     height: 99vh;
 }
 .started-grid-header {
@@ -679,6 +679,12 @@ export default {
     margin-top: 10px;
     margin-right: 2rem;
     margin-left: 2rem;
+}
+.webplayer {
+    border: none !important;
+    border-radius: 15px;
+    width: calc(100vw - 2rem);
+    margin-left: 1rem;
 }
 @media only screen and (min-width: 700px) {
     .bigQR > img {
