@@ -9,10 +9,10 @@ View for creating a game room. This view have settings that are sent to the serv
                 Room settings
             </h1>
             <div class="hr" />
-            <h3>Select Time Range</h3>
+            <h3>Time range for your top songs:</h3>
             <Select :list="timeRanges" :default-value="timeRanges[0]" @selected="setTimeRange" />
            
-            <h3>Number of songs per player</h3>
+            <h3>Number of songs per player:</h3>
             <Select :list="nrOfSongsArray" :default-value="nrOfSongsArray[0]" @selected="setNrOfSongs" />
            
             <br>
@@ -66,8 +66,8 @@ export default {
             time_range: 'short_term', 
             // Time rages are specific to the spotify API and not chosen by us. 
             timeRanges: [
-                {value: '4 weeks', key: 'short_term'},
-                {value: '6 months', key: 'medium_term'},
+                {value: '1 Month', key: 'short_term'},
+                {value: 'Half a year', key: 'medium_term'},
                 {value: 'Over a year', key: 'long_term'} 
             ],
             nrOfSongsArray: Array.from({length: 20}, (_, i) => i + 1)
