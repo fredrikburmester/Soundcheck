@@ -20,8 +20,11 @@ Component also implemented as guessing icon when game has started.
                 </p>
             </div>
         </div>
-        <div class="name" >
-            <input @click="changeName($event)" @keyup.enter="onEnter" type="text" id="playerName" readonly="readonly" :value="playerName"> 
+        <div v-if="isMe" class="name" >
+            <input @click="changeName($event)" @keyup.enter="onEnter" type="text" id="playerName" :value="playerName"> 
+        </div>
+        <div v-else class="name" >
+            <input @keyup.enter="onEnter" type="text" id="playerName" readonly="readonly" :value="playerName"> 
         </div>
         <div
             v-if="host"
