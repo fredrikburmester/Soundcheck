@@ -58,8 +58,18 @@ export default {
     data: function () {
         return {
             logo: logo,
-            error: this.$store.state.noTracksFound
+            error: this.$store.state.noTracksFound,
+            sid: this.$store.getters.getSid
         };
+    },
+    mounted: function () {
+        this.generateSid()
+    },
+    sockets: {
+        generate_sid({sid}) {
+            this.sid = sid
+            this.$store.commit('setSid', this.sid)
+        },
     },
     methods: {
         logout: function () {
@@ -74,6 +84,9 @@ export default {
                 false
             );
         },
+        generateSid() {
+            this.$socket.client.emit('generate_sid', { path: 'Home' });
+        }
     },
 };
 </script>
