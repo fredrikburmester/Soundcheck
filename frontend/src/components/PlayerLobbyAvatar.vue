@@ -83,9 +83,14 @@ export default {
         onEnter: function(event) {
             event.target.blur()
             event.target.setAttribute('readonly','readonly')
-            this.playerName_ = event.target.value
-            console.log(`New name: ${this.playerName_}`)
-            this.$emit('updateName', this.playerName_)
+
+            var newName = event.target.value
+            if(newName.length < 2 || newName.length > 20) {
+                event.target.value = this.playerName_
+            } else {
+                this.playerName_ = newName
+                this.$emit('updateName', this.playerName_)
+            }
         }
     }
 };
