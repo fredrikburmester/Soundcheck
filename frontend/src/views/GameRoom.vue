@@ -90,6 +90,7 @@ This view containes the entire game. There are 2 stages, a room lobby/waiting ro
                     :host="player.host"
                     :selected="selected(player.sid)"
                     @click="guess(player)"
+                    :guesses="player.guesses"
                 />
             </div>
             <div>
@@ -246,6 +247,8 @@ export default {
             answers, // What are the answers to the questions? (encoded)
             questionTimeStarted, // How long has it been since the last question started? Used in progressbar.
             players_guessed, // How many players have guessed on a question? 
+            new_sid,
+            error
         }) {
             // console.log({
             //     status,
@@ -262,6 +265,12 @@ export default {
                 this.settings = settings;
                 this.getTopTrack();
                 this.found = true;
+
+                console.log({new_sid: new_sid, old_sid: this.$store.getters.getSid})
+                if(new_sid.length > 0) {
+                    console.log("setting new sid")
+                    this.$store.commit('setSid', new_sid)
+                }
 
             // If the game has started the player can either rejoin or is redirected if not in the game. 
             } else if (status == 'playing') {
@@ -291,7 +300,7 @@ export default {
                     // set error
                     this.$store.commit(
                         'updateError',
-                        'Game has already started!'
+                        error || 'Game has already started!'
                     );
                     // go to join
                     this.$router.push('/join');
@@ -304,22 +313,22 @@ export default {
             } else if (status == 'NaR') {
                 // Room does not exist
                 // set error
-                this.$store.commit('updateError', 'That room does not exist!');
+                this.$store.commit('updateError', error || 'That room does not exist!');
                 // go to join
                 this.$router.push('/join');
-            }
+            } 
         },
         // Updating the list of current players each time a player joines or leaves. 
         update_list_of_players({ players }) {
             // Set the current player name
+            console.log("updating players", players)
             players.forEach(player => {
                 if (player.sid == this.$store.getters.getSid) {
                     this.name = player.name
                     console.log("me:", this.name)
                 }
             });
-
-            // Update array of players
+            
             this.players = players;
 
             // Check who is host
