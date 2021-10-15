@@ -78,6 +78,7 @@ export default {
         createRoom: function () {
             this.$socket.client.emit('createRoom', {
                 sid: this.$store.getters.getSid,
+                id: this.$store.getters.getUserId,
                 time_range: this.time_range,
                 no_songs: this.no_songs,
             });

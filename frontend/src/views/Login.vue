@@ -45,6 +45,7 @@ export default {
     sockets: {
         generate_sid({sid}) {
             this.sid = sid
+            this.$store.commit('setSid', this.sid)
         },
         access_token(data) {
             this.$store.commit('setAccessToken', data.access_token)
@@ -65,7 +66,7 @@ export default {
         this.checkToken();
     },
     mounted() {
-        this.$socket.client.emit('generate-sid');
+        this.$socket.client.emit('generate_sid', { path: 'Login' });
     },
     methods: {
         // Sends the user to spotify authentication system
