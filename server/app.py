@@ -7,13 +7,10 @@ from flask import Flask
 from flask_socketio import join_room, leave_room, close_room
 from flask_socketio import SocketIO
 from flask import request, jsonify, Response
+from flask_cors import CORS
 import time
 import logging
-
 import threading
-
-from flask_cors import CORS
-
 import json
 import random
 import requests
@@ -23,24 +20,18 @@ import sys
 # Database
 from tinydb import TinyDB, Query, where
 from datetime import date
-import time
+from database import db_helper
+
+# Variables
+from variables import CLIENT_SECRET, CLIENT_ID, ENV
 
 db = TinyDB('db.json')
-# Rooms = db.table("Rooms")
-# Rooms.insert({'code':'FDSA'})
-
-
-# For Spotify
-CLIENT_SECRET = "5c04ecc65221460587462cd9dabd9eae"
-CLIENT_ID = "bad02ecfaf4046638a1daa7f60cbe42b"
-
-ENV = sys.argv[1]
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'secret!'
 cors = CORS(app, resources={r"/api/*": {"origins": "*"}})
 log = logging.getLogger('werkzeug')
-log.disabled = False
+log.disabled = True
 
 # Allow cross origin to be able to do websockets from different servers
 # socketio = SocketIO(app)
@@ -51,64 +42,12 @@ else:
     print("Running development mode")
     socketio = SocketIO(app, cors_allowed_origins='*')
 
-
-#### DATABASE ####
-class Player:
-    def __init__(self):
-        self.host = False
-        self.name = ''  # Name of player
-        self.id = ''  # Spotify username
-        self.points = 0
-        self.access_token = ''
-        self.refresh_token = ''
-        self.guesses = []
-        self.color = ''
-
-        def toJSON(self):
-            return json.dumps(self, default=lambda o: o.__dict__,
-                              sort_keys=True, indent=4)
-
-
-class Room:
-    def __init__(self, code):
-        self.questions = ["Who's top song is this?"]
-        self.code = code  # Room code
-        self.players = []  # player object
-        # every persons top track for example {player: sid, answer: trackid}
-        self.answers = []
-        self.results = []  # points for each person
-        self.players_guessed = []
-        self.started = False
-        self.ended = False
-        self.current_question = -1
-        self.settings = []
-        self.guesses = 0
-        self.questionTimeStarted = 0
-
-
-ROOMS = []
-PLAYERS = []
-
-COLOR_COUNTER = 0
-# Used for player icons
-COLORS = [
-    '#FF8360',
-    '#E8E288',
-    '#7DCE82',
-    '#3CDBD3',
-    '#B9C0DA',
-    '#998DA0',
-    '#B5838D'
-]
-
 ################## API Endpoints ##################
 
 # Personal results endpoint. Searches DB for any rooms containing the user and returns game statistics.
-
-
 @app.route('/api/me/<username>/results', methods=['GET'])
 def personal_results(username):
-    global ROOMS
+    
     table_Rooms = db.table("Rooms")
     Room = Query()
     Player = Query()
@@ -127,10 +66,9 @@ def personal_results(username):
 
 # Room results endpoint. Searches DB for room that matches code, and returns game statistics.
 
-
 @app.route('/api/<code>/results', methods=['GET'])
 def results(code):
-    global ROOMS
+    
     table_Rooms = db.table("Rooms")
     result = table_Rooms.search(where('code') == code)
     if result:
@@ -150,6 +88,7 @@ def results(code):
     return Response(status=404, headers={
         "Access-Control-Allow-Origin": "*"
     })
+
 #############################################
 
 
@@ -162,16 +101,16 @@ def check_token(data):
     socketio.emit("access_token", {'access_token': access_token, 'refresh_token': refresh_token, 'sid': data['sid']},
                   to=data['sid'])
 
-@socketio.on('generate-sid')
-def generate_sid():
-    print("Generating SID", str(request.sid))
+@socketio.on('generate_sid')
+def generate_sid(data):
+    print(f"[Clent Reload - {data['path']}] Updating SID: {str(request.sid)}")
     socketio.emit("generate_sid", {'sid': request.sid}, to=request.sid)
 
 # Checks if room exists with specific code
 @socketio.on('isRoom')
 def isRoom(data):
-    global ROOMS
-    for Room in ROOMS:
+    
+    for Room in db_helper.ROOMS:
         if Room.code == data['code']:
             socketio.emit('isRoom', {'isRoom': 'true'}, to=request.sid)
             return
@@ -180,16 +119,13 @@ def isRoom(data):
     return
 
 # When the user makes a guess on the client side, it emits a websocket that is recieved here, and the logic is handled.
-
-
 @socketio.on('player_guess')
 def player_guess(data):
     sid = data['sid']
     player_guess = data['guess']
     code = data['code']
-
-    global ROOMS
-    for Room in ROOMS:
+    
+    for Room in db_helper.ROOMS:
         if Room.code == code:
             current_question = Room.current_question
             for player in Room.players:
@@ -212,14 +148,25 @@ def player_guess(data):
                     socketio.emit('nr_of_players_guessed', {
                         'players': Room.players_guessed
                     }, room=code)
+
                     return
 
+def guesses_per_player(sid, code):
+    for Room in db_helper.ROOMS:
+        if Room.code == code:
+            for player in Room.players:
+                if player.sid == sid:
+                    guesses_per_player = {}
+                    for guess in player.guesses:
+                        if guess['guess'] not in guesses_per_player:
+                            guesses_per_player[guess['guess']] = 1
+                        else:
+                            guesses_per_player[guess['guess']] += 1
+                    return guesses_per_player
+
 # Here are the scores calculated, for each right answer you get 10 points.
-
-
 def compile_results(code):
-    global ROOMS
-    for Room in ROOMS:
+    for Room in db_helper.ROOMS:
         if Room.code == code:
             Room.ended = True
             for player in Room.players:
@@ -255,8 +202,6 @@ def compile_results(code):
     return
 
 # Handles the backend logic when a user enters a room.
-
-
 @socketio.on('connect_to_room')
 def connect_to_room(data):
     code = data['code']
@@ -264,9 +209,8 @@ def connect_to_room(data):
     access_token = data['access_token']
     refresh_token = data['refresh_token']
     reconnecting = False
-
-    global ROOMS
-    for Room in ROOMS:
+    
+    for Room in db_helper.ROOMS:
         if Room.code == code:
 
             # Initializing variables
@@ -282,21 +226,36 @@ def connect_to_room(data):
                 status = 'lobby'
                 access = True
 
+                # sending get request and saving the response as response object
+                r2 = requests.get(url="https://api.spotify.com/v1/me",
+                                    headers={"Authorization": "Bearer " + access_token})
+
+                # extracting data in json format
+                data = r2.json()
+
                 for player in Room.players:
-                    if player.sid == sid:  # player is reconnecting to lobby
+                    if player.sid == request.sid or player.id == str(data['id']):  # player is reconnecting to lobby
                         reconnecting = True
-                        print(f"[{code}]{player.name} reconnecting")
+                        
+                        print(f"[{code}] {player.name} reconnecting")
+
+                        # Kick other instance of player
+                        if player.sid != sid:
+                            socketio.emit("connectToRoom", {
+                                'status': 'playing',
+                                'access': None,
+                                'question': None,
+                                'settings': None,
+                                'answers': None,
+                                'error': "You connected from another device!"
+                            }, to=player.sid)
+                        
+                        db_helper.update_player_sid(player.sid, request.sid, code)
+                        break
 
                 if not reconnecting:
-                    # sending get request and saving the response as response object
-                    r2 = requests.get(url="https://api.spotify.com/v1/me",
-                                      headers={"Authorization": "Bearer " + access_token})
-
-                    # extracting data in json format
-                    data = r2.json()
-
                     # Create player object
-                    new_player = Player()
+                    new_player = db_helper.Player()
                     new_player.name = str(data['display_name'])
                     new_player.id = str(data['id'])
                     new_player.points = 0
@@ -334,7 +293,8 @@ def connect_to_room(data):
                 'settings': settings,
                 'answers': Room.answers,  # also defines total number of questions
                 'questionTimeStarted': Room.questionTimeStarted,
-                'players_guessed': Room.players_guessed
+                'players_guessed': Room.players_guessed,
+                'new_sid': request.sid
             }, to=request.sid)
 
             # Send a updated list of the current players in the room
@@ -351,70 +311,26 @@ def connect_to_room(data):
     return
 
 # Creates a list of all players in a room and sends it to the client.
-
-
 def send_list_of_players(code):
-    global ROOMS
-    list_of_players = []
-    for Room in ROOMS:
-        if Room.code == code:
-            for player in Room.players:
-                list_of_players.append({
-                    'name': player.name,
-                    'id': player.id,
-                    'points': player.points,
-                    'access_token': player.access_token,
-                    'refresh_token': player.refresh_token,
-                    'color': player.color,
-                    'sid': player.sid,
-                    'host': player.host
-                })
-            break
-
+    list_of_players = db_helper.get_list_of_players(code)
     socketio.emit("update_list_of_players", {
         'players': list_of_players,
     }, room=code)
 
 @socketio.on('update_name')
 def update_player_name(data):
-    sid = data['sid']
-    code = data['code']
-    name = data['name']
-
-    print("UPDATE PLAYER NAME")
-    
-    for Room in ROOMS:
-        if Room.code == code:
-            list_of_players = []
-            for player in Room.players:
-                if player.sid == sid:
-                    player.name = name
-                list_of_players.append({
-                    'name': player.name,
-                    'id': player.id,
-                    'points': player.points,
-                    'access_token': player.access_token,
-                    'refresh_token': player.refresh_token,
-                    'color': player.color,
-                    'sid': player.sid,
-                    'host': player.host
-                })
-            break                
+    sid, code, name = data['sid'], data['code'], data['name']
+    list_of_players = db_helper.update_player_name(sid, code, name)            
     socketio.emit("update_list_of_players", {
         'players': list_of_players,
     }, room=code)
 
-
-
 # When the host proceeds to the next question on the frontend, it sends a websocket that is recieved here.
-
-
 @socketio.on('next_question')
 def next_question(data):
     code = data['code']  # Specifying the room code.
 
-    global ROOMS
-    for Room in ROOMS:
+    for Room in db_helper.ROOMS:
         if code == Room.code:
             Room.guesses = 0
             Room.current_question += 1
@@ -423,17 +339,17 @@ def next_question(data):
             # answer is track id in this case
             if current_question == len(Room.answers) and len(Room.answers) != 0:
 
-                print(f"[{code}] Sending: Game is over, loading...")
+                print(f"[{code}] Game has ended.")
                 socketio.emit('game_ended', room=code)
 
-                print(f"[{code}] Compiling results")
+                print(f"[{code}] Compiling results...")
                 #compile_results(code)
                 
                 thread = threading.Thread(target=compile_results, args=(code,))
                 thread.start()
                 thread.join()
 
-                print(f"[{code}] Sending: Go to results")
+                print(f"[{code}] Redirecting users to results...")
                 socketio.emit("connectToRoom", {
                     'status': 'ended',
                     'access': None,
@@ -453,16 +369,14 @@ def next_question(data):
                 return
 
 # Used to start the game. Sends out a socket to all players in the room that the game is starting.
-
-
 @socketio.on('start_game')
 def start_game(data):
     code = data['code']
     num_of_players = 0
 
     # Get the room
-    global ROOMS
-    for Room in ROOMS:
+    
+    for Room in db_helper.ROOMS:
         if Room.code == code:
             num_of_players = len(Room.players)
             nr_of_questions = len(Room.answers)
@@ -475,55 +389,31 @@ def start_game(data):
             print(f"[{code}] Number of players: {num_of_players}")
             return
 
-
 @socketio.on('toptrack')
 def get_top_track(data):
-    trackid = []
-    trackid.append(data['trackid'])
+    trackid = data['trackid']
     code = data['room']
     sid = data['sid']
-
-    global ROOMS
-    # Go thorugh each room and find the one sending the 'toptrack' emit
-    for Room in ROOMS:
-        if code == Room.code:
-            # Make sure to not add songs again on reconnect
-            reconnecting = False
-            for answer in Room.answers:
-                if answer['player'] == sid:
-                    reconnecting = True
-
-            if not reconnecting:
-                print(f"[{code}] Adding top song(s) for {sid}")
-                for x in range(len(trackid[0])):
-                    Room.answers.append({
-                        'player': sid,
-                        'info': trackid[0][x],
-                    })
+    db_helper.set_top_track(trackid, code, sid)
 
 # Deleting and closing the room on host close room
-
-
 def close_socket_room(code):
-    for Room in ROOMS:
-        if Room.code == code:
-            ROOMS.remove(Room)
-            socketio.emit("room_closed_by_host", room=Room.code)
+    db_helper.close_room(code)
+    
+    socketio.emit("room_closed_by_host", room=code)
 
-            close_room(code)
-            print(f"[Server] Deleting room {code}")
+    # Close socket connection
+    close_room(code)
+    print(f"[Server] Closing room {code}")
 
 # Removes a player from the Room object if the player decides to leave the room
 # Also sends a updated list of all players to the users in the room.
-
-
 @socketio.on('leave_room')
 def remove_player_from_room(data):
     code = data['code']
     sid = data['sid']
-
-    global ROOMS
-    for Room in ROOMS:
+    
+    for Room in db_helper.ROOMS:
         if Room.code == code:
             for player in Room.players:
                 if player.sid == sid:
@@ -539,54 +429,55 @@ def remove_player_from_room(data):
                     else:
                         leave_room(code)
 
-                    # Send out an updated list of players to the room
-                    list_of_players = []
-                    for player in Room.players:
-                        list_of_players.append({
-                            'name': player.name,
-                            'id': player.id,
-                            'points': player.points,
-                            'access_token': player.access_token,
-                            'refresh_token': player.refresh_token,
-                            'color': player.color,
-                            'sid': player.sid,
-                        })
+                    break
 
-                    socketio.emit("update_list_of_players", {
-                                  'players': list_of_players}, room=code)
-                    return
+            # Update answers for player songs
+            Room.answers = [answer for answer in Room.answers if not answer['player'] == sid]
+
+            # Send out an updated list of players to the room
+            list_of_players = []
+            for player in Room.players:
+                list_of_players.append({
+                    'name': player.name,
+                    'id': player.id,
+                    'points': player.points,
+                    'access_token': player.access_token,
+                    'refresh_token': player.refresh_token,
+                    'color': player.color,
+                    'sid': player.sid,
+                })
+
+            socketio.emit("update_list_of_players", {
+                            'players': list_of_players}, room=code)
+            return
 
 # Creating a Room object to store all room information in and sends the code of the room to the host client requesting
 # to create the room
-
-
 @socketio.on('createRoom')
 def createRoom(data):
     sid = data['sid']
+    id = data['id']
     time_range = data['time_range']
     no_songs = data['no_songs']
+
     # Generate a random room code, 4 letters
     code = generateId()
 
-    # Get the global variable (think of the scope?)
-    global ROOMS
-
     reconnecting = False
-    for _Room in ROOMS:
+    for _Room in db_helper.ROOMS:
         for player in _Room.players:
-            if player.sid == sid and player.host == True and _Room.ended == False:
+            if player.id == id and player.host == True and _Room.ended == False:
                 code = _Room.code
                 reconnecting = True
-                print(
-                    f"[Server] User {player.name} already has an active room: {code}. Rejoining.")
+                print(f"[Server] Host {player.name} already has an active room: {code}. Rejoining as host.")
 
     if not reconnecting:
-        ROOMS.append(Room(code))
-        print(f"[Server] Creating room: {code}")
+        db_helper.ROOMS.append(db_helper.Room(code))
+        print(f"[Server] Player: {sid} created room: {code}")
 
-    for _Room in ROOMS:
-        if _Room.code == code:
-            _Room.settings.append([time_range, no_songs])
+        for _Room in db_helper.ROOMS:
+            if _Room.code == code:
+                _Room.settings.append([time_range, no_songs])
 
     socketio.emit('roomCode', {'code': code}, to=request.sid)
 
@@ -624,7 +515,6 @@ def createPlaylist(data):
             "Content-Type": "application/json",
             "Authorization": f"Bearer {data['access_token']}"
         })
-    print("playlist created")
     socketio.emit('playlistCreated', to=request.sid)
 
 # Add tracks to existing playlist
@@ -649,15 +539,13 @@ def addToPlaylist(data):
             "Content-Type": "application/json",
             "Authorization": f"Bearer {data['access_token']}"
         })
-    print("playlist created")
     socketio.emit('playlistCreated', to=request.sid)
-#############################################
+
+#######################################################
 
 ################## Regular functions ##################
 
 # Generates a access_token based on the token from the spotify authentication logincallback
-
-
 def generate_access_token(code):
     global CLIENT_ID
     global CLIENT_SECRET
@@ -701,23 +589,16 @@ def generate_access_token(code):
         return access_token, refresh_token
 
 # Generates a color for a player
-
-
 def getColor():
-    global COLORS
-    global COLOR_COUNTER
+    color = db_helper.COLORS[db_helper.COLOR_COUNTER]
+    db_helper.COLOR_COUNTER += 1
 
-    color = COLORS[COLOR_COUNTER]
-    COLOR_COUNTER += 1
-
-    if (COLOR_COUNTER == len(COLORS) - 1):
-        COLOR_COUNTER = 0
+    if (db_helper.COLOR_COUNTER == len(db_helper.COLORS) - 1):
+        db_helper.COLOR_COUNTER = 0
 
     return color
 
 # Generates a random room code and checks that the code is unique
-
-
 def generateId():
     letters = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"
     code = ""
