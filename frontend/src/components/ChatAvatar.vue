@@ -100,8 +100,8 @@ export default {
 }
 .initials {
     font-family: 'Roboto', sans-serif;
-    position: absolute;
-    margin-left: 13px;
+    position: inherit;
+    margin-top: 10px;
     z-index: 1;
 }
 </style>
