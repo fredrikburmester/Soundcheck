@@ -30,7 +30,6 @@ export default {
     },
     async mounted() {
         var self = this;
-        //const token = 'BQCXLYNjMKB9lU6-S5pwRyOqKpkWdG-ACvHujZGbwFmWLB-ekX2AnEsKPN-KnMQ9UQA2zhKOA9DlNMoT8xhxCY4XCpUI3SKm4ntaQJfOOPrs0vCC_s_usj_33FuFQqwa_MSI_smF3dlcUcInogbFcpg2Tcs39PzAeqVAN27NnoaCxeQqJMxFbndCw9G2j0ggSr9j5473w0PslyRkzqq2b3IQ8kWWr2oSMQmRbWBBBJO1It-UnroiOgMf4n6VDqJbo3ITqvd2uUMrXLBX6ZHs4w'
 
         window.onSpotifyWebPlaybackSDKReady = () => {
             const player = new Spotify.Player({
@@ -79,7 +78,7 @@ export default {
                  }),
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': `Bearer BQAqDWlUdWmTr3MWHiFpWDGPxosk_EJEJwlbvYjlISIiwBGSTHamvXhBf3_PofYDGKJsisWjytGbPol3DxGaOq6GRgzGsJnDs1YYcQg8aeRku99Jy7gi4m3ddN8XqYjnW45uKJ1JLU7We5x4X_1wLshtiuUWv38Hwoq_EnvHvPYShnT5aZevt_MIoqc2drjOk0dbb9n9iSxsVJ7yxLTXSbHyuOO9m682pTqxcoYMhYYHVKmq71ZlzGEBW3nn89lsrBplupJgEv6FgrDdPZ6t_A`
+                    'Authorization': `Bearer self.token`
                 },
             })
         },
