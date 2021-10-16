@@ -18,16 +18,19 @@ Component also implemented as guessing icon when game has started. Hence the sel
                 </p>
             </div>
         </div>
-        <div class="name">
-            <p :class="selected_ ? 'selected-text' : ''">
+        <div class="avatar-text">
+            <p class="name" :class="selected_ ? 'selected-text' : ''">
                 {{ playerName_ }}
             </p>
+            <p v-if="guesses_ > 1" class="guesses">Guessed: {{guesses_}} times</p>
+            <p v-if="guesses_ == 1" class="guesses">Guessed: {{guesses_}} time</p>
         </div>
         <div
             v-if="host"
             class="star"
         >
-            👑 <span style="font-size: 12px; color: gray; margin-left: 8px">Game leader</span> 
+            <span style="font-size: 12px; color: gray; margin-left: 54px">Game leader</span> 
+            
         </div>
     </div>
 </template>
@@ -51,6 +54,14 @@ export default {
         selected: {
             type: Boolean,
         },
+        guesses: {
+            type: Number,
+            default: 0
+        },
+        numberOfSongs: {
+            type: Number,
+            default: 0
+        },
     },
     data() {
         return {
@@ -59,6 +70,8 @@ export default {
             color_: this.color,
             host_: this.host,
             selected_: this.selected,
+            guesses_ : this.guesses,
+            numberOfSongs_ : this.numberOfSongs,
         };
     },
     computed: {
@@ -123,14 +136,20 @@ export default {
     top: 0;
     padding: 0;
 }
-.name > p {
+.guesses {
+    font-size: 12px;
+    top: 33px; 
+    margin-left: 10px;
+    position: absolute;
+}
+.name {
     white-space: nowrap;
     margin-left: 10px;
 }
 .star {
     position: absolute;
-    top: 40px;
-    left: 45px;
+    top: -2px;
+    left: 26px;
     font-size: 20px;
 }
 </style>
