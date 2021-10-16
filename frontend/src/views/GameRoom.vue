@@ -479,12 +479,16 @@ export default {
             })
         },
         sendMessage(event) {
-            this.$socket.client.emit('send_message', {
-                sid: this.$store.getters.getSid,
-                message: event.target.value,
-                code: this.code
-            });
-            event.target.value = ""
+            if(event.target.value.length > 0) {
+                this.$socket.client.emit('send_message', {
+                    sid: this.$store.getters.getSid,
+                    message: event.target.value,
+                    code: this.code
+                });
+                event.target.value = ""
+            } else {
+                //
+            }
         },
         sendName(name) {
             for(let player in this.players) {
