@@ -745,7 +745,7 @@ export default {
     backdrop-filter: blur(5px);
     display: grid;
     grid-template-columns: 1;
-    grid-template-rows: auto 200px;
+    grid-template-rows: auto 225px;
     justify-items: start;
     align-items: end;
 }
@@ -757,7 +757,8 @@ export default {
 }
 .chat-room > .input-area > input {
     margin: 0 2rem 0 2rem;
-    height: 40px;
+    height: 45px;
+    font-size: 15px;
     justify-self: stretch;
     border-radius: 40px;
     padding-left: 20px;
