@@ -201,6 +201,16 @@ def compile_results(code):
             return
     return
 
+@socketio.on("send_message")
+def send_message(data):
+    code = data['code']
+    sid = data['sid']
+    message = data['message']
+
+    socketio.emit("recieve_message", {
+        'text': message, 'sid': request.sid
+    }, to=code)
+
 # Handles the backend logic when a user enters a room.
 @socketio.on('connect_to_room')
 def connect_to_room(data):
