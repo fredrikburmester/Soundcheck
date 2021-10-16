@@ -201,7 +201,8 @@ import PlayerLobbyAvatar from '../components/PlayerLobbyAvatar';
 import { nextTick } from 'vue'
 
 const QRCode = require('qrcode');
-const axios = require('axios');
+import API from "../libs/api"
+// const axios = require('axios');
 
 export default {
     name: 'Home',
@@ -499,74 +500,46 @@ export default {
             this.$router.push('/');
         },
         // gets the top track for the user when joining the room. These are then sent to the server. 
-        getTopTrack() {
-            var self = this;
+        getTopTrack: async function() {
             var token = this.$store.getters.getAccessToken;
 
             var time_range = this.settings[0];
-            var no_songs = this.settings[1];
+            var nr_songs = this.settings[1];
 
-            axios
-                .get(
-                    `https://api.spotify.com/v1/me/top/tracks?time_range=${time_range}&limit=${no_songs}`,
-                    {
-                        headers: {
-                            Authorization: `Bearer ${token}`,
-                            Accept: 'application/json',
-                            'Content-Type': 'application/json',
-                        },
-                    }
-                )
-                .then(function (response) {
-                    if (response.data.items.length < no_songs) {
-                        axios
-                            .get(
-                                `https://api.spotify.com/v1/me/top/tracks?time_range=long_term&limit=${no_songs}`,
-                                {
-                                    headers: {
-                                        Authorization: `Bearer ${token}`,
-                                        Accept: 'application/json',
-                                        'Content-Type': 'application/json',
-                                    },
-                                }
-                            )
-                            .then(function (response) {
-                                if (response.data.items.length < no_songs) {
-                                    self.$store.commit(
-                                        'updateNoTracks',
-                                        true
-                                    );
-                                    self.leaveRoom();
-                                } else {
-                                    var trackid = [];
-                                    for (var i = 0; i < no_songs; i++) {
-                                        trackid.push(
-                                            response.data.items[0].uri.split(
-                                                ':'
-                                            )[2]
-                                        );
-                                    }
-                                    self.$socket.client.emit('toptrack', {
-                                        trackid: trackid,
-                                        sid: self.$store.getters.getSid,
-                                        room: self.code,
-                                    });
-                                }
-                            });
-                    } else {
-                        var trackid = [];
-                        for (var i = 0; i < no_songs; i++) {
-                            trackid.push(
-                                response.data.items[i].uri.split(':')[2]
-                            );
-                        }
-                        self.$socket.client.emit('toptrack', {
-                            trackid: trackid,
-                            sid: self.$store.getters.getSid,
-                            room: self.code,
-                        });
-                    }
+            var trackIds = await API.getTopSongsForUser(time_range, nr_songs, token)
+            console.log("top tracks: ", trackIds )
+
+            var time_range_text;
+            if(time_range == 'short_term') {
+                time_range_text = 'month'
+            } else if (time_range == 'medium_term') {
+                time_range_text = 'half a year'
+            } else if (time_range == 'long_term') {
+                time_range_text = 'year'
+            }
+
+            if (trackIds.length < nr_songs) {
+                let error = `Not enough top song! ${trackIds.length} top songs the last ${time_range_text}. Try creating a room with another time-frame or fewer songs. `
+
+                this.$socket.client.emit('leave_room', {
+                    code: this.code,
+                    sid: this.$store.getters.getSid,
                 });
+
+                // set error
+                this.$store.commit(
+                    'updateError', error
+                );
+                // go to join
+                this.$router.push('/join');
+            } else {
+                this.$socket.client.emit('toptrack', {
+                    trackid: trackIds,
+                    sid: this.$store.getters.getSid,
+                    room: this.code,
+                });
+            }
+ 
         },
     },
 };
