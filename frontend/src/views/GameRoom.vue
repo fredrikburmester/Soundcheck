@@ -728,10 +728,9 @@ export default {
 }
 .chat-icon > img {
     border-radius: 50px;
-    outline: thick solid white;
     border: 10px;
-    width: 30px;
-    height: 30px;
+    width: 40px;
+    height: 40px;
 }
 
 .chat-room {
