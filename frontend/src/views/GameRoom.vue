@@ -20,28 +20,30 @@ This view containes the entire game. There are 2 stages, a room lobby/waiting ro
             >
         </div>
         <div @click="openChat" :style="started ? 'bottom: 190px;' : 'bottom: 230px;' " class="chat-icon"> 
-            <img src="@/assets/chat-icon.jpg" alt="chat-icon">
+            <img src="@/assets/chat-icon-small-green.jpg" alt="chat-icon">
         </div>
-
-        <div v-on:keyup.escape="closeChat()" v-if="chat" class="chat-room" tabindex="0">
-            <CloseButton  color="red" id="closeChatButton" @click="closeChat" />
-            <div class="messages" id="messages">
-                <div v-for="(message, index) in messages" :key="message" :class="index == 0 ? 'message first-message' : 'message'">
-                    <ChatAvatar 
-                        :player-name="message.player.name"
-                        :color="message.player.color"
-                        :host="message.player.host"
-                        :isMe="message.player.name == name"
-                    />
-                    <p>{{ message.text }}</p>
+        <transition name="fade">
+            <div v-on:keyup.escape="closeChat()" v-if="chat" class="chat-room" tabindex="0">
+                <CloseButton  color="red" id="closeChatButton" @click="closeChat" />
+                <div class="messages" id="messages">
+                    <div v-if="messages.length == 0" id="no-messages">No messages...</div>
+                    <div v-for="(message, index) in messages" :key="message" :class="index == 0 ? 'message first-message' : 'message'">
+                        <ChatAvatar 
+                            :player-name="message.player.name"
+                            :color="message.player.color"
+                            :host="message.player.host"
+                            :isMe="message.player.name == name"
+                        />
+                        <p>{{ message.text }}</p>
+                    </div>
+                    <div style="height: 1px" id="chat-end"></div>
                 </div>
-                <div style="height: 1px" id="chat-end"></div>
+                <div class="input-area">
+                    <hr>
+                    <input v-on:keyup.enter="sendMessage($event)" type="text" placeholder="Type here...">
+                </div>
             </div>
-            <div class="input-area">
-                <hr>
-                <input v-on:keyup.enter="sendMessage($event)" type="text" placeholder="Type here...">
-            </div>
-        </div>
+        </transition>
         <div
             v-if="leaveRoomModal == true"
             :key="leaveRoomModal"
@@ -166,7 +168,7 @@ This view containes the entire game. There are 2 stages, a room lobby/waiting ro
                         </p>
                     </h3>
                 </div>
-                <div class="list">
+                <div class="list" :key="players">
                     <PlayerLobbyAvatar 
                         @updateName="sendName"
                         v-for="player in players"
@@ -625,6 +627,16 @@ export default {
 </script>
 
 <style scoped>
+.fade-enter-active, .fade-leave-active {
+  transition: opacity .2s ease;
+  -webkit-transition: opacity .2s ease;
+  -moz-transition: opacity .2s ease;
+  -o-transition: opacity .2s ease;
+}
+
+.fade-enter-from, .fade-leave-to {
+  opacity: 0;
+}
 .gameroom {
     display: grid;
 }
@@ -719,6 +731,10 @@ export default {
     margin: 0;
     margin-top: 18px;
     text-align: left;
+}
+#no-messages {
+    margin-top: auto;
+    color: gray
 }
 .message-icon {
     height: 40px;
