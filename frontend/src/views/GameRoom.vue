@@ -695,7 +695,7 @@ export default {
 }
 .messages {
     display: flex;
-    padding: 0 4rem 0 4rem;
+    padding: 0 2rem 0 2rem;
     overflow-y: scroll;
     height: 100%;
     flex-direction: column;
@@ -745,7 +745,7 @@ export default {
     backdrop-filter: blur(5px);
     display: grid;
     grid-template-columns: 1;
-    grid-template-rows: calc(100vh - 150px) 150px;
+    grid-template-rows: auto 200px;
     justify-items: start;
     align-items: end;
 }
@@ -753,10 +753,10 @@ export default {
     width: 100%;
     display: grid;
     justify-content: stretch;
-    margin-bottom: 75px
+    margin-bottom: auto
 }
 .chat-room > .input-area > input {
-    margin: 0 4rem 0 4rem;
+    margin: 0 2rem 0 2rem;
     height: 40px;
     justify-self: stretch;
     border-radius: 40px;
@@ -765,7 +765,7 @@ export default {
     border: none;
 }
 .chat-room > .input-area > hr {
-    margin: 1rem 4rem 1rem 4rem;
+    margin: 1rem 2rem 1rem 2rem;
     height: 1px;
     background-color: rgb(255, 255, 255);
     border:none;
