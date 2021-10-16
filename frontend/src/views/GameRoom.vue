@@ -19,6 +19,29 @@ This view containes the entire game. There are 2 stages, a room lobby/waiting ro
                 @click="showQR = false"
             >
         </div>
+        <div @click="openChat" :style="started ? 'bottom: 190px;' : 'bottom: 230px;' " class="chat-icon"> 
+            <img src="@/assets/chat-icon.jpg" alt="chat-icon">
+        </div>
+
+        <div v-on:keyup.escape="closeChat()" v-if="chat" class="chat-room" tabindex="0">
+            <CloseButton  color="red" id="closeChatButton" @click="closeChat" />
+            <div class="messages" id="messages">
+                <div v-for="(message, index) in messages" :key="message" :class="index == 0 ? 'message first-message' : 'message'">
+                    <ChatAvatar 
+                        :player-name="message.player.name"
+                        :color="message.player.color"
+                        :host="message.player.host"
+                        :isMe="message.player.name == name"
+                    />
+                    <p>{{ message.text }}</p>
+                </div>
+                <div style="height: 1px" id="chat-end"></div>
+            </div>
+            <div class="input-area">
+                <hr>
+                <input v-on:keyup.enter="sendMessage($event)" type="text" placeholder="Type here...">
+            </div>
+        </div>
         <div
             v-if="leaveRoomModal == true"
             :key="leaveRoomModal"
@@ -199,6 +222,7 @@ import ProgressBar from '../components/ProgressBar';
 import CloseButton from '../components/CloseButton';
 import PlayerLobbyAvatar from '../components/PlayerLobbyAvatar';
 import { nextTick } from 'vue'
+import ChatAvatar from '../components/ChatAvatar.vue'
 
 const QRCode = require('qrcode');
 import API from "../libs/api"
@@ -211,7 +235,8 @@ export default {
         Button,
         ProgressBar,
         CloseButton,
-        PlayerLobbyAvatar
+        PlayerLobbyAvatar,
+        ChatAvatar
     },
     data: function () {
         return {
@@ -232,7 +257,9 @@ export default {
             players: [],
             progressbarTime: 0,
             players_guessed: [],
-            name: ""
+            name: "",
+            chat: false,
+            messages: []
         };
     },
     // All functions under the "sockets" are websockets from the sever and the functions are 
@@ -267,9 +294,7 @@ export default {
                 this.getTopTrack();
                 this.found = true;
 
-                console.log({new_sid: new_sid, old_sid: this.$store.getters.getSid})
                 if(new_sid.length > 0) {
-                    console.log("setting new sid")
                     this.$store.commit('setSid', new_sid)
                 }
 
@@ -322,11 +347,9 @@ export default {
         // Updating the list of current players each time a player joines or leaves. 
         update_list_of_players({ players }) {
             // Set the current player name
-            console.log("updating players", players)
             players.forEach(player => {
                 if (player.sid == this.$store.getters.getSid) {
                     this.name = player.name
-                    console.log("me:", this.name)
                 }
             });
             
@@ -367,7 +390,21 @@ export default {
             this.nr_of_questions = data.nr_of_questions;
             this.started = true;
         },
-    },
+        recieve_message({ text, sid }) {
+            var user;
+            this.players.forEach(player => {
+                if(player.sid == sid) {
+                    user = player
+                }
+            });
+            let message = {
+                'text': text,
+                'player': user
+            }
+            this.messages.push(message)
+            this.scrollToBottom()
+        },
+     },
     computed: {
         getPlayersGuessed() {
             return this.players_guessed.length;
@@ -405,10 +442,49 @@ export default {
         // Function called when the dom has loaded. 
         this.connectToRoom();
     },
+    watch: {
+        chat() {   
+            if (this.chat === false) {
+                window.removeEventListener("keyup", this.onEscapeKeyUp);
+            } else {
+                window.addEventListener("keyup", this.onEscapeKeyUp);
+            }
+        }
+    },
     methods: {
         // toggles the leave room modal 
+        openChat() {
+            this.chat = true
+            this.$nextTick(() => {
+                this.scrollToBottom()
+            })
+        },
+        closeChat() {
+            this.chat = false
+        },
+        onEscapeKeyUp(event) {
+            if (event.which === 27) {
+                this.chat = false;
+            }
+        },
         toggleModal() {
             this.leaveRoomModal = !this.leaveRoomModal;
+        },
+        scrollToBottom() {
+            this.$nextTick(() => {
+                let chat = document.getElementById("chat-end")
+                if(chat) {
+                    chat.scrollIntoView({ behavior: "smooth", block: "end" });
+                }
+            })
+        },
+        sendMessage(event) {
+            this.$socket.client.emit('send_message', {
+                sid: this.$store.getters.getSid,
+                message: event.target.value,
+                code: this.code
+            });
+            event.target.value = ""
         },
         sendName(name) {
             for(let player in this.players) {
@@ -507,7 +583,6 @@ export default {
             var nr_songs = this.settings[1];
 
             var trackIds = await API.getTopSongsForUser(time_range, nr_songs, token)
-            console.log("top tracks: ", trackIds )
 
             var time_range_text;
             if(time_range == 'short_term') {
@@ -617,6 +692,89 @@ export default {
 }
 .qr > img {
     width: 50px;
+}
+.messages {
+    display: flex;
+    padding: 0 4rem 0 4rem;
+    overflow-y: scroll;
+    height: 100%;
+    flex-direction: column;
+}
+.messages > .first-message {
+    margin-top: auto !important;
+    
+}
+.message {
+    display: grid;
+    grid-template-columns: 60px auto;
+    justify-content: start;
+    align-items: start;
+    margin-bottom: 10px;
+}
+.message > p {
+    margin: 0;
+    margin-top: 18px;
+    text-align: left;
+}
+.message-icon {
+    height: 40px;
+    width: 40px;
+    border-radius: 20px;
+}
+.chat-icon {
+    position: fixed;
+    right: 30px;
+    cursor: pointer;
+}
+.chat-icon > img {
+    border-radius: 50px;
+    outline: thick solid white;
+    border: 10px;
+    width: 30px;
+    height: 30px;
+}
+
+.chat-room {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 99;
+    height: 100vh;
+    width: 100vw;
+    background-color: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(5px);
+    display: grid;
+    grid-template-columns: 1;
+    grid-template-rows: calc(100vh - 150px) 150px;
+    justify-items: start;
+    align-items: end;
+}
+.chat-room > .input-area {
+    width: 100%;
+    display: grid;
+    justify-content: stretch;
+    margin-bottom: 75px
+}
+.chat-room > .input-area > input {
+    margin: 0 4rem 0 4rem;
+    height: 40px;
+    justify-self: stretch;
+    border-radius: 40px;
+    padding-left: 20px;
+    padding-right: 20px;
+    border: none;
+}
+.chat-room > .input-area > hr {
+    margin: 1rem 4rem 1rem 4rem;
+    height: 1px;
+    background-color: rgb(255, 255, 255);
+    border:none;
+}
+#closeChatButton {
+    position: fixed;
+    top: 45px;
+    right: 0;
+    padding: 2rem
 }
 .list {
     margin-left: 2rem;
