@@ -75,7 +75,6 @@ export default {
     },
     methods: {
         changeName: function(event) {
-            console.log(this.isMe)
             if (this.isMe && event.target.hasAttribute('readonly')) {
                 event.target.removeAttribute('readonly');
             } 
@@ -88,8 +87,8 @@ export default {
             if(newName.length < 2 || newName.length > 20) {
                 event.target.value = this.playerName_
             } else {
-                this.playerName_ = newName
-                this.$emit('updateName', this.playerName_)
+                this.$emit('updateName', {old: this.playerName_, new: event.target.value})
+                event.target.value = this.playerName_
             }
         }
     }
