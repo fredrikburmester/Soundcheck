@@ -33,7 +33,7 @@ This view containes the entire game. There are 2 stages, a room lobby/waiting ro
             <div v-on:keyup.escape="closeChat()" v-if="chat" class="chat-room" tabindex="0">
                 <CloseButton  color="red" id="closeChatButton" @click="closeChat" />
                 <div class="messages" id="messages">
-                    <div @click="closeChat" id="messages-background">
+                    <div id="messages-background">
                         <div v-if="messages.length == 0" id="no-messages">{{ chatStatusText }}</div>
                     </div>
                     <div v-for="(message, index) in messages" :key="message" :class="index == 0 ? 'message first-message' : 'message'">
