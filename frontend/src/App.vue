@@ -40,7 +40,8 @@ body {
     color: white;
     margin: 0;
     padding: 0;
-    height: 100vh;
+    min-height: 100vh;
+    min-height: -webkit-fill-available;
     width: 100vw;
     position: fixed;
     top: 0;

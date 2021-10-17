@@ -23,7 +23,7 @@ This view containes the entire game. There are 2 stages, a room lobby/waiting ro
             <img src="@/assets/chat-icon-small-green.jpg" alt="chat-icon">
         </div>
         <transition name="fade">
-            <div v-on:keyup.escape="closeChat()" v-if="chat" :style="chatGridStyle" class="chat-room" tabindex="0">
+            <div v-on:keyup.escape="closeChat()" v-if="chat" class="chat-room" tabindex="0">
                 <CloseButton  color="red" id="closeChatButton" @click="closeChat" />
                 <div class="messages" id="messages">
                     <div v-if="messages.length == 0" id="no-messages">No messages...</div>
@@ -420,14 +420,12 @@ export default {
         lobbyGridStyle() {
             if(this.host) {
                 return {
-                    // 'height': `${window.innerHeight}px`,
-                    'height': 'calc(100vh - env(safe-area-inset-bottom))',
+                    'height': `${window.innerHeight}px`,
                     'grid-template-rows': '180px auto 210px'
                 }
             } else {
                 return {
-                    // 'height': `${window.innerHeight}px`,
-                    'height': 'calc(100vh - env(safe-area-inset-bottom))',
+                    'height': `${window.innerHeight}px`,
                     'grid-template-rows': '180px auto 190px'
                     
                 };
@@ -436,24 +434,16 @@ export default {
         startedGridStyle() {
             if(this.host) {
                 return {
-                    // 'height': `${window.innerHeight}px`,
-                    'height': 'calc(100vh - env(safe-area-inset-bottom))',
+                    'height': `${window.innerHeight}px`,
                     'grid-template-rows': '190px auto 70px 100px'
                 }
             } else {
                 return {
-                    // 'height': `${window.innerHeight}px`,
-                    'height': 'calc(100vh - env(safe-area-inset-bottom))',
+                    'height': `${window.innerHeight}px`,
                     'grid-template-rows': '190px auto 0px 100px'
                     
                 };
             }
-        },
-        chatGridStyle() {
-            return {
-                'height': `${window.innerHeight}px`,
-                'grid-template-rows': `${window.innerHeight - 100}px 100px`
-            };
         },
         chatIconStyle() {
             if(this.host) {
@@ -516,15 +506,6 @@ export default {
                 let chat = document.getElementById("chat-end")
                 if(chat) {
                     chat.scrollIntoView({ behavior: "smooth", block: "end" });
-                }
-            })
-        },
-        scrollWebsite() {
-            this.$nextTick(() => {
-                console.log("scroll")
-                let el = document.getElementById("bottom-chat-element")
-                if(el) {
-                    el.scrollIntoView({ behavior: "smooth", block: "end" });
                 }
             })
         },
@@ -804,7 +785,7 @@ export default {
     display: flex;
     justify-self: end;
     right: 1rem;
-    bottom: 50px
+    bottom: 65px
 }
 .send-button > p {
     margin-left: 20px;
@@ -834,7 +815,7 @@ input {
     position: fixed;
     right: 30px;
     cursor: pointer;
-    z-index: 2;
+    z-index: 99;
 }
 .chat-icon > img {
     border-radius: 50px;
@@ -845,29 +826,30 @@ input {
 
 .chat-room {
     position: fixed;
+    bottom: 0;
     left: 0;
     z-index: 99;
+    height: 100vh;
     width: 100vw;
     background-color: rgba(0, 0, 0, 0.6);
     backdrop-filter: blur(5px);
     display: grid;
     grid-template-columns: 1;
+    grid-template-rows: calc(100vh - 120px) 120px;
     justify-items: start;
     align-items: end;
     color: black;
-    margin-top: 10px;
-    bottom: 0;
-    bottom: env(safe-area-inset-bottom);
+    margin-top: 10px
 }
 .chat-room > .input-area {
     width: 100%;
     display: grid;
     justify-content: stretch;
     margin-bottom: auto;
-    height: 100px;
+    height: 120px;
 }
 .chat-room > .input-area > input {
-    height: 100px;
+    height: 120px;
     font-size: 15px;
     line-height: 20px;
     justify-self: stretch;
@@ -882,7 +864,7 @@ input {
     box-sizing: border-box;
     border-bottom: 2px solid white;
     border-top: 2px solid white;
-    padding-bottom: 40px;
+    padding-bottom: 50px;
 }
 
 .chat-room > .input-area > input:focus {
@@ -967,7 +949,7 @@ input {
     height: 100vh;
     width: 100vw;
     background-color: black;
-    z-index: 3;
+    z-index: 2;
 }
 
 .close-button {
