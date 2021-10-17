@@ -23,7 +23,7 @@ This view containes the entire game. There are 2 stages, a room lobby/waiting ro
             <img src="@/assets/chat-icon-small-green.jpg" alt="chat-icon">
         </div>
         <transition name="fade">
-            <div v-on:keyup.escape="closeChat()" v-if="chat" class="chat-room" tabindex="0">
+            <div v-on:keyup.escape="closeChat()" v-if="chat" :style="chatGridStyle" class="chat-room" tabindex="0">
                 <CloseButton  color="red" id="closeChatButton" @click="closeChat" />
                 <div class="messages" id="messages">
                     <div v-if="messages.length == 0" id="no-messages">No messages...</div>
@@ -445,6 +445,12 @@ export default {
                 };
             }
         },
+        chatGridStyle() {
+            return {
+                'height': `${window.innerHeight}px`,
+                'grid-template-rows': `${window.innerHeight - 100}px 100px`
+            };
+        },
         chatIconStyle() {
             if(this.host) {
                 if(this.started) {
@@ -511,9 +517,10 @@ export default {
         },
         scrollWebsite() {
             this.$nextTick(() => {
-                let chat = document.getElementById("bottom-chat-element")
-                if(chat) {
-                    chat.scrollIntoView({ behavior: "smooth", block: "end" });
+                console.log("scroll")
+                let el = document.getElementById("bottom-chat-element")
+                if(el) {
+                    el.scrollIntoView({ behavior: "smooth", block: "end" });
                 }
             })
         },
@@ -837,13 +844,11 @@ input {
     bottom: 0;
     left: 0;
     z-index: 99;
-    height: 100vh;
     width: 100vw;
     background-color: rgba(0, 0, 0, 0.6);
     backdrop-filter: blur(5px);
     display: grid;
     grid-template-columns: 1;
-    grid-template-rows: calc(100vh - 100px - env(safe-area-inset-bottom)) 100px;
     justify-items: start;
     align-items: end;
     color: black;
