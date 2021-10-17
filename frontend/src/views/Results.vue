@@ -48,13 +48,13 @@ displayed in a modal.
                         <h3 v-if="index == 0" class="title" style="padding-left: 0; margin-left: 0; color: gold">
                             Winner
                         </h3>
-                        <h3 v-if="index == 1 && players[index-1].points != player.points" class="title" style="padding-left: 0; margin-left: 0; color: silver">
+                        <h3 v-if="index > 0 && players[index-1].points != player.points" class="title" style="padding-left: 0; margin-left: 0; color: silver">
                             Second place
                         </h3>
-                        <h3 v-if="index == 2 && players[index-1].points != player.points" class="title" style="padding-left: 0; margin-left: 0; color: #26c28">
+                        <h3 v-if="index > 1 && players[index-1].points != player.points" class="title" style="padding-left: 0; margin-left: 0; color: #26c28">
                             Third place
                         </h3>
-                        <h3 v-if="index == 3 && players[index-1].points != player.points" class="title" style="padding-left: 0; margin-left: 0; color: #26c28">
+                        <h3 v-if="index > 2 && players[index-1].points != player.points" class="title" style="padding-left: 0; margin-left: 0; color: #26c28">
                             The rest of you loosers 💩
                         </h3>
                         <div style="height: 80px;">
@@ -156,64 +156,35 @@ export default {
                 self.date = self.getDateFromUnix(data.date)
 
                 // Convert answer ids to names for display
-                for (let player of data.players) {
-                    for (let guess of player.guesses) {
-                        for (let player2 of data.players) {
-                            if (player2.sid == guess.guess) {
-                                guess.guess = player2.name;
+                for(let p1 of self.players) { // go through the players
+                    for(let guess of p1.guesses) { // go through the guesses of that player
+                        for(let p2 of self.players) { // find the username (id) for the guess 
+                            if(guess.guess == p2.id) {  
+                                guess.guess = p2.name // set id to the player name for display
                             }
-                            if (player2.sid == guess.correct_answer) {
-                                guess.correct_answer = player2.name;
+                            if(guess.correct_answer == p2.id) {
+                                guess.correct_answer = p2.name
                             }
                         }
                     }
                 }
-                self.players.forEach(player => {
-                    var sid = player.sid
-                    self.answers.forEach(answer => {
-                        if(answer.player == sid) {
-                            answer.player = player.name
-                        }
-                    })
-                })
 
                 // sorting the players based on points
                 self.players.sort(function(a, b) {
                     var keyA = a.points,
                         keyB = b.points;
-                    // Compare the 2 dates
+                    // Compare the 2 values
                     if (keyA < keyB) return 1;
                     if (keyA > keyB) return -1;
                     return 0;
                 });
-
-                // compile answers list for each player.
-                self.players.forEach(player => {
-                    self.answers.forEach((answer, index) => {
-                        var found = false
-                        player.guesses.forEach(guess => {
-                            if (guess.question == index) {
-                                found = true
-                            }   
-                        })
-                        if(!found) {
-                            player.guesses.push({
-                                'correct_answer': answer.player,
-                                'guess': '',
-                                'info': answer.info,
-                                'question': index
-                            })
-                        }
-                    })
-                })
                 
                 //Add tracks to store so that they can be used in the /playlist route
-                self.answers.forEach((answer) => {
-                    self.$store.commit('addTrack', answer['info'])
-                })
-
-                setTimeout(function(){ self.state = 'found'; }, 300);
-
+                // get the tracks from the first players guesses
+                for(let guess of self.players[0].guesses) {
+                    self.$store.commit('addTrack', guess.info)
+                }
+                self.state = 'found';
             })
             .catch(function (err) {
                 console.log(err)
