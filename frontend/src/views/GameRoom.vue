@@ -39,10 +39,9 @@ This view containes the entire game. There are 2 stages, a room lobby/waiting ro
                     <div style="height: 1px" id="chat-end"></div>
                 </div>
                 <div class="input-area">
-                    <hr>
-                    <input v-on:keyup.enter="sendMessage" v-model="message" type="text" placeholder="Type here...">
+                    <input v-on:keyup.enter="sendMessage" v-model="message" id="chat-input" type="text" placeholder="Type here...">
                     <div @click="sendMessage" class="send-button">
-                        <img src="@/assets/send.png" alt="">
+                        <p>Send</p>
                     </div>
                 </div>
             </div>
@@ -510,6 +509,7 @@ export default {
             })
         },
         sendMessage() {
+            document.getElementById('chat-input').focus()
             if(this.message.length > 0) {
                 this.$socket.client.emit('send_message', {
                     id: this.$store.getters.getUserId,
@@ -751,10 +751,10 @@ export default {
 }
 .messages {
     display: flex;
-    padding: 0 2rem 0 2rem;
+    padding: 0 2rem 2rem 2rem;
     overflow-y: scroll;
-    height: 100%;
     flex-direction: column;
+    height: inherit;
 }
 .messages > .first-message {
     margin-top: auto !important;
@@ -768,33 +768,47 @@ export default {
 }
 .message > p {
     margin: 0;
-    margin-top: 18px;
+    margin-top: 8px;
     text-align: left;
+    background-color: white;
+    border-radius: 10px;
+    padding: 15px;
 }
 .send-button {
-    width: 41px;
-    height: 41px;
-    border-radius: 50px;
-    background-color: #1DB954;
-    position: absolute;
-    right: 35px;
-    bottom: 148px;
+    position:fixed;
+    width: 80px;
+    height: 40px;
+    border-radius: 20px ;
+    background-color: rgb(71, 138, 255);
     cursor: pointer;
+    display: flex;
+    justify-self: end;
+    right: 1rem;
+    bottom: 50px
+}
+.send-button > p {
+    margin-left: 20px;
+    margin-top: 10px;
+    color: white
 }
 .send-button > img {
-    margin-top:10px;
+    margin-top:12px;
+    margin-left: 12px;
     width: 20px;
     height: 20px;
     filter: invert(100%);
 }
 #no-messages {
     margin-top: auto;
-    color: gray
+    color: white;
 }
 .message-icon {
     height: 40px;
     width: 40px;
     border-radius: 20px;
+}
+input {
+  -webkit-appearance: none;
 }
 .chat-icon {
     position: fixed;
@@ -811,7 +825,7 @@ export default {
 
 .chat-room {
     position: fixed;
-    top: 0;
+    bottom: 0;
     left: 0;
     z-index: 99;
     height: 100vh;
@@ -820,37 +834,53 @@ export default {
     backdrop-filter: blur(5px);
     display: grid;
     grid-template-columns: 1;
-    grid-template-rows: auto 225px;
+    grid-template-rows: calc(100vh - 100px) 100px;
     justify-items: start;
     align-items: end;
+    color: black;
+    margin-top: 10px
 }
 .chat-room > .input-area {
     width: 100%;
     display: grid;
     justify-content: stretch;
-    margin-bottom: auto
+    margin-bottom: auto;
+    height: 100px;
 }
 .chat-room > .input-area > input {
-    margin: 0 2rem 0 2rem;
-    height: 45px;
+    height: 100px;
     font-size: 15px;
+    line-height: 20px;
     justify-self: stretch;
-    border-radius: 40px;
     padding-left: 20px;
-    padding-right: 20px;
-    border: none;
+    padding-right: 120px;
+    border: 0 none;
+    -webkit-appearance: none;
+    background: white;
+    color: black;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    border-bottom: 2px solid white;
+    border-top: 2px solid white;
+    padding-bottom: 40px;
+}
+
+.chat-room > .input-area > input:focus {
+    outline-width: 0;
 }
 .chat-room > .input-area > hr {
     margin: 1rem 2rem 1rem 2rem;
     height: 1px;
-    background-color: rgb(255, 255, 255);
+    background-color: rgb(255, 255, 255, 0.1);
     border:none;
 }
 #closeChatButton {
     position: fixed;
-    top: 45px;
+    top: 30px;
     right: 0;
-    padding: 2rem
+    padding: 2rem;
+    filter: drop-shadow(0px 0px 8px red);
 }
 .list {
     margin-left: 2rem;
