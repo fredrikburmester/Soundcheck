@@ -40,7 +40,10 @@ This view containes the entire game. There are 2 stages, a room lobby/waiting ro
                 </div>
                 <div class="input-area">
                     <hr>
-                    <input v-on:keyup.enter="sendMessage($event)" type="text" placeholder="Type here...">
+                    <input v-on:keyup.enter="sendMessage" v-model="message" type="text" placeholder="Type here...">
+                    <div @click="sendMessage" class="send-button">
+                        <img src="@/assets/send.png" alt="">
+                    </div>
                 </div>
             </div>
         </transition>
@@ -260,6 +263,7 @@ export default {
             players_guessed: [],
             name: "",
             chat: false,
+            message: '',
             messages: []
         };
     },
@@ -505,14 +509,14 @@ export default {
                 }
             })
         },
-        sendMessage(event) {
-            if(event.target.value.length > 0) {
+        sendMessage() {
+            if(this.message.length > 0) {
                 this.$socket.client.emit('send_message', {
                     id: this.$store.getters.getUserId,
-                    message: event.target.value,
+                    message: this.message,
                     code: this.code
                 });
-                event.target.value = ""
+                this.message = ""
             } else {
                 //
             }
@@ -761,12 +765,27 @@ export default {
     grid-template-columns: 60px auto;
     justify-content: start;
     align-items: start;
-    margin-bottom: 10px;
 }
 .message > p {
     margin: 0;
     margin-top: 18px;
     text-align: left;
+}
+.send-button {
+    width: 41px;
+    height: 41px;
+    border-radius: 50px;
+    background-color: #1DB954;
+    position: absolute;
+    right: 35px;
+    bottom: 148px;
+    cursor: pointer;
+}
+.send-button > img {
+    margin-top:10px;
+    width: 20px;
+    height: 20px;
+    filter: invert(100%);
 }
 #no-messages {
     margin-top: auto;
