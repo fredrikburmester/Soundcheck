@@ -39,10 +39,11 @@ This view containes the entire game. There are 2 stages, a room lobby/waiting ro
                     <div style="height: 1px" id="chat-end"></div>
                 </div>
                 <div class="input-area">
-                    <input v-on:keyup.enter="sendMessage" v-model="message" id="chat-input" type="text" placeholder="Type here...">
+                    <input @focus="scrollWebsite" v-on:keyup.enter="sendMessage" v-model="message" id="chat-input" type="text" placeholder="Type here...">
                     <div @click="sendMessage" class="send-button">
                         <p>Send</p>
                     </div>
+                    <div id="bottom-chat-element"></div>
                 </div>
             </div>
         </transition>
@@ -503,6 +504,14 @@ export default {
         scrollToBottom() {
             this.$nextTick(() => {
                 let chat = document.getElementById("chat-end")
+                if(chat) {
+                    chat.scrollIntoView({ behavior: "smooth", block: "end" });
+                }
+            })
+        },
+        scrollWebsite() {
+            this.$nextTick(() => {
+                let chat = document.getElementById("bottom-chat-element")
                 if(chat) {
                     chat.scrollIntoView({ behavior: "smooth", block: "end" });
                 }
