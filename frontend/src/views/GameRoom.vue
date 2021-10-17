@@ -834,7 +834,7 @@ input {
     backdrop-filter: blur(5px);
     display: grid;
     grid-template-columns: 1;
-    grid-template-rows: calc(100vh - 100px) 100px;
+    grid-template-rows: calc(100vh - 100px - env(safe-area-inset-bottom)) 100px;
     justify-items: start;
     align-items: end;
     color: black;
