@@ -19,7 +19,7 @@ This view containes the entire game. There are 2 stages, a room lobby/waiting ro
                 @click="showQR = false"
             >
         </div>
-        <div @click="openChat" :style="started ? 'bottom: 190px;' : 'bottom: 230px;' " class="chat-icon"> 
+        <div @click="openChat" :style="chatIconStyle" class="chat-icon"> 
             <img src="@/assets/chat-icon-small-green.jpg" alt="chat-icon">
         </div>
         <transition name="fade">
@@ -394,10 +394,10 @@ export default {
             this.nr_of_questions = data.nr_of_questions;
             this.started = true;
         },
-        recieve_message({ text, sid }) {
+        recieve_message({ text, id }) {
             var user;
             this.players.forEach(player => {
-                if(player.sid == sid) {
+                if(player.id == id) {
                     user = player
                 }
             });
@@ -441,6 +441,29 @@ export default {
                 };
             }
         },
+        chatIconStyle() {
+            if(this.host) {
+                if(this.started) {
+                    return {
+                        'bottom': '180px',
+                    };
+                } else {
+                    return {
+                        'bottom': '220px',
+                    }
+                }
+            } else {
+                if(this.started) {
+                    return {
+                        'bottom': '115px',
+                    };
+                } else {
+                    return {
+                        'bottom': '200px',
+                    };
+                }
+            }
+        }
     },
     mounted: function () {
         // Function called when the dom has loaded. 
@@ -485,7 +508,7 @@ export default {
         sendMessage(event) {
             if(event.target.value.length > 0) {
                 this.$socket.client.emit('send_message', {
-                    sid: this.$store.getters.getSid,
+                    id: this.$store.getters.getUserId,
                     message: event.target.value,
                     code: this.code
                 });

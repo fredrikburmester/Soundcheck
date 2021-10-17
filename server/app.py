@@ -204,11 +204,11 @@ def compile_results(code):
 @socketio.on("send_message")
 def send_message(data):
     code = data['code']
-    sid = data['sid']
+    id = data['id']
     message = data['message']
 
     socketio.emit("recieve_message", {
-        'text': message, 'sid': request.sid
+        'text': message, 'id': id
     }, to=code)
 
 # Handles the backend logic when a user enters a room.
