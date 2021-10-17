@@ -830,7 +830,7 @@ input {
     position: fixed;
     right: 30px;
     cursor: pointer;
-    z-index: 99;
+    z-index: 2;
 }
 .chat-icon > img {
     border-radius: 50px;
@@ -841,7 +841,6 @@ input {
 
 .chat-room {
     position: fixed;
-    bottom: 0;
     left: 0;
     z-index: 99;
     width: 100vw;
@@ -852,7 +851,9 @@ input {
     justify-items: start;
     align-items: end;
     color: black;
-    margin-top: 10px
+    margin-top: 10px;
+    bottom: 0;
+    bottom: env(safe-area-inset-bottom);
 }
 .chat-room > .input-area {
     width: 100%;
@@ -962,7 +963,7 @@ input {
     height: 100vh;
     width: 100vw;
     background-color: black;
-    z-index: 2;
+    z-index: 3;
 }
 
 .close-button {
