@@ -113,7 +113,7 @@ This view containes the entire game. There are 2 stages, a room lobby/waiting ro
                     :player-name="player.name"
                     :color="player.color"
                     :host="player.host"
-                    :selected="selected(player.sid)"
+                    :selected="selected(player.id)"
                     @click="guess(player)"
                     :guesses="player.guesses"
                 />
@@ -225,7 +225,6 @@ import CloseButton from '../components/CloseButton';
 import PlayerLobbyAvatar from '../components/PlayerLobbyAvatar';
 import { nextTick } from 'vue'
 import ChatAvatar from '../components/ChatAvatar.vue'
-
 const QRCode = require('qrcode');
 import API from "../libs/api"
 // const axios = require('axios');
@@ -348,14 +347,17 @@ export default {
         },
         // Updating the list of current players each time a player joines or leaves. 
         update_list_of_players({ players }) {
+            var list_of_players = []; 
+
             // Set the current player name
             players.forEach(player => {
-                if (player.sid == this.$store.getters.getSid) {
+                if (player.id == this.$store.getters.getUserId) {
                     this.name = player.name
                 }
+                list_of_players.push(player)
             });
             
-            this.players = players;
+            this.players = list_of_players;
 
             // Check who is host
             this.isHost();
@@ -493,17 +495,28 @@ export default {
             }
         },
         sendName(name) {
-            for(let player in this.players) {
-                if(player.sid == this.$store.getters.getSid) {
-                    //
-                }
-            }
+            var oldName = name.old
+            var newName = name.new
 
-            this.$socket.client.emit('update_name', {
-                sid: this.$store.getters.getSid,
-                name: name,
-                code: this.code
+            var same = false
+            this.players.forEach(player => {
+                if(player.name.toLowerCase() == newName.toLowerCase() || player.id.toLowerCase() == newName.toLowerCase()) {
+                    same = true
+                }
             });
+
+            if(!same) {
+                this.players.forEach(player => {
+                    if(player.name == oldName) {
+                        player.name = newName
+                    }
+                });
+                this.$socket.client.emit('update_name', {
+                    sid: this.$store.getters.getSid,
+                    name: newName,
+                    code: this.code
+                });
+            }
         },
         async copyToClipboard() {
             await navigator.clipboard.writeText(window.location.href);
@@ -555,7 +568,7 @@ export default {
             var pos = document.getElementById('active-list')
             var pos = pos.scrollTop
 
-            this.my_guess = player.sid;
+            this.my_guess = player.id;
             this.$socket.client.emit('player_guess', {
                 sid: this.$store.getters.getSid,
                 code: this.code,
@@ -616,8 +629,8 @@ export default {
             } else {
                 this.$socket.client.emit('toptrack', {
                     trackid: trackIds,
-                    sid: this.$store.getters.getSid,
                     room: this.code,
+                    userid: this.$store.getters.getUserId
                 });
             }
  
@@ -745,6 +758,7 @@ export default {
     position: fixed;
     right: 30px;
     cursor: pointer;
+    z-index: 99;
 }
 .chat-icon > img {
     border-radius: 50px;
