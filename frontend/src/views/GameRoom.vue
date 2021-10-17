@@ -421,13 +421,13 @@ export default {
             if(this.host) {
                 return {
                     // 'height': `${window.innerHeight}px`,
-                    'height': '100vh',
+                    'height': 'calc(100vh - env(safe-area-inset-bottom))',
                     'grid-template-rows': '180px auto 210px'
                 }
             } else {
                 return {
                     // 'height': `${window.innerHeight}px`,
-                    'height': '100vh',
+                    'height': 'calc(100vh - env(safe-area-inset-bottom))',
                     'grid-template-rows': '180px auto 190px'
                     
                 };
@@ -437,13 +437,13 @@ export default {
             if(this.host) {
                 return {
                     // 'height': `${window.innerHeight}px`,
-                    'height': '100vh',
+                    'height': 'calc(100vh - env(safe-area-inset-bottom))',
                     'grid-template-rows': '190px auto 70px 100px'
                 }
             } else {
                 return {
                     // 'height': `${window.innerHeight}px`,
-                    'height': '100vh',
+                    'height': 'calc(100vh - env(safe-area-inset-bottom))',
                     'grid-template-rows': '190px auto 0px 100px'
                     
                 };
