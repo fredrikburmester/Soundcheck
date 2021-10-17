@@ -6,29 +6,32 @@ Gathers album art, track and artist name from spotify API here.
 
 <template>
     <div>
-        <div class="song">
-            <div class="image">
-                <img :src="imgSrc" class="circle">
+        <transition name="fade">
+            <div v-if="imgSrc" class="song">
+                    <div class="image-container">
+                        <img :src="imgSrc" alt="image">
+                    </div>
+                    <div class="info">
+                        <p id="song" style="color: gray">
+                            Song
+                        </p>
+                        <p id="track-name">
+                            {{ track_name }}
+                        </p>
+                        <p id="artist">
+                            {{ artist }}
+                        </p>
+                        <br>
+                        <p id="answer">
+                            Answer: <span>{{ answer }}</span> 
+                        </p>
+                        <p id="guess">
+                            Guess: <span :style="guess == answer ? 'color: green' : 'color: red'">{{ guess }}</span>
+                        </p>
+                    </div>
+
             </div>
-            <div class="info">
-                <p id="song" style="color: gray">
-                    Song
-                </p>
-                <p id="track-name">
-                    {{ track_name }}
-                </p>
-                <p id="artist">
-                    {{ artist }}
-                </p>
-                <br>
-                <p id="answer">
-                    Answer: <span>{{ answer }}</span> 
-                </p>
-                <p id="guess">
-                    Guess: <span :style="guess == answer ? 'color: green' : 'color: red'">{{ guess }}</span>
-                </p>
-            </div>
-        </div>
+        </transition>
     </div>
 </template>
 
@@ -87,22 +90,30 @@ export default {
 
 <style scoped>
 @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap');
+.fade-enter-active, .fade-leave-active {
+  transition: opacity 1s ease;
+  -webkit-transition: opacity 1s ease;
+  -moz-transition: opacity 1s ease;
+  -o-transition: opacity 1s ease;
+}
 
+.fade-enter-from, .fade-leave-to {
+  opacity: 0;
+}
 .song {
 	display: flex;
 	flex-direction: row;
     margin-bottom: 2rem;
 }
-.image {
+.image-container {
 	width: 60px;
 	height: 60px;
     margin: 5px;
 }
-.image img {
+.image-container img {
 	width: 60px;
 	height: 60px;
-	border-radius: 50%;
-	background-color: white;
+	border-radius: 100px;
 }
 .info {
 	margin-left: 20px;
