@@ -403,8 +403,8 @@ def start_game(data):
 def get_top_track(data):
     trackid = data['trackid']
     code = data['room']
-    sid = data['sid']
-    db_helper.set_top_track(trackid, code, sid)
+    userid = data['userid']
+    db_helper.set_top_track(trackid, code, userid)
 
 # Deleting and closing the room on host close room
 def close_socket_room(code):
