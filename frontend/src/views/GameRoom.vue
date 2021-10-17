@@ -19,15 +19,25 @@ This view containes the entire game. There are 2 stages, a room lobby/waiting ro
                 @click="showQR = false"
             >
         </div>
+        <CheckMark v-if="correctGuess" /> 
+        <CrossMark v-if="wrongGuess" /> 
         <div @click="openChat" :style="chatIconStyle" class="chat-icon"> 
+            <div v-if="newMessages > 0 && !read" id="unread-bubble">
+                <p>
+                    {{ newMessages }}
+                </p>
+            </div>
             <img src="@/assets/chat-icon-small-green.jpg" alt="chat-icon">
         </div>
         <transition name="fade">
             <div v-on:keyup.escape="closeChat()" v-if="chat" class="chat-room" tabindex="0">
                 <CloseButton  color="red" id="closeChatButton" @click="closeChat" />
                 <div class="messages" id="messages">
-                    <div v-if="messages.length == 0" id="no-messages">No messages...</div>
+                    <div @click="closeChat" id="messages-background">
+                        <div v-if="messages.length == 0" id="no-messages">{{ chatStatusText }}</div>
+                    </div>
                     <div v-for="(message, index) in messages" :key="message" :class="index == 0 ? 'message first-message' : 'message'">
+                        
                         <ChatAvatar 
                             :player-name="message.player.name"
                             :color="message.player.color"
@@ -52,7 +62,7 @@ This view containes the entire game. There are 2 stages, a room lobby/waiting ro
             :key="leaveRoomModal"
             class="leaveroom-modal"
         >
-            <div>
+            <div style="padding: 0 2rem 0 2rem">
                 <h2 v-if="host" style="padding: 0 2rem 0 2rem">
                     Do you really want to end the game?
                 </h2>
@@ -188,6 +198,7 @@ This view containes the entire game. There are 2 stages, a room lobby/waiting ro
                     </p>
                     <div class="copycode">
                         <Button
+                            v-if="status != 'Host ended the game...'"
                             :key="clipboardtext"
                             color="#FFF"
                             :button-text="clipboardtext"
@@ -230,6 +241,8 @@ import { nextTick } from 'vue'
 import ChatAvatar from '../components/ChatAvatar.vue'
 const QRCode = require('qrcode');
 import API from "../libs/api"
+import CheckMark from '../components/CheckMark.vue'
+import CrossMark from '../components/CrossMark.vue'
 // const axios = require('axios');
 
 export default {
@@ -240,7 +253,10 @@ export default {
         ProgressBar,
         CloseButton,
         PlayerLobbyAvatar,
-        ChatAvatar
+        ChatAvatar,
+        CheckMark,
+        CrossMark
+        
     },
     data: function () {
         return {
@@ -264,7 +280,12 @@ export default {
             name: "",
             chat: false,
             message: '',
-            messages: []
+            messages: [],
+            read: false,
+            newMessages: 0,
+            chatStatusText: 'No new messages since you joined...',
+            correctGuess: false,
+            wrongGuess: false
         };
     },
     // All functions under the "sockets" are websockets from the sever and the functions are 
@@ -372,6 +393,10 @@ export default {
             this.status = 'Host ended the game...';
             this.players = [];
             this.$store.commit('clearPlayersGuessed');
+            this.chatStatusText = 'Room is closed and will not recieve messages...'
+            this.messages = []
+            this.newMessages = 0
+            this.read = true
         },
         // Updates the number of players that have guess on a question
         nr_of_players_guessed(data) {
@@ -379,6 +404,12 @@ export default {
         },
         // Updates the current question if the host goes to the next question
         next_question(data) {
+            console.log(data)
+
+            if (this.settings[2] == "Yes") {
+                this.checkAnswer(data)
+            }
+
             // Set the current question and reset the progressbar
             this.current_question = data.current_question;
             this.progressbarTime = 0;
@@ -397,22 +428,32 @@ export default {
         start_game(data) {
             this.nr_of_questions = data.nr_of_questions;
             this.started = true;
+            this.chat = false
         },
         recieve_message({ text, id }) {
             var user;
+            this.newMessages += 1
+
             this.players.forEach(player => {
                 if(player.id == id) {
                     user = player
                 }
             });
+
             let message = {
                 'text': text,
                 'player': user
             }
             this.messages.push(message)
-            this.scrollToBottom()
+
+            this.read = false
+            if(this.chat) {
+                this.scrollToBottom()
+                this.read = true
+                this.newMessages = 0
+            }
         },
-     },
+    },
     computed: {
         getPlayersGuessed() {
             return this.players_guessed.length;
@@ -486,9 +527,30 @@ export default {
         // toggles the leave room modal 
         openChat() {
             this.chat = true
+            this.read = true
+            this.newMessages = 0
             this.$nextTick(() => {
                 this.scrollToBottom()
             })
+        },
+        checkAnswer(data) {
+            var self = this
+            this.currentAnswer = data.answer            
+            if(data.current_question > 0) {
+                if(this.my_guess == this.currentAnswer) {
+                    this.correctGuess = true
+
+                    setTimeout(function(){ 
+                        self.correctGuess = false
+                    }, 1500);
+                } else if (this.my_guess != this.currentAnswer){
+                    this.wrongGuess = true
+
+                    setTimeout(function(){ 
+                        self.wrongGuess = false
+                    }, 1500);
+                }
+            }
         },
         closeChat() {
             this.chat = false
@@ -800,8 +862,11 @@ export default {
     filter: invert(100%);
 }
 #no-messages {
-    margin-top: auto;
+    position: fixed;
+    left: 20px;
+    bottom: 135px;
     color: white;
+    text-align: left;
 }
 .message-icon {
     height: 40px;
@@ -815,7 +880,7 @@ input {
     position: fixed;
     right: 30px;
     cursor: pointer;
-    z-index: 99;
+    z-index: 2;
 }
 .chat-icon > img {
     border-radius: 50px;
@@ -823,12 +888,27 @@ input {
     width: 40px;
     height: 40px;
 }
-
+#unread-bubble {
+    position: relative;
+    border-radius: 10px;
+    background-color: red;
+    height: 16px;
+    width: 16px;
+    z-index: 3;
+    margin-bottom: -10px;
+    margin-left: 25px;
+}
+#unread-bubble > p {
+    position: relative;
+    padding: 0;
+    margin: 0;
+    font-size: 12px;
+}
 .chat-room {
     position: fixed;
     bottom: 0;
     left: 0;
-    z-index: 99;
+    z-index: 4;
     height: 100vh;
     width: 100vw;
     background-color: rgba(0, 0, 0, 0.6);
@@ -866,7 +946,14 @@ input {
     border-top: 2px solid white;
     padding-bottom: 50px;
 }
-
+#messages-background {
+    width: 100vw;
+    height: calc(100vh - 120px);
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 2;
+}
 .chat-room > .input-area > input:focus {
     outline-width: 0;
 }
@@ -913,7 +1000,7 @@ input {
     background-color: rgba(0, 0, 0, 0.7);
     width: 100vw;
     height: 100vh;
-    z-index: 100;
+    z-index: 3;
 }
 .bigQR > img {
     width: 60vw;
@@ -949,7 +1036,7 @@ input {
     height: 100vh;
     width: 100vw;
     background-color: black;
-    z-index: 2;
+    z-index: 5;
 }
 
 .close-button {

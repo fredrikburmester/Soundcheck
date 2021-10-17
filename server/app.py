@@ -469,6 +469,7 @@ def createRoom(data):
     id = data['id']
     time_range = data['time_range']
     no_songs = data['no_songs']
+    show_correct_answers = data['show_correct_answers']
 
     # Generate a random room code, 4 letters
     code = generateId()
@@ -487,7 +488,7 @@ def createRoom(data):
 
         for _Room in db_helper.ROOMS:
             if _Room.code == code:
-                _Room.settings.append([time_range, no_songs])
+                _Room.settings.append([time_range, no_songs, show_correct_answers])
 
     socketio.emit('roomCode', {'code': code}, to=request.sid)
 

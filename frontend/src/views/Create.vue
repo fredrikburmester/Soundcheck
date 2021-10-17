@@ -14,7 +14,8 @@ View for creating a game room. This view have settings that are sent to the serv
            
             <h3>Number of songs per player:</h3>
             <Select :list="nrOfSongsArray" :default-value="nrOfSongsArray[0]" @selected="setNrOfSongs" />
-           
+            <h3>Show correct answers after each question:</h3>
+            <Select :list="['Yes', 'No']" :default-value="'Yes'" @selected="setShowCorrect" />
             <br>
             <br>
         </div>
@@ -70,7 +71,8 @@ export default {
                 {value: 'Half a year', key: 'medium_term'},
                 {value: 'Over a year', key: 'long_term'} 
             ],
-            nrOfSongsArray: Array.from({length: 20}, (_, i) => i + 1)
+            nrOfSongsArray: Array.from({length: 20}, (_, i) => i + 1),
+            show_correct_answers: 'Yes'
         };
     },
     methods: {
@@ -81,6 +83,7 @@ export default {
                 id: this.$store.getters.getUserId,
                 time_range: this.time_range,
                 no_songs: this.no_songs,
+                show_correct_answers: this.show_correct_answers
             });
         },
         setTimeRange(value) {
@@ -88,6 +91,9 @@ export default {
         },
         setNrOfSongs(value) {
             this.no_songs = value
+        },
+        setShowCorrect(value) {
+            this.show_correct_answers = value
         }
     },
 };
