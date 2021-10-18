@@ -8,11 +8,13 @@ About page.
         <div class="text">
             <VueMarkdownIt :style="style" :source="content" />
         </div>
-        <Button 
-            button-link="/login" 
-            button-text="Back"
-            color="#CD1A2B"
-        />
+        <div class="button-container">
+            <Button 
+                button-link="/login" 
+                button-text="Back"
+                color="#CD1A2B"
+            />
+        </div>
     </div>
 </template>
 
@@ -50,22 +52,29 @@ export default {
 
 <style scoped>
 @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap');
+.aboutPage{
+    text-align: center;
+    display: grid;
+    grid-template-rows: 100px auto 200px;
+    width: 100vw;
+}
 .text{
     font-family: 'Roboto', sans-serif;
     display: inline-block;
     text-align: left;
-    margin: 0 5px 50px 5px;
-    width: 100%;
+    margin: 0 2rem 0 2rem;
+    overflow-y: scroll;
 }
 a {
     color: white !important; 
     text-decoration: none !important;
 }
-.aboutPage{
-    text-align: center;
-    display: inline-block;
-    margin-top: 25px;
-    width: 80vw;
+.button-container {
+    padding: 2rem 2rem 2rem 2rem;
+}
+.aboutPage > .button {
+    position: fixed;
+    bottom: 30px;
 }
 @media only screen and (min-width: 900px) {
     .text {

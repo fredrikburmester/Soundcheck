@@ -112,7 +112,7 @@ p {
     margin-left: -2rem;
     text-align: center;
     position: fixed;
-    bottom: 40px;
+    bottom: 20px;
 }
 .about > p {
     color: rgb(101, 101, 101)
