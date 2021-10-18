@@ -459,12 +459,12 @@ export default {
             if(this.host) {
                 return {
                     'height': `${window.innerHeight}px`,
-                    'grid-template-rows': '180px auto 210px'
+                    'grid-template-rows': '180px auto 240px'
                 }
             } else {
                 return {
                     'height': `${window.innerHeight}px`,
-                    'grid-template-rows': '180px auto 190px'
+                    'grid-template-rows': '180px auto 220px'
                     
                 };
             }
@@ -491,7 +491,7 @@ export default {
                     };
                 } else {
                     return {
-                        'bottom': '220px',
+                        'bottom': '250px',
                     }
                 }
             } else {
@@ -501,7 +501,7 @@ export default {
                     };
                 } else {
                     return {
-                        'bottom': '200px',
+                        'bottom': '230px',
                     };
                 }
             }
@@ -532,7 +532,6 @@ export default {
         },
         checkAnswer(data) {
             var self = this
-            this.currentAnswer = data.answer            
             if(data.current_question > 0) {
                 if(this.my_guess == this.currentAnswer) {
                     this.correctGuess = true
@@ -548,6 +547,7 @@ export default {
                     }, 1500);
                 }
             }
+            this.currentAnswer = data.answer    
         },
         closeChat() {
             this.chat = false
@@ -745,14 +745,12 @@ export default {
 }
 .lobby-grid {
     display: grid;
-    grid-template-rows: minmax(160px,170px) auto minmax(0px, 220px);
 }
 .lobby-grid-header {
     margin-top: 40px;
 }
 .started-grid {
     display: grid;
-    grid-template-rows: 140px auto minmax(0px, 70px) 100px;
     height: 99vh;
 }
 .started-grid-header {
