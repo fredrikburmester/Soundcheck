@@ -46,17 +46,19 @@ displayed in a modal.
                 <div class="list">
                     <div v-for="player, index in players" :key="player.sid">
                         <h3 v-if="index == 0" class="title" style="padding-left: 0; margin-left: 0; color: gold">
-                            Winner
+                            {{ places[0] }}
                         </h3>
-                        <h3 v-if="index > 0 && players[index-1].points != player.points" class="title" style="padding-left: 0; margin-left: 0; color: silver">
-                            Second place
-                        </h3>
-                        <h3 v-if="index > 1 && players[index-1].points != player.points" class="title" style="padding-left: 0; margin-left: 0; color: #26c28">
-                            Third place
-                        </h3>
-                        <h3 v-if="index > 2 && players[index-1].points != player.points" class="title" style="padding-left: 0; margin-left: 0; color: #26c28">
-                            The rest of you loosers 💩
-                        </h3>
+                        <div v-else-if="index > 0 && player.place <= 3 && player.place > 0 && player.points != players[index - 1].points" class="title" style="padding-left: 0; margin-left: 0;">
+                            <h3 v-if="player.place == 1" style="color: silver">
+                                {{ places[player.place] }}
+                            </h3>
+                            <h3 v-if="player.place == 2" style="color: #b06a00">
+                                {{ places[player.place] }}
+                            </h3>
+                            <h3 v-if="player.place == 3" style="color: lightgray">
+                                {{ places[player.place] }}
+                            </h3>
+                        </div>
                         <div style="height: 80px;">
                             <PlayerAvatar
                                 :id="player.sid"
@@ -118,7 +120,8 @@ export default {
             selected_player: null,
             answers: null,
             tracksForPlaylist: [],
-            state: ''
+            state: '',
+            places: ['Winner', 'Second Place', 'Third Place', 'The rest of you loosers 💩'],
         };
     },
     computed: {
@@ -133,7 +136,7 @@ export default {
                 'height': `${window.innerHeight}px`,
                 'width': `${window.innerWidth}px`
             }
-        },
+        }
     },
     mounted() {
         
@@ -178,6 +181,20 @@ export default {
                     if (keyA > keyB) return -1;
                     return 0;
                 });
+
+                // Add the place to the players
+                self.players[0].place = 0;
+                for(let i = 1; i < self.players.length; i++) {
+                    if (self.players[i].points == self.players[i - 1].points) {
+                        const place = self.players[i - 1].place;
+                        self.players[i].place = place; 
+                    } else {
+                        const place = self.players[i - 1].place + 1
+                        self.players[i].place = place; 
+                    }
+                }
+
+                console.log(self.players);
                 
                 //Add tracks to store so that they can be used in the /playlist route
                 // get the tracks from the first players guesses
@@ -216,7 +233,7 @@ export default {
         },
         deselectPlayer() {
             this.selected = false;
-        },
+        }
     }
 };
 </script>
