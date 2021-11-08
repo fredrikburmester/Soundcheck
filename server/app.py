@@ -568,7 +568,7 @@ def generate_access_token(code):
             "grant_type": "authorization_code",
             "code": code,
             "scope": scope,
-            "redirect_uri": "https://soundcheck.fdrive.se/logincallback",
+            "redirect_uri": "https://soundcheckgame.com/logincallback",
             'client_id': CLIENT_ID,
             'client_secret': CLIENT_SECRET
         }
