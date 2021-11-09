@@ -74,8 +74,8 @@ export default {
     font-family: 'Roboto', sans-serif;
     display: inline-block;
     text-align: left;
-    margin: 0 2rem 0 2rem;
     overflow-y: scroll;
+    padding: 0 6rem 0 6rem;
 }
 h1 {
     margin-top: 40px
@@ -94,9 +94,9 @@ a {
 .aboutPage > .button {
     position: fixed;
 }
-@media only screen and (min-width: 900px) {
+@media only screen and (min-width: 800px) {
     .text {
-        width: 40vw;
+        padding: 0 2rem 0 2rem;
     }
 }
 </style>
