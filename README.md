@@ -5,6 +5,8 @@
 
 Link to website: [Soundcheck](https://soundcheckgame.com/)
 
+> **Note:** The iOS Branch is the one activily maintained. 
+
 ## Info
 
 A spotify-authenticated website game for friends to guess each others favourite songs and genres. 
