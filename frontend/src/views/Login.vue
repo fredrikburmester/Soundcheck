@@ -115,6 +115,7 @@ p {
     bottom: 20px;
 }
 .about > p {
-    color: rgb(101, 101, 101)
+    color: rgb(101, 101, 101);
+    cursor: pointer;
 }
 </style>
