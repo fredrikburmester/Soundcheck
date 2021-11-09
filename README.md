@@ -3,7 +3,7 @@
 
 ![Soundcheck Logo](https://raw.githubusercontent.com/fredrikburmester/Soundcheck/master/frontend/src/assets/soundcheck-logo.png)
 
-Link to website: [Soundcheck](https://soundcheck.fdrive.se/)
+Link to website: [Soundcheck](https://soundcheckgame.com/)
 
 ## Info
 
