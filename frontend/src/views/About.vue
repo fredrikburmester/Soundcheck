@@ -75,7 +75,7 @@ export default {
     display: inline-block;
     text-align: left;
     overflow-y: scroll;
-    padding: 0 6rem 0 6rem;
+    padding: 0 8rem 0 8rem;
 }
 h1 {
     margin-top: 40px
@@ -94,7 +94,7 @@ a {
 .aboutPage > .button {
     position: fixed;
 }
-@media only screen and (min-width: 800px) {
+@media only screen and (max-width: 1000px) {
     .text {
         padding: 0 2rem 0 2rem;
     }
