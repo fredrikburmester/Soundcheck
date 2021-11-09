@@ -21,7 +21,7 @@ This view containes the entire game. There are 2 stages, a room lobby/waiting ro
         </div>
         <CheckMark v-if="correctGuess" /> 
         <CrossMark v-if="wrongGuess" /> 
-        <div @click="openChat" :style="chatIconStyle" class="chat-icon"> 
+        <div :style="chatIconStyle" class="chat-icon" @click="openChat"> 
             <div v-if="newMessages > 0 && !read" id="unread-bubble">
                 <p>
                     {{ newMessages }}
@@ -30,27 +30,32 @@ This view containes the entire game. There are 2 stages, a room lobby/waiting ro
             <img src="@/assets/chat-icon-small-green.jpg" alt="chat-icon">
         </div>
         <transition name="fade">
-            <div v-on:keyup.escape="closeChat()" v-if="chat" class="chat-room" tabindex="0">
-                <CloseButton  color="red" id="closeChatButton" @click="closeChat" />
-                <div class="messages" id="messages">
-                    <div v-if="messages.length == 0" id="no-messages">{{ chatStatusText }}</div>
-                    <div v-for="(message, index) in messages" :key="message" :class="index == 0 ? 'message first-message' : 'message'">
-                        <ChatAvatar 
-                            :player-name="message.player.name"
-                            :color="message.player.color"
-                            :host="message.player.host"
-                            :isMe="message.player.name == name"
-                        />
-                        <p>{{ message.text }}</p>
+            <div v-if="chat" class="chat-room" tabindex="0" @keyup.escape="closeChat()">
+                <CloseButton id="closeChatButton" color="red" @click="closeChat" />
+                <div id="messages" class="messages">
+                    <div v-if="messages.length == 0" id="no-messages">
+                        {{ chatStatusText }}
                     </div>
-                    <div style="height: 1px" id="chat-end"></div>
+                    <div v-for="(m, index) in messages" :key="m" :class="index == 0 ? 'message first-message' : 'message'">
+                        <ChatAvatar 
+                            :player-name="m.player.name"
+                            :color="m.player.color"
+                            :host="m.player.host"
+                            :is-me="m.player.name == name"
+                        />
+                        <p>{{ m.text }}</p>
+                    </div>
+                    <div id="chat-end" style="height: 1px" />
                 </div>
                 <div class="input-area">
-                    <input @focus="scrollWebsite" v-on:keyup.enter="sendMessage" v-model="message" id="chat-input" type="text" placeholder="Type here...">
-                    <div @click="sendMessage" class="send-button">
+                    <input
+                        id="chat-input" v-model="message" type="text" placeholder="Type here..." @focus="scrollWebsite"
+                        @keyup.enter="sendMessage"
+                    >
+                    <div class="send-button" @click="sendMessage">
                         <p>Send</p>
                     </div>
-                    <div id="bottom-chat-element"></div>
+                    <div id="bottom-chat-element" />
                 </div>
             </div>
         </transition>
@@ -124,8 +129,8 @@ This view containes the entire game. There are 2 stages, a room lobby/waiting ro
                     :color="player.color"
                     :host="player.host"
                     :selected="selected(player.id)"
-                    @click="guess(player)"
                     :guesses="player.guesses"
+                    @click="guess(player)"
                 />
             </div>
             <div>
@@ -171,22 +176,22 @@ This view containes the entire game. There are 2 stages, a room lobby/waiting ro
                     <div class="hr" style="margin-top: 1rem; margin-bottom: 1rem" />
                     <h3 class="title">
                         <p v-if="players.length > 1">
-                            {{players.length}} Players:
+                            {{ players.length }} Players:
                         </p>
                         <p v-else>
                             So empty... Invite some friends!
                         </p>
                     </h3>
                 </div>
-                <div class="list" :key="players">
+                <div :key="players" class="list">
                     <PlayerLobbyAvatar 
-                        @updateName="sendName"
                         v-for="player in players"
                         :key="player.id"
                         :player-name="player.name"
                         :color="player.color"
                         :host="player.host"
-                        :isMe="player.name == name"
+                        :is-me="player.name == name"
+                        @updateName="sendName"
                     />
                 </div>
                 <div class="buttons">
@@ -507,10 +512,6 @@ export default {
             }
         }
     },
-    mounted: function () {
-        // Function called when the dom has loaded. 
-        this.connectToRoom();
-    },
     watch: {
         chat() {   
             if (this.chat === false) {
@@ -519,6 +520,10 @@ export default {
                 window.addEventListener("keyup", this.onEscapeKeyUp);
             }
         }
+    },
+    mounted: function () {
+        // Function called when the dom has loaded. 
+        this.connectToRoom();
     },
     methods: {
         // toggles the leave room modal 

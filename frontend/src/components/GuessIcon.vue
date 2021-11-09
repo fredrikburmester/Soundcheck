@@ -8,28 +8,27 @@ Gathers album art, track and artist name from spotify API here.
     <div>
         <transition name="fade">
             <div v-if="imgSrc" class="song">
-                    <div class="image-container">
-                        <img :src="imgSrc" alt="image">
-                    </div>
-                    <div class="info">
-                        <p id="song" style="color: gray">
-                            Song
-                        </p>
-                        <p id="track-name">
-                            {{ track_name }}
-                        </p>
-                        <p id="artist">
-                            {{ artist }}
-                        </p>
-                        <br>
-                        <p id="answer">
-                            Answer: <span>{{ answer }}</span> 
-                        </p>
-                        <p id="guess">
-                            Guess: <span :style="guess == answer ? 'color: green' : 'color: red'">{{ guess }}</span>
-                        </p>
-                    </div>
-
+                <div class="image-container">
+                    <img :src="imgSrc" alt="image">
+                </div>
+                <div class="info">
+                    <p id="song" style="color: gray">
+                        Song
+                    </p>
+                    <p id="track-name">
+                        {{ track_name }}
+                    </p>
+                    <p id="artist">
+                        {{ artist }}
+                    </p>
+                    <br>
+                    <p id="answer">
+                        Answer: <span>{{ answer }}</span> 
+                    </p>
+                    <p id="guess">
+                        Guess: <span :style="guess == answer ? 'color: green' : 'color: red'">{{ guess }}</span>
+                    </p>
+                </div>
             </div>
         </transition>
     </div>

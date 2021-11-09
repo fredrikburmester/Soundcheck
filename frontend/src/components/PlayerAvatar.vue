@@ -22,15 +22,18 @@ Component also implemented as guessing icon when game has started. Hence the sel
             <p class="name" :class="selected_ ? 'selected-text' : ''">
                 {{ playerName_ }}
             </p>
-            <p v-if="guesses_ > 1" class="guesses">Guessed: {{guesses_}} times</p>
-            <p v-if="guesses_ == 1" class="guesses">Guessed: {{guesses_}} time</p>
+            <p v-if="guesses_ > 1" class="guesses">
+                Guessed: {{ guesses_ }} times
+            </p>
+            <p v-if="guesses_ == 1" class="guesses">
+                Guessed: {{ guesses_ }} time
+            </p>
         </div>
         <div
             v-if="host"
             class="star"
         >
-            <span style="font-size: 12px; color: gray; margin-left: 54px">Game leader</span> 
-            
+            <span style="font-size: 12px; color: gray; margin-left: 54px">Game leader</span>
         </div>
     </div>
 </template>

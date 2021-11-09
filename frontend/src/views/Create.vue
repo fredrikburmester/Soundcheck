@@ -53,14 +53,6 @@ export default {
             this.$router.push(data.code);
         },
     },
-    computed: {
-        gridStyle() {
-            return {
-                'height': `${window.innerHeight}px`,
-                'grid-template-rows': 'auto 178px'
-            }
-        }
-    },
     data() {
         return {
             no_songs: 1,
@@ -74,6 +66,14 @@ export default {
             nrOfSongsArray: Array.from({length: 20}, (_, i) => i + 1),
             show_correct_answers: 'Yes'
         };
+    },
+    computed: {
+        gridStyle() {
+            return {
+                'height': `${window.innerHeight}px`,
+                'grid-template-rows': 'auto 178px'
+            }
+        }
     },
     methods: {
         // After setting all settings, they are sent to the server. 

@@ -30,13 +30,11 @@ About page.
 
 <script>
 import Button from '../components/Button'
-import VueMarkdownIt from 'vue3-markdown-it'
 
 export default {
     name: 'About',
     components: {
         Button,
-        VueMarkdownIt
     },
     data(){
         return{

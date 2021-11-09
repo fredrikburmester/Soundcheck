@@ -55,24 +55,24 @@ export default {
     async getTopSongsForUser(time_range, nr_songs, token) {
         var trackIds = []
         await axios
-        .get(
-            `https://api.spotify.com/v1/me/top/tracks?time_range=${time_range}&limit=${nr_songs}`,
-            {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                    Accept: 'application/json',
-                    'Content-Type': 'application/json',
-                },
-            }
-        )
-        .then(function (response) {
-            (response.data.items)
-            if(response.data.items.length > 0) {
-                response.data.items.forEach(item => {
-                    trackIds.push(item.uri.split(':')[2])
-                });
-            }
-        });
+            .get(
+                `https://api.spotify.com/v1/me/top/tracks?time_range=${time_range}&limit=${nr_songs}`,
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                        Accept: 'application/json',
+                        'Content-Type': 'application/json',
+                    },
+                }
+            )
+            .then(function (response) {
+                (response.data.items)
+                if(response.data.items.length > 0) {
+                    response.data.items.forEach(item => {
+                        trackIds.push(item.uri.split(':')[2])
+                    });
+                }
+            });
         return trackIds
 
     }

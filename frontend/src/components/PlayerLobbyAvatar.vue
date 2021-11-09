@@ -7,9 +7,7 @@ Component also implemented as guessing icon when game has started.
 
 <template>
     <div class="playerAvatar">
-        <div class="changeNameModal">
-
-        </div>
+        <div class="changeNameModal" />
         <div>
             <div
                 :style="playerIconStyles"
@@ -20,11 +18,11 @@ Component also implemented as guessing icon when game has started.
                 </p>
             </div>
         </div>
-        <div v-if="isMe" class="name" >
-            <input @click="changeName($event)" @keyup.enter="onEnter" type="text" id="playerName" :value="playerName"> 
+        <div v-if="isMe" class="name">
+            <input id="playerName" type="text" :value="playerName" @click="changeName($event)" @keyup.enter="onEnter"> 
         </div>
-        <div v-else class="name" >
-            <input @keyup.enter="onEnter" type="text" id="playerName" readonly="readonly" :value="playerName"> 
+        <div v-else class="name">
+            <input id="playerName" type="text" readonly="readonly" :value="playerName" @keyup.enter="onEnter"> 
         </div>
         <div
             v-if="host"
@@ -58,6 +56,7 @@ export default {
             type: Boolean,
         },
     },
+    emits: ['updateName'],
     data() {
         return {
             playerName_: this.playerName,

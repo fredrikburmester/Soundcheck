@@ -14,7 +14,7 @@ Displays a list of previous games for one user.
                 </p>
             </div>
             <div class="list">
-                <div class="list-item" v-for="result in results.slice().reverse()" :key="result" @click="goTo(result.code)">
+                <div v-for="result in results.slice().reverse()" :key="result" class="list-item" @click="goTo(result.code)">
                     <PreviousResultIcon :code="result.code" :date="getDateStringFromUnix(result.date)" :uri="result.answers[0].info" />
                 </div>
             </div>

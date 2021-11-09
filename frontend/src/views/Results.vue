@@ -7,32 +7,32 @@ displayed in a modal.
     <div>
         <div v-if="state == 'found'">
             <transition name="fade">
-            <div v-if="selected" :style="personalResultStyle" class="individual-grid">
-                <div class="individual-grid-header">
-                    <h1 class="code">
-                        {{ selected_player.name }}
-                    </h1>
-                    <p class="date">
-                        {{ date }}
-                    </p>
-                    <div class="hr" />
-                    <h3 class="title">
-                        Individual results
-                    </h3>
-                    <div class="close-button" @click="deselectPlayer()">
-                        <CloseButton color="red"/>
+                <div v-if="selected" :style="personalResultStyle" class="individual-grid">
+                    <div class="individual-grid-header">
+                        <h1 class="code">
+                            {{ selected_player.name }}
+                        </h1>
+                        <p class="date">
+                            {{ date }}
+                        </p>
+                        <div class="hr" />
+                        <h3 class="title">
+                            Individual results
+                        </h3>
+                        <div class="close-button" @click="deselectPlayer()">
+                            <CloseButton color="red" />
+                        </div>
+                    </div>
+                    <div class="personal-list">
+                        <div v-for="guess in selected_player.guesses" :key="guess">
+                            <GuessIcon
+                                :trackid="guess.info"
+                                :guess="guess.guess"
+                                :answer="guess.correct_answer"
+                            />
+                        </div>
                     </div>
                 </div>
-                <div class="personal-list">
-                    <div v-for="guess in selected_player.guesses" :key="guess">
-                        <GuessIcon
-                            :trackid="guess.info"
-                            :guess="guess.guess"
-                            :answer="guess.correct_answer"
-                        />
-                    </div>
-                </div>
-            </div>
             </transition>
             <div class="grid" :style="resultGridStyle">
                 <div class="grid-header">

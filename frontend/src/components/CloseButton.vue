@@ -4,16 +4,16 @@ Simple close icon, no logic here.
 
 <template>
     <div class="close-button-component">
-            <div
-                id="line1"
-                class="line"
-                :style="colorStyles"
-            />
-            <div
-                id="line2"
-                class="line"
-                :style="colorStyles"
-            />
+        <div
+            id="line1"
+            class="line"
+            :style="colorStyles"
+        />
+        <div
+            id="line2"
+            class="line"
+            :style="colorStyles"
+        />
     </div>
 </template>
 

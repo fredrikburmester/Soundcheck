@@ -9,7 +9,6 @@ Page for saving game tracks to a user playlist in spotify.
             </div>
         </transition>
         <transition name="fade" mode="out-in">
-            
             <div> 
                 <div class="close-button">
                     <CloseButton 
@@ -19,7 +18,6 @@ Page for saving game tracks to a user playlist in spotify.
                 <div :style="gridStyle" :class="(existingPlaylist || newPlaylist) ? 'dim grid' : 'grid'">
                     <div class="grid-header">
                         <h3>Tap to select/deselect</h3>
-                        
                     </div>
                     <div class="track-list-container">
                         <div v-for="track in tracks" :key="track" :class="{ iconlist: track[1]}">

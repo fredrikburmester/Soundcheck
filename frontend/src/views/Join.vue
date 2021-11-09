@@ -5,7 +5,9 @@ Page for joining a room by entering a room code.
 <template>
     <div class="join">
         <h1>Enter room code...</h1>
-        <p style="color: rgba(205,26,43,1)">{{ error }}</p>
+        <p style="color: rgba(205,26,43,1)">
+            {{ error }}
+        </p>
         <InputField 
             class="input"
             :text="code"
