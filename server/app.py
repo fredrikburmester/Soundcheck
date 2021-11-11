@@ -52,15 +52,14 @@ def personal_results(username):
     Room = Query()
     Player = Query()
     result = table_Rooms.search(Room.players.any(Player.id == username))
-    if result:
-
+    if result and len(result) > 0:
         return Response(json.dumps({
             'results': result,
         }), status=200, mimetype='application/json', headers={
             "Access-Control-Allow-Origin": "*"
         })
 
-    return Response(status=200, headers={
+    return Response(status=401, headers={
         "Access-Control-Allow-Origin": "*"
     })
 

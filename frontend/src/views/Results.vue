@@ -37,7 +37,7 @@ displayed in a modal.
             <div class="grid" :style="resultGridStyle">
                 <div class="grid-header">
                     <h1 class="code">
-                        {{ code }} <span @click="removeUserData" style="color: red; font-size: 15px; cursor: pointer;">Remove Data</span>
+                        {{ code }} 
                     </h1>
                     <p class="date">
                         {{ date }}
@@ -233,13 +233,6 @@ export default {
         },
         deselectPlayer() {
             this.selected = false;
-        },
-        removeUserData() {
-            // send socket to call clearPlayerData function
-            this.$socket.client.emit('clearPlayerData', {
-                user_id: this.$store.getters.getUserId,
-            });
-
         }
     }
 };

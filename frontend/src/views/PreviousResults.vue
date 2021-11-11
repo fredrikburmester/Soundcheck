@@ -7,7 +7,7 @@ Displays a list of previous games for one user.
         <div class="grid" :style="resultGridStyle">
             <div class="grid-header">
                 <h1 class="title">
-                    Previous Games
+                    Previous Games <span @click="removeUserData" style="color: red; font-size: 15px; cursor: pointer;">Remove Data</span>
                 </h1>
                 <p class="username">
                     {{ username }}
@@ -92,6 +92,13 @@ export default {
         },
         goBack() {
             this.$router.go(-1)
+        },
+        removeUserData() {
+            // send socket to call clearPlayerData function
+            this.$socket.client.emit('clearPlayerData', {
+                id: this.$store.getters.getUserId,
+            });
+
         }
     }
 }

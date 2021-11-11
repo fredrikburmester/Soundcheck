@@ -28,6 +28,7 @@ export default {
             .get(`${url}/me/${username}/results`)
             .then(function (response) {
                 result = response;
+                console.log(response)
             })
             .catch(function (err) {
                 console.log("Error: ", err)
