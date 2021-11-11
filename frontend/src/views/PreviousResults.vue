@@ -102,7 +102,7 @@ export default {
 
             const self = this;
             setTimeout(function(){ 
-                self.$router.go(0)
+                self.$router.go('/')
                 self.$store.commit('updateLoading', false);
             }, 500);
         }
