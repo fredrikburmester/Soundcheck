@@ -552,6 +552,10 @@ def addToPlaylist(data):
         })
     socketio.emit('playlistCreated', to=request.sid)
 
+@socketio.on('clearPlayerData')
+def clearPlayerData(data):
+    clear_player_data(data['id'])
+
 #######################################################
 
 ################## Regular functions ##################
@@ -628,6 +632,16 @@ def generateId():
 
     return code
 
+def clear_player_data(id):
+    for room in db.table("Rooms"):
+        code = room['code']
+        players = room['players']
+        for player in players:
+            if player['id'] == id:
+                player['id'] = '[deleted]'
+                player['name'] = '[deleted]'
+
+        db.table("Rooms").update({'players': players}, Query().code == code)
 
 # Run the server in either dev or prod
 if __name__ == '__main__':
