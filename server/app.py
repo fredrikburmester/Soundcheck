@@ -639,6 +639,10 @@ def clear_player_data(id):
             if player['id'] == id:
                 player['id'] = '[deleted]'
                 player['name'] = '[deleted]'
+            
+            for guesses in player['guesses']:
+                if guesses['id'] == id:
+                    guesses['id'] = '[deleted]'
 
         db.table("Rooms").update({'players': players}, Query().code == code)
 
