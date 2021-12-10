@@ -50,7 +50,7 @@ body {
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     text-align: center;
-    background-color: #191414;
+    background-color: #101010;
     /* overflow-y: scroll; */
 }
 .fade-enter-active, .fade-leave-active {
