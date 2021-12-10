@@ -42,7 +42,7 @@ export default {
                 + '\n\nWhen you play, you and your friends top songs will be displayed and a music player at the bottom of the screen enables to listen to the song. '
                 + 'To make a guess, tap on the player you think the song belongs to!\n\n'
                 + 'When the game is over, your Spotify username, the songs in the game and guesses will be saves in our database for users to view the results after the game :)'
-                + '\n\n _By using this website you agree that the information mentioned above can be stored_.'
+                + '\n\n _By using this website you agree that the information mentioned above can be stored. \nIn your My Games panel you can always remove your stored name and username from the database. Other people can still se the game history but without your name._'
                 + '\n\n Creators: \n - Fredrik Burmester \n - Josef Hamnert \n - Daniel Hagstedt'
                 + '\n\n Contact: \n - [fredrik.burmester@gmail.com](mailto:fredrik.burmester@gmail.com) \n - [josef.hamnert@gmail.com](mailto:josef.hamnert@gmail.com) \n - [dhagstedt@gmail.com](mailto:dhagstedt@gmail.com)'
                 + '\n\n _This game has no affiliation with Spotify._'
