@@ -285,7 +285,7 @@ export default {
             messages: [],
             read: false,
             newMessages: 0,
-            chatStatusText: 'No new messages since you joined...',
+            chatStatusText: 'Messages are deleted after each game 🔒 ',
             correctGuess: false,
             wrongGuess: false
         };
