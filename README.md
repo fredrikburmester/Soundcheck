@@ -5,10 +5,10 @@ Made in the course TDDD27 at Linköping University
 
 ## 🚀 Website
 
-|Branch |Environment|URL                           |
-|-------|-----------|------------------------------|
-|iOS    |prod       |https://soundcheckgame.com    |
-|master |dev        |                              |
+|Branch      |Environment|URL                           |
+|------------|-----------|------------------------------|
+|main        |prod       |https://soundcheckgame.com    |
+|development |dev        |                              |
 
 ## 🔎 Info
 
