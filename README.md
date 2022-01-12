@@ -1,13 +1,16 @@
 # Soundcheck - A Music Game for Friends!
-> Made in the course TDDD27 at Linköping University
+Made in the course TDDD27 at Linköping University
 
 ![Soundcheck Logo](https://raw.githubusercontent.com/fredrikburmester/Soundcheck/master/frontend/src/assets/soundcheck-logo.png)
 
-Link to website: [Soundcheck](https://soundcheckgame.com/)
+## 🚀 Website
 
-> **Note:** The iOS Branch is the one activily maintained. 
+|Branch |Environment|URL                           |
+|-------|-----------|------------------------------|
+|iOS    |prod       |https://soundcheckgame.com    |
+|master |dev        |                              |
 
-## Info
+## 🔎 Info
 
 A spotify-authenticated website game for friends to guess each others favourite songs and genres. 
 
@@ -15,17 +18,7 @@ Each player joins a room hosted by 1 player and authenticates with their spotify
 
 Press on an avatar to guess who's favourite song is playing right now. At the bottom there's a spotify web player (which sadly is limited to 30s of streaming) were you can listen to the song. If you are on desktop the player is able to play the entire song, so we recommend that the host is on desktop if you are all gathered and want the full song experience.
 
-## Deadlines
-- April 14th: Specifications in README.md file
-- April 14th: Complete wireframe/design
-- April 14th: Project setup ready and first commit done. 
-- May 8th: functional prototype - (time for new functionality) - **Mid course screencast**: https://youtu.be/aEppwet_UZ8
-- May 16th: Project ready for testing and bug fixes
-- May 20th: Fully functioning project, ready for refactoring
-- May 31st: Refactoring done
-- June 4th: Fully finished project
-
-## Infrastructure
+## 📦 Infrastructure
 ### Backend
 The backend is a REST API build with flask and sockets.io for websockets. Communication will be Peer->Server->Peer.
 
@@ -47,7 +40,7 @@ The nameservers are handeled by Cloudflare without proxying.
 
 The server is running on a 1-core 512GB RAM Viritual Ubuntu Server.
 
-## Getting started
+## 🔆 Getting started
 
 Clone this repo to your computer. You will have two folders, frontend and backend. 
 
@@ -139,8 +132,6 @@ Group screencast: [TDDD27 - LiU - Soundcheck - Group Screencast](https://youtu.b
 
 ## Individual Screencasts 
 Fredrik Burmester (frebu645): [TDDD27 - LiU - Individual Screencast - Soundcheck - Fredrik Burmester](https://youtu.be/DkEs84ja3XI)
-
 Josef Hamnert (josha196): [TDDD27 - LiU - Individual Screencast - Soundcheck - Josef Hamnert](https://youtu.be/mitou7tS_KI)
-
 Daniel Hagstedt (danha896): [TDDD27 - LiU - Individual Screencast - Soundcheck - Daniel Hagstedt](https://youtu.be/Jh9TE5do6Os)
 
