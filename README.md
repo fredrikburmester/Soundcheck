@@ -1,11 +1,16 @@
 # Soundcheck - A Music Game for Friends!
-> Made in the course TDDD27 at Linköping University
+Made in the course TDDD27 at Linköping University
 
 ![Soundcheck Logo](https://raw.githubusercontent.com/fredrikburmester/Soundcheck/master/frontend/src/assets/soundcheck-logo.png)
 
-Link to website: [Soundcheck](https://soundcheckgame.com/)
+## 🚀 Website
 
-## Info
+|Branch |Environment|URL                           |
+|-------|-----------|------------------------------|
+|iOS    |prod       |https://soundcheckgame.com    |
+|master |dev        |                              |
+
+## 🔎 Info
 
 A spotify-authenticated website game for friends to guess each others favourite songs and genres. 
 
@@ -13,17 +18,7 @@ Each player joins a room hosted by 1 player and authenticates with their spotify
 
 Press on an avatar to guess who's favourite song is playing right now. At the bottom there's a spotify web player (which sadly is limited to 30s of streaming) were you can listen to the song. If you are on desktop the player is able to play the entire song, so we recommend that the host is on desktop if you are all gathered and want the full song experience.
 
-## Deadlines
-- April 14th: Specifications in README.md file
-- April 14th: Complete wireframe/design
-- April 14th: Project setup ready and first commit done. 
-- May 8th: functional prototype - (time for new functionality) - **Mid course screencast**: https://youtu.be/aEppwet_UZ8
-- May 16th: Project ready for testing and bug fixes
-- May 20th: Fully functioning project, ready for refactoring
-- May 31st: Refactoring done
-- June 4th: Fully finished project
-
-## Infrastructure
+## 📦 Infrastructure
 ### Backend
 The backend is a REST API build with flask and sockets.io for websockets. Communication will be Peer->Server->Peer.
 
@@ -37,7 +32,7 @@ The frontend is built with Vue. We will be using the state manager Vuex for glob
 ### Database
 To store information about the rooms we will use a small database called TinyDB. This way we can store and retrieve information about the users in a room and their scores. When a game starts, a room and user object is created. The room object holds information like the room id, name, players and so on. The user object will hold the score of the player, the player id and name. ~~After each game the user object and room object will be deleted. This means that no scores will be saved for future review at this point.~~ All games are saved and can be viewed after the fact! Just go to the start page and look at your previous games.
 ### Hosting
-The server will be hosted under a SSL certified domain name: https://soundcheckgame.com. 
+The server will be hosted under a SSL certified domain name: https://soundcheck.fdrive.se. 
 
 The website is routed through an nginx reverse proxy and static files will be served from there as well. The webserver config file can be found in the folder `nginx`. 
 
@@ -45,7 +40,7 @@ The nameservers are handeled by Cloudflare without proxying.
 
 The server is running on a 1-core 512GB RAM Viritual Ubuntu Server.
 
-## Getting started
+## 🔆 Getting started
 
 Clone this repo to your computer. You will have two folders, frontend and backend. 
 
@@ -89,6 +84,46 @@ For the backend:
 
 `pm2 start npm --name "TDDD27-Frontend" -- run prod`
 
+## Buttons
+The button structure looks like this. 
+
+- The button component is `48px` tall with a `10px` bottom margin. 
+- The standard grid on the page has a footer that is `62px + <button-size> + <button-margin> = 120`
+- Adding another button will therefore result in a footer that is `178px` tall.   
+
+A fixed button looks like this, firstly we need a button container: 
+```
+.button-container {
+    position: fixed;
+    left: 50%;
+    bottom: 15px;
+    transform: translate(-50%, -50%);
+    margin: 0 auto;
+    width: 100vw;
+}
+
+```
+And then a div for the button actual button: 
+```
+.logout-button-div {
+    padding: 0 2rem 0 2rem;
+}
+```
+And then just place the button inside that div: 
+```
+<div class="button-container">
+    <div class="logout">
+        <Button
+            color="#CD1A2B"
+            button-link="/logout"
+            button-text="Log out"
+            class="logout"
+            @click="logout"
+        />
+    </div>
+</div>
+```
+
 ## Issues and Bugs
 https://trello.com/b/7ShV1pMC/spotifygame
 
@@ -97,8 +132,6 @@ Group screencast: [TDDD27 - LiU - Soundcheck - Group Screencast](https://youtu.b
 
 ## Individual Screencasts 
 Fredrik Burmester (frebu645): [TDDD27 - LiU - Individual Screencast - Soundcheck - Fredrik Burmester](https://youtu.be/DkEs84ja3XI)
-
 Josef Hamnert (josha196): [TDDD27 - LiU - Individual Screencast - Soundcheck - Josef Hamnert](https://youtu.be/mitou7tS_KI)
-
 Daniel Hagstedt (danha896): [TDDD27 - LiU - Individual Screencast - Soundcheck - Daniel Hagstedt](https://youtu.be/Jh9TE5do6Os)
 
