@@ -1,5 +1,5 @@
 # Soundcheck - A Music Game for Friends!
-Made in the course TDDD27 at Linköping University
+Made during the course TDDD27 at Linköping University with continued development ongoing.
 
 ![Soundcheck Logo](https://raw.githubusercontent.com/fredrikburmester/Soundcheck/master/frontend/src/assets/soundcheck-logo.png)
 
