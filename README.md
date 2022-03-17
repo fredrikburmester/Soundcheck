@@ -12,27 +12,27 @@ Made during the course TDDD27 at Linköping University with continued developmen
 
 ## 🔎 Info
 
-A spotify-authenticated website game for friends to guess each others favourite songs and genres. 
+A spotify-authenticated webbased game for friends to guess each others favourite songs! 
 
-Each player joins a room hosted by 1 player and authenticates with their spotify login. The host selects a gamemode and the game is on!
+Each player joins a room hosted by 1 player and authenticates with their spotify login. The host chooses the game settings and the game is on!
 
-Press on an avatar to guess who's favourite song is playing right now. At the bottom there's a spotify web player (which sadly is limited to 30s of streaming) were you can listen to the song. If you are on desktop the player is able to play the entire song, so we recommend that the host is on desktop if you are all gathered and want the full song experience.
+Press on an avatar to guess who's favourite song is playing. At the bottom is spotify web player (which sadly is limited to 30s of streaming on mobile) were you can listen to the song. *If you are on desktop the player is able to play the entire song, so we recommend that the host is on desktop if you are all gathered and want the full song experience. This is a spotify issue and we can't do anything about it sadly...*
 
 ## 📦 Infrastructure
 ### Backend
-The backend is a REST API build with flask and sockets.io for websockets. Communication will be Peer->Server->Peer.
+The backend is a REST API build with flask and sockets.io for websockets. Communication is Peer->Server->Peer for all game-related communication.
 
 This game requires a connection to the Spotify API. We have therefore created an application in the Spotify developer console which gives us a private client_id and secret that we can use to get information from the API. 
 
-When a user enters our site they will be required to log in to their Spotify account from a link on our website. From this request an access_token is given, unique to the user. The client can use this token to get information about their top songs or personal info from the Spotify API. We can then use this information about the user, like top songs or genres, in the game. 
+When a user enters our site they will be required to log in to their Spotify account by clicking a link on our website. From this request an access_token is given, unique to the user. The client can use this token to get information about their top songs or personal info from the Spotify API. We can then use this information about the user, like top songs or genres, in the game. 
 
 ### Frontend
-The frontend is built with Vue. We will be using the state manager Vuex for global states. The website will be responsive but build from a mobile perspective. 
+The frontend is built with Vue and Vuex for global states. The website is responsive but build from a mobile perspective. 
 
 ### Database
-To store information about the rooms we will use a small database called TinyDB. This way we can store and retrieve information about the users in a room and their scores. When a game starts, a room and user object is created. The room object holds information like the room id, name, players and so on. The user object will hold the score of the player, the player id and name. ~~After each game the user object and room object will be deleted. This means that no scores will be saved for future review at this point.~~ All games are saved and can be viewed after the fact! Just go to the start page and look at your previous games.
+To store information about the rooms we use a small database called TinyDB. This way we can store and retrieve information about the users in a room and their scores. When a game starts, a room and user object is created. The room object holds information like the room id, name, players and so on. The user object holds the score of the player, the player id and name. ~~After each game the user object and room object will be deleted. This means that no scores will be saved for future review at this point.~~ All games are saved and can be viewed after the fact! Just go to the start page and look at your previous games.
 ### Hosting
-The server will be hosted under a SSL certified domain name: https://soundcheckgame.com. 
+The server is hosted under an SSL certified domain name: https://soundcheckgame.com. 
 
 The website is routed through an nginx reverse proxy and static files will be served from there as well. The webserver config file can be found in the folder `nginx`. 
 
