@@ -32,7 +32,7 @@ The frontend is built with Vue. We will be using the state manager Vuex for glob
 ### Database
 To store information about the rooms we will use a small database called TinyDB. This way we can store and retrieve information about the users in a room and their scores. When a game starts, a room and user object is created. The room object holds information like the room id, name, players and so on. The user object will hold the score of the player, the player id and name. ~~After each game the user object and room object will be deleted. This means that no scores will be saved for future review at this point.~~ All games are saved and can be viewed after the fact! Just go to the start page and look at your previous games.
 ### Hosting
-The server will be hosted under a SSL certified domain name: https://soundcheck.fdrive.se. 
+The server will be hosted under a SSL certified domain name: https://soundcheckgame.com. 
 
 The website is routed through an nginx reverse proxy and static files will be served from there as well. The webserver config file can be found in the folder `nginx`. 
 
